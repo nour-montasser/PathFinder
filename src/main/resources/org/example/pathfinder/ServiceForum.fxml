@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ServiceOffreController">
+    <children>
+        <!-- Title Input -->
+        <HBox spacing="10">
+            <Label text="Title:" />
+            <TextField fx:id="titleField" promptText="Enter title" />
+        </HBox>
+
+        <!-- Description Input -->
+        <HBox spacing="10">
+            <Label text="Description:" />
+            <TextArea fx:id="descriptionField" prefHeight="100" prefWidth="300" promptText="Enter description" />
+        </HBox>
+
+        <!-- Field Input -->
+        <HBox spacing="10">
+            <Label text="Field:" />
+            <TextField fx:id="fieldField" promptText="Enter field" />
+        </HBox>
+
+        <!-- Price Input -->
+        <HBox spacing="10">
+            <Label text="Price:" />
+            <TextField fx:id="priceField" promptText="Enter price" />
+        </HBox>
+
+        <!-- Required Experience -->
+        <HBox spacing="10">
+            <Label text="Required Experience:" />
+            <TextField fx:id="requiredExperienceField" promptText="Enter experience" />
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Date Posted:" />
+            <TextField fx:id="dateField" promptText="Enter date (YYYY-MM-DD)" />
+        </HBox>
+        <!-- Required Education -->
+        <HBox spacing="10">
+            <Label text="Required Education:" />
+            <TextField fx:id="requiredEducationField" promptText="Enter education level" />
+        </HBox>
+
+        <!-- Skills -->
+        <HBox spacing="10">
+            <Label text="Skills:" />
+            <TextField fx:id="skillsField" promptText="Enter skills" />
+        </HBox>
+
+        <!-- Submit Button -->
+        <Button onAction="#handleSubmit" text="Submit" />
+
+        <!-- TableView to Display Inserted Data -->
+        <TableView fx:id="serviceTable" prefHeight="300" prefWidth="600">
+            <columns>
+                <TableColumn text="ID Service" fx:id="idServiceColumn" prefWidth="75" />
+                <TableColumn text="ID User" fx:id="idUserColumn" prefWidth="75" />
+                <TableColumn text="Title" fx:id="titleColumn" prefWidth="100" />
+                <TableColumn text="Description" fx:id="descriptionColumn" prefWidth="150" />
+                <TableColumn text="Date Posted" fx:id="datePostedColumn" prefWidth="100" />
+                <TableColumn text="Field" fx:id="fieldColumn" prefWidth="100" />
+                <TableColumn text="Price" fx:id="priceColumn" prefWidth="75" />
+                <TableColumn text="Experience" fx:id="experienceColumn" prefWidth="100" />
+                <TableColumn text="Education" fx:id="educationColumn" prefWidth="100" />
+                <TableColumn text="Skills" fx:id="skillsColumn" prefWidth="150" />
+            </columns>
+        </TableView>
+    </children>
+</VBox>
