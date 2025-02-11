@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.SkillTestController">
+    <VBox spacing="10" alignment="CENTER">
+        <Label text="Skill Test Management" style="-fx-font-size: 18px;"/>
+
+        <HBox spacing="5">
+            <Label text="Title:"/>
+            <TextField fx:id="titleField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Description:"/>
+            <TextField fx:id="descriptionField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Duration (mins):"/>
+            <TextField fx:id="durationField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Job Offer ID:"/>
+            <TextField fx:id="jobOfferIdField"/>
+        </HBox>
+
+        <HBox spacing="5">
+            <Label text="Required Score:"/>
+            <TextField fx:id="scoreRequiredField"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Button text="Add" onAction="#addSkillTest"/>
+            <Button text="Delete" onAction="#deleteSkillTest"/>
+            <Button text="Refresh" onAction="#refreshList"/>
+        </HBox>
+
+        <ListView fx:id="skillTestList"/>
+    </VBox>
+</AnchorPane>
