@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="827.0" prefWidth="1320.0" styleClass="root" stylesheets="@../style/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.demo.Controller.FrontHomeCompanyController">
+
+    <children>
+
+        <VBox prefHeight="781.0" prefWidth="281.0">
+
+            <children>
+
+                <AnchorPane fx:id="side_ankerpane" prefHeight="827.0" prefWidth="281.0" style="-fx-background-color: #f3fafa;" styleClass="side_ankerpane" stylesheets="@../style/style.css">
+
+                    <children>
+
+                        <ImageView fitHeight="196.0" fitWidth="203.0" layoutX="44.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+
+                            <image>
+
+                                <Image url="@../assets/logo.png" />
+
+                            </image>
+
+                        </ImageView>
+
+                        <Button fx:id="HomeButton" layoutX="17.0" layoutY="225.0" prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #5bc0de;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Home" textFill="WHITE">
+
+                            <font>
+
+                                <Font size="18.0" />
+
+                            </font>
+
+                        </Button>
+                        <Button fx:id="btn_workbench111" layoutX="18.0" layoutY="361.0"  prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #1e2b3c;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Products" textFill="WHITE">
+                            <font>
+                                <Font name="Century Gothic Bold" size="13.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="btn_workbench11" layoutX="18.0" layoutY="292.0"  prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #1e2b3c;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Gyms" textFill="WHITE">
+                            <font>
+                                <Font name="Century Gothic Bold" size="13.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="btn_workbench12" layoutX="18.0" layoutY="431.0"  prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #1e2b3c;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Events" textFill="WHITE">
+                            <font>
+                                <Font name="Century Gothic Bold" size="13.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="btn_workbench112" layoutX="18.0" layoutY="500.0"  prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #1e2b3c;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Reclamation" textFill="WHITE">
+                            <font>
+                                <Font name="Century Gothic Bold" size="13.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="Profile" layoutX="18.0" layoutY="696.0" onAction="#openProfile" prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #1e2b3c;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Profile" textFill="WHITE">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="btn_workbench111111" layoutX="18.0" layoutY="760.0" onAction="#logOut" prefHeight="53.0" prefWidth="248.0" style="-fx-background-color: #dc3545;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="Log Out" textFill="WHITE">
+                            <font>
+                                <Font name="Century Gothic Bold" size="13.0" />
+                            </font>
+                        </Button>
+                  <Button fx:id="openAbonnement" layoutX="15.0" layoutY="562.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="255.0" style="-fx-background-color: #1e2b3c;" styleClass="btn_workbench11" stylesheets="@../style/style.css" text="subscription" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="13.0" />
+                     </font>
+                  </Button>
+
+                    </children>
+
+                </AnchorPane>
+
+            </children>
+
+        </VBox>
+
+        <Pane fx:id="l" prefHeight="781.0" prefWidth="1040.0" style="-fx-background-color: #f3fafa;">
+
+            <children>
+                <ImageView fx:id="userPhoto" fitHeight="70.0" fitWidth="113.0" layoutX="913.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../assets/images/Guy_in_laptop.png" />
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="38.0" fitWidth="30.0" layoutX="115.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../assets/icons/shopping-basket.png" />
+                    </image>
+                </ImageView>
+                <Label fx:id="nbrPannier" layoutX="141.0" layoutY="59.0" text="0">
+                    <font>
+                        <Font name="Century Gothic" size="15.0" />
+                    </font>
+                </Label>
+                <Label layoutX="49.0" layoutY="42.0" text="Basket">
+                    <font>
+                        <Font name="Century Gothic Bold" size="18.0" />
+                    </font>
+                </Label>
+            <Label fx:id="idU" layoutX="349.0" layoutY="25.0" prefHeight="21.0" prefWidth="196.0" />
+            <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" layoutX="589.0" layoutY="31.0" prefHeight="31.0" prefWidth="307.0" textAlignment="RIGHT" textOverrun="CENTER_ELLIPSIS">
+               <font>
+                  <Font name="System Bold" size="21.0" />
+               </font></Label>
+            <Label layoutX="57.0" layoutY="138.0" text="Hello !">
+               <font>
+                  <Font name="Century Gothic Bold" size="34.0" />
+               </font>
+            </Label>
+            <Label fx:id="dailyAdvicesText" layoutX="57.0" layoutY="188.0" text="Gestion de l'application Sportty">
+               <font>
+                  <Font name="Century Gothic" size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="62.0" layoutY="228.0" text="Gyms" textFill="#9a9292">
+               <font>
+                  <Font name="Century Gothic Bold" size="15.0" />
+               </font>
+            </Label>
+            <Pane fx:id="pane_1111" layoutX="62.0" layoutY="258.0" prefHeight="234.0" prefWidth="307.0" style="-fx-background-color: #5bc0de; -fx-border-color: #000000;" styleClass="pane_1111" stylesheets="@../style/style.css">
+               <children>
+                  <Label fx:id="longestWorkoutDuration" layoutX="24.0" layoutY="175.0" prefHeight="45.0" prefWidth="232.0" text="60 minutes" textAlignment="JUSTIFY" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="30.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="150.0" fitWidth="215.0" layoutX="98.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/Longest%20Workout%20Duration.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="19.0" layoutY="8.0" prefHeight="39.0" prefWidth="215.0" text="Longest Workout Duration" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="Century Gothic Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Label layoutX="62.0" layoutY="519.0" text="About us" textFill="#9a9292">
+               <font>
+                  <Font name="Century Gothic Bold" size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="405.0" layoutY="519.0" text="Latest Reclamation" textFill="#9a9292">
+               <font>
+                  <Font name="Century Gothic Bold" size="15.0" />
+               </font>
+            </Label>
+            <Pane fx:id="pane_132" layoutX="390.0" layoutY="540.0" prefHeight="270.0" prefWidth="632.0" style="-fx-border-color: #000000; -fx-background-color: #001f3f;" styleClass="pane_11" stylesheets="@../style/style.css">
+               <children>
+                  <Label fx:id="titreReclamationText" layoutX="32.0" layoutY="34.0" text="Reclamation 1" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="196.0" fitWidth="194.0" layoutX="394.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/Guy_in_laptop.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="60.0" layoutY="106.0" textFill="#323131">
+                     <font>
+                        <Font name="Century Gothic Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="descriptionReclamation" alignment="TOP_LEFT" contentDisplay="TOP" layoutX="32.0" layoutY="80.0" prefHeight="181.0" prefWidth="391.0" text="Lorem Ipsum has been the industry's standard Lorem Ipsum has been the industry's standard Lorem Ipsum has been the industry's standard Lorem Ipsum has been the industry's standard " textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="Century Gothic" size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane fx:id="pane_11111" layoutX="389.0" layoutY="258.0" prefHeight="234.0" prefWidth="307.0" style="-fx-background-color: #5bc0de; -fx-border-color: #000000;" styleClass="pane_1111" stylesheets="@../style/style.css">
+               <children>
+                  <Label fx:id="averageWorkoutDuration" layoutX="19.0" layoutY="175.0" prefHeight="45.0" prefWidth="267.0" text="39.0 minutes" textAlignment="JUSTIFY" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="30.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="167.0" fitWidth="167.0" layoutX="146.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/Average%20Workout%20Duration.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="19.0" prefHeight="39.0" prefWidth="215.0" text="Average Workout Duration" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="Century Gothic Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <ImageView fitHeight="29.0" fitWidth="40.0" layoutX="126.0" layoutY="124.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/icons/airplane.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="currentUserField" layoutX="163.0" layoutY="138.0">
+               <font>
+                  <Font name="Century Gothic Bold" size="34.0" />
+               </font>
+            </Label>
+            <Pane fx:id="pane_111111" layoutX="715.0" layoutY="258.0" prefHeight="234.0" prefWidth="307.0" style="-fx-background-color: #5bc0de; -fx-border-color: #000000;" styleClass="pane_1111" stylesheets="@../style/style.css">
+               <children>
+                  <Label fx:id="nbReclamationText" layoutX="19.0" layoutY="175.0" prefHeight="45.0" prefWidth="267.0" text="56 Reclamation" textAlignment="JUSTIFY" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="30.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="196.0" fitWidth="205.0" layoutX="129.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/Number%20Of%20Reclamation.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="19.0" layoutY="8.0" prefHeight="31.0" prefWidth="208.0" text="Number Of Reclamation" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="Century Gothic Bold" size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane fx:id="pane_11112" layoutX="62.0" layoutY="540.0" prefHeight="270.0" prefWidth="307.0" style="-fx-background-color: #5bc0de; -fx-border-color: #000000;" styleClass="pane_1111" stylesheets="@../style/style.css">
+               <children>
+                  <Label fx:id="descriptionReclamation1" alignment="TOP_LEFT" contentDisplay="TOP" layoutX="13.0" layoutY="27.0" prefHeight="216.0" prefWidth="281.0" text="Here we are not only a gym that meets the needs of the general population, but also those of people with specific needs, including people with ADHD (Attention Deficit Disorder with or without Hyperactivity). and people with disabilities." textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="150.0" fitWidth="215.0" layoutX="143.0" layoutY="135.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/Sporty.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+
+            </children>
+
+        </Pane>
+
+    </children>
+
+</HBox>
