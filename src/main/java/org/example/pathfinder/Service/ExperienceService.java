@@ -18,7 +18,7 @@ public class ExperienceService implements Services<Experience> {
 
     @Override
     public void add(Experience experience) {
-        String query = "INSERT INTO experience (id_cv, type, position, location_name, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO experience (id_cv, type, position, location_name, start_date, end_date, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, experience.getIdCv());
             statement.setString(2, experience.getType());
@@ -26,6 +26,7 @@ public class ExperienceService implements Services<Experience> {
             statement.setString(4, experience.getLocationName());
             statement.setString(5, experience.getStartDate());
             statement.setString(6, experience.getEndDate());
+            statement.setString(7, experience.getDescription()); // ✅ Now adding description
             statement.executeUpdate();
             System.out.println("Experience added successfully.");
         } catch (Exception e) {
@@ -35,7 +36,7 @@ public class ExperienceService implements Services<Experience> {
 
     @Override
     public void update(Experience experience) {
-        String query = "UPDATE experience SET id_cv = ?, type = ?, position = ?, location_name = ?, start_date = ?, end_date = ? WHERE id_experience = ?";
+        String query = "UPDATE experience SET id_cv = ?, type = ?, position = ?, location_name = ?, start_date = ?, end_date = ?, description = ? WHERE id_experience = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, experience.getIdCv());
             statement.setString(2, experience.getType());
@@ -43,7 +44,8 @@ public class ExperienceService implements Services<Experience> {
             statement.setString(4, experience.getLocationName());
             statement.setString(5, experience.getStartDate());
             statement.setString(6, experience.getEndDate());
-            statement.setInt(7, experience.getIdExperience());
+            statement.setString(7, experience.getDescription()); // ✅ Now updating description
+            statement.setInt(8, experience.getIdExperience());
             statement.executeUpdate();
             System.out.println("Experience updated successfully.");
         } catch (Exception e) {
@@ -77,7 +79,8 @@ public class ExperienceService implements Services<Experience> {
                         resultSet.getString("position"),
                         resultSet.getString("location_name"),
                         resultSet.getString("start_date"),
-                        resultSet.getString("end_date")
+                        resultSet.getString("end_date"),
+                        resultSet.getString("description") // ✅ Fetching description from DB
                 );
             }
         } catch (Exception e) {
@@ -100,7 +103,8 @@ public class ExperienceService implements Services<Experience> {
                         resultSet.getString("position"),
                         resultSet.getString("location_name"),
                         resultSet.getString("start_date"),
-                        resultSet.getString("end_date")
+                        resultSet.getString("end_date"),
+                        resultSet.getString("description") // ✅ Now including description
                 ));
             }
         } catch (Exception e) {

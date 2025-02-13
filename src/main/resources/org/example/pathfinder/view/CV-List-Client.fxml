@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.pathfinder.Controller.CVShowController"
+           prefWidth="1000" prefHeight="700"
+           style="-fx-background-color: #f4f4f4;">
+
+    <!-- Main Container -->
+    <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
+
+        <!-- Title -->
+        <Label text="My CVs" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+        <!-- Search Bar & Add Button Container -->
+        <HBox spacing="10" alignment="CENTER"
+              style="-fx-padding: 5; -fx-pref-width: 100%; -fx-alignment: center-right;">
+
+            <!-- Search Bar -->
+            <HBox spacing="5" alignment="CENTER_LEFT"
+                  style="-fx-border-color: #ddd; -fx-border-radius: 20; -fx-padding: 5;
+                         -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);">
+
+                <!-- Search Icon -->
+                <ImageView fx:id="searchIcon" fitWidth="25" fitHeight="25" pickOnBounds="true" preserveRatio="true"/>
+
+                <!-- Search Field -->
+                <TextField fx:id="searchField" promptText="Search..."
+                           style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
+            </HBox>
+
+            <!-- Add New CV Button -->
+            <Button fx:id="addCVButton" text="ADD NEW CV"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;
+                           -fx-padding: 8 15; -fx-border-radius: 20; -fx-alignment: center; -fx-spacing: 5;">
+                <graphic>
+                    <ImageView  fx:id="addIcon"  fitWidth="20" fitHeight="20" pickOnBounds="true" preserveRatio="true"/>
+
+
+                </graphic>
+            </Button>
+
+        </HBox>
+
+        <!-- Grid to Display CVs -->
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <GridPane fx:id="cvGridPane" hgap="15" vgap="15"
+                      style="-fx-padding: 10;"
+                      alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="200" prefWidth="250" hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="200" prefWidth="250" hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="200" prefWidth="250" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <rowConstraints>
+                    <RowConstraints minHeight="200" prefHeight="250" vgrow="ALWAYS"/>
+                    <RowConstraints minHeight="200" prefHeight="250" vgrow="ALWAYS"/>
+                </rowConstraints>
+
+                <!-- Dynamic CV Items will be inserted here -->
+            </GridPane>
+        </ScrollPane>
+
+    </VBox>
+</StackPane>

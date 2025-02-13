@@ -7,14 +7,15 @@ public class Experience {
     private int idCv; // Foreign key to CV table
     private String type;
     private String position;
-    private String locationName; // Assuming this is a reference ID (long)
+    private String locationName;
     private String startDate; // Keeping as String for simplicity (use Date or LocalDate for stricter typing)
     private String endDate;
+    private String description; // Newly added column for experience details
 
     // Constructors
     public Experience() {}
 
-    public Experience(int idExperience, int idCv, String type, String position, String locationName, String startDate, String endDate) {
+    public Experience(int idExperience, int idCv, String type, String position, String locationName, String startDate, String endDate, String description) {
         this.idExperience = idExperience;
         this.idCv = idCv;
         this.type = type;
@@ -22,15 +23,17 @@ public class Experience {
         this.locationName = locationName;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.description = description;
     }
 
-    public Experience(int idCv, String type, String position, String locationName, String startDate, String endDate) {
+    public Experience(int idCv, String type, String position, String locationName, String startDate, String endDate, String description) {
         this.idCv = idCv;
         this.type = type;
         this.position = position;
         this.locationName = locationName;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.description = description;
     }
 
     // Getters and Setters
@@ -90,6 +93,14 @@ public class Experience {
         this.endDate = endDate;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -97,16 +108,17 @@ public class Experience {
         if (!(o instanceof Experience experience)) return false;
         return idExperience == experience.idExperience &&
                 idCv == experience.idCv &&
-                locationName == experience.locationName &&
                 Objects.equals(type, experience.type) &&
                 Objects.equals(position, experience.position) &&
+                Objects.equals(locationName, experience.locationName) &&
                 Objects.equals(startDate, experience.startDate) &&
-                Objects.equals(endDate, experience.endDate);
+                Objects.equals(endDate, experience.endDate) &&
+                Objects.equals(description, experience.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idExperience, idCv, type, position, locationName, startDate, endDate);
+        return Objects.hash(idExperience, idCv, type, position, locationName, startDate, endDate, description);
     }
 
     // toString
@@ -117,9 +129,10 @@ public class Experience {
                 ", idCv=" + idCv +
                 ", type='" + type + '\'' +
                 ", position='" + position + '\'' +
-                ", locationName=" + locationName +
+                ", locationName='" + locationName + '\'' +
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

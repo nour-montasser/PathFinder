@@ -9,7 +9,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Load the FXML file
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/CV-Forum.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/CV-List-Client.fxml"));
 
         // Create the Scene
         Scene scene = new Scene(fxmlLoader.load(), 1000, 700);

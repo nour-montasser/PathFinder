@@ -2,6 +2,8 @@ module org.example.pathfinder {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql; // Required for database connection
+    requires org.json;  // Add this for JSON parsing
+    requires java.desktop; // 🚀 This fixes the issue!
     // Export the base package
 
 

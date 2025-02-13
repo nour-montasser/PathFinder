@@ -7,37 +7,45 @@ import java.util.Objects;
 
 public class CV {
     private int idCV;
-    private int userId; // id_user foreign key
+    private int userId; // Foreign key to User
     private String title;
     private String introduction;
-    private String languages;
+    private String skills; // Replaces languages
     private Timestamp dateCreation; // date_creation column
     private List<Experience> experiences; // List of associated experiences
+    private List<Language> languageList; // List of associated languages
+    private List<Certificate> certificates; // List of associated certificates
 
     // Default constructor
     public CV() {
         this.experiences = new ArrayList<>(); // Initialize the experiences list
+        this.languageList = new ArrayList<>(); // Initialize the languages list
+        this.certificates = new ArrayList<>(); // Initialize the certificates list
     }
 
     // Constructor with all fields
-    public CV(int idCV, int userId, String title, String introduction, String languages, Timestamp dateCreation) {
+    public CV(int idCV, int userId, String title, String introduction, String skills, Timestamp dateCreation) {
         this.idCV = idCV;
         this.userId = userId;
         this.title = title;
         this.introduction = introduction;
-        this.languages = languages;
+        this.skills = skills;
         this.dateCreation = dateCreation;
         this.experiences = new ArrayList<>(); // Initialize the experiences list
+        this.languageList = new ArrayList<>(); // Initialize the languages list
+        this.certificates = new ArrayList<>(); // Initialize the certificates list
     }
 
     // Constructor for creating a new CV (without ID or dateCreation)
-    public CV(int userId, String title, String introduction, String languages) {
+    public CV(int userId, String title, String introduction, String skills) {
         this.userId = userId;
         this.title = title;
         this.introduction = introduction;
-        this.languages = languages;
+        this.skills = skills;
         this.dateCreation = new Timestamp(System.currentTimeMillis()); // Default to current timestamp
         this.experiences = new ArrayList<>(); // Initialize the experiences list
+        this.languageList = new ArrayList<>(); // Initialize the languages list
+        this.certificates = new ArrayList<>(); // Initialize the certificates list
     }
 
     // Getters and Setters
@@ -73,12 +81,12 @@ public class CV {
         this.introduction = introduction;
     }
 
-    public String getLanguages() {
-        return languages;
+    public String getSkills() {
+        return skills;
     }
 
-    public void setLanguages(String languages) {
-        this.languages = languages;
+    public void setSkills(String skills) {
+        this.skills = skills;
     }
 
     public Timestamp getDateCreation() {
@@ -102,6 +110,32 @@ public class CV {
         this.experiences.add(experience);
     }
 
+    public List<Language> getLanguageList() {
+        return languageList;
+    }
+
+    public void setLanguageList(List<Language> languageList) {
+        this.languageList = languageList;
+    }
+
+    // Add a single language to the CV
+    public void addLanguage(Language language) {
+        this.languageList.add(language);
+    }
+
+    public List<Certificate> getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(List<Certificate> certificates) {
+        this.certificates = certificates;
+    }
+
+    // Add a single certificate to the CV
+    public void addCertificate(Certificate certificate) {
+        this.certificates.add(certificate);
+    }
+
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -111,14 +145,16 @@ public class CV {
                 userId == cv.userId &&
                 Objects.equals(title, cv.title) &&
                 Objects.equals(introduction, cv.introduction) &&
-                Objects.equals(languages, cv.languages) &&
+                Objects.equals(skills, cv.skills) &&
                 Objects.equals(dateCreation, cv.dateCreation) &&
-                Objects.equals(experiences, cv.experiences);
+                Objects.equals(experiences, cv.experiences) &&
+                Objects.equals(languageList, cv.languageList) &&
+                Objects.equals(certificates, cv.certificates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCV, userId, title, introduction, languages, dateCreation, experiences);
+        return Objects.hash(idCV, userId, title, introduction, skills, dateCreation, experiences, languageList, certificates);
     }
 
     // toString
@@ -129,9 +165,11 @@ public class CV {
                 ", userId=" + userId +
                 ", title='" + title + '\'' +
                 ", introduction='" + introduction + '\'' +
-                ", languages='" + languages + '\'' +
+                ", skills='" + skills + '\'' +
                 ", dateCreation=" + dateCreation +
                 ", experiences=" + experiences +
+                ", languageList=" + languageList +
+                ", certificates=" + certificates +
                 '}';
     }
 }
