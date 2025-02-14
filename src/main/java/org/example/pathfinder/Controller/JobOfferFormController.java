@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.JobOfferService;
 
@@ -80,8 +81,8 @@ public class JobOfferFormController {
             // Show success message
             showAlert(Alert.AlertType.INFORMATION, "Job Offer Added", "The job offer was successfully added.");
 
-            // Clear the form
-            clearForm();
+            Stage stage = (Stage) titleField.getScene().getWindow();
+            stage.close();
 
         } catch (Exception e) {
             // Handle exception and show error message

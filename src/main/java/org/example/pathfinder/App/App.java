@@ -3,6 +3,7 @@ package org.example.pathfinder.App;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.JobOfferService;
@@ -18,7 +19,10 @@ public class App extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("PathFinder");
         stage.setScene(scene);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/Sources/pathfinder_logo_compass.png")));
+        stage.setMaximized(true);
         stage.show();
+
     }
 
     public static void main(String[] args) {

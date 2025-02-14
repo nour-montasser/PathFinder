@@ -8,26 +8,28 @@
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      spacing="10" style="-fx-padding: 10; -fx-border-color: #ccc; -fx-border-radius: 5;"
-      fx:controller="org.example.pathfinder.Controller.JobOfferListCardController">
+      spacing="10" style="-fx-padding: 10; -fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: white;"
+      fx:controller="org.example.pathfinder.Controller.JobOfferListCardController"
+      focusTraversable="false"
+      fx:id="cardContainer">
 
     <HBox spacing="15">
         <ImageView fx:id="companyImage" fitWidth="100" fitHeight="100" />
         <VBox spacing="5">
-            <Label fx:id="titleLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <Label fx:id="descriptionLabel" wrapText="true" />
+            <Label fx:id="titleLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+            <Label fx:id="descriptionLabel" wrapText="true" style="-fx-text-fill: #555555;" />
         </VBox>
     </HBox>
 
     <VBox fx:id="additionalDetails" spacing="5" style="-fx-padding: 10;">
-        <Label fx:id="requiredEducationLabel" />
-        <Label fx:id="requiredExperienceLabel" />
-        <Label fx:id="skillsLabel" />
+        <Label fx:id="requiredEducationLabel" style="-fx-text-fill: #555555;" />
+        <Label fx:id="requiredExperienceLabel" style="-fx-text-fill: #555555;" />
+        <Label fx:id="skillsLabel" style="-fx-text-fill: #555555;" />
     </VBox>
 
-    <!-- Add Update and Delete buttons here -->
     <HBox spacing="10" alignment="center">
-        <Button fx:id="updateButton" text="Update"  onAction="#handleUpdate" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+        <Button fx:id="updateButton" text="Update" onAction="#handleUpdate" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
         <Button fx:id="deleteButton" text="Delete" onAction="#handleDelete" style="-fx-background-color: #f44336; -fx-text-fill: white;" />
+        <Button fx:id="applyButton" text="Apply" onAction="#handleApply" style="-fx-background-color: #2b4156; -fx-text-fill: white;" />
     </HBox>
 </VBox>

@@ -1,21 +1,25 @@
 package org.example.pathfinder.Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class ApplicationJob {
     private Long id_Application;
     private Long id_JobOffer;
     private Long id_User;
-    private Date dateApplication;
-    private String status;
+    private Timestamp dateApplication;
+    private String status; // pending, accepted, rejected
 
-    // Constructor
-    public ApplicationJob(Long id_JobOffer, Long id_User, Date dateApplication, String status) {
+    // Constructor with current timestamp as default for dateApplication
+    public ApplicationJob(Long id_JobOffer, Long id_User) {
         this.id_JobOffer = id_JobOffer;
         this.id_User = id_User;
-        this.dateApplication = dateApplication;
-        this.status = status;
+        this.dateApplication = new Timestamp(System.currentTimeMillis());
+        this.status = "pending";
+    }
+
+    public ApplicationJob() {
+
     }
 
     // Getters and setters
@@ -43,11 +47,11 @@ public class ApplicationJob {
         this.id_User = id_User;
     }
 
-    public Date getDateApplication() {
+    public Timestamp getDateApplication() {
         return dateApplication;
     }
 
-    public void setDateApplication(Date dateApplication) {
+    public void setDateApplication(Timestamp dateApplication) {
         this.dateApplication = dateApplication;
     }
 
