@@ -1,7 +1,10 @@
 package org.example.pathfinder.Service;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import org.example.pathfinder.Model.Message;
 import org.example.pathfinder.App.DatabaseConnection;
+
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,26 +19,16 @@ public class MessageService implements Services<Message> {
 
     @Override
     public void add(Message message) {
-        // Debugging: print content before adding
-        System.out.println("Attempting to add message with content: '" + message.getContent() + "'");
-
-        // Validate content
-        if (message.getContent() == null || message.getContent().trim().isEmpty()) {
-            throw new IllegalArgumentException("Content cannot be null or empty.");
-        }
-
         String req = "INSERT INTO Message (content, id_user_sender, media, timesent, id_channel) VALUES (?, ?, ?, ?, ?)";
 
         try {
-            // Prepare the statement
             PreparedStatement stm = cnx.prepareStatement(req);
-            stm.setString(1, message.getContent()); // content
-            stm.setLong(2, message.getIdUserSender()); // id_user_sender
-            stm.setString(3, message.getMedia()); // media
-            stm.setTimestamp(4, message.getTimesent()); // timesent
-            stm.setLong(5, message.getIdChannel()); // id_channel
+            stm.setString(1, message.getContent());
+            stm.setLong(2, message.getIdUserSender());
+            stm.setString(3, message.getMedia());
+            stm.setTimestamp(4, message.getTimesent());
+            stm.setLong(5, message.getIdChannel());
 
-            // Execute the update
             int rowsAffected = stm.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Message sent successfully.");
@@ -45,10 +38,9 @@ public class MessageService implements Services<Message> {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error adding message: " + e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Input validation failed: " + e.getMessage());
         }
     }
+
 
 
 
@@ -71,17 +63,29 @@ public class MessageService implements Services<Message> {
 
 
     @Override
-    public void delete(Message message) {
+    public void delete(Message message, ListView<String> messageListView) {
         String req = "DELETE FROM Message WHERE id_message = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
             stm.setLong(1, message.getIdMessage());
-            stm.executeUpdate();
-            System.out.println("Message deleted successfully.");
+            int rowsAffected = stm.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Message deleted successfully.");
+
+                // Remove message from ListView
+                ObservableList<String> items = messageListView.getItems();
+                items.remove(message.getContent());
+            } else {
+                System.out.println("Message not found.");
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException("Error deleting message: " + e.getMessage(), e);
         }
     }
+
+
 
     public List<Message> getall() {
         List<Message> messages = new ArrayList<>();
