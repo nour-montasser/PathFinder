@@ -1,4 +1,10 @@
 package org.example.pathfinder.Controller;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
+import java.util.List;
+import org.example.pathfinder.Model.ServiceOffre;
+import org.example.pathfinder.Service.ServiceOffreService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -7,10 +13,16 @@ import org.example.pathfinder.Model.ServiceOffre;
 import java.sql.Date;
 
 
+
 public class ServiceOffreController {
 
     @FXML
-    private TextField titleField, fieldField, priceField, requiredExperienceField, requiredEducationField, skillsField,dateField;
+    private DatePicker dateField;
+
+    @FXML
+    private ComboBox<String> fieldField;
+    @FXML
+    private TextField titleField, priceField, requiredExperienceField, requiredEducationField, skillsField;
     @FXML
     private TextArea descriptionField;
     @FXML
@@ -27,7 +39,8 @@ public class ServiceOffreController {
 
     // Simulated logged-in user ID (replace with your session management logic)
     private final int loggedInUserId = 10;
-
+    private final ServiceOffreService serviceOffreService = new ServiceOffreService();
+    private ObservableList<ServiceOffre> serviceList = FXCollections.observableArrayList();
     @FXML
     public void initialize() {
         // Configure table columns to match ServiceOffre properties
@@ -35,21 +48,35 @@ public class ServiceOffreController {
         idUserColumn.setCellValueFactory(new PropertyValueFactory<>("id_user"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        fieldColumn.setCellValueFactory(new PropertyValueFactory<>("field"));
+        // Create a list of options for the dropdown
+        ObservableList<String> fieldOptions = FXCollections.observableArrayList(
+                "Art", "Computer Science", "Engineering", "Accounting", "Business", "Design", "Health"
+        );
+
+
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         experienceColumn.setCellValueFactory(new PropertyValueFactory<>("required_experience"));
         educationColumn.setCellValueFactory(new PropertyValueFactory<>("required_education"));
         skillsColumn.setCellValueFactory(new PropertyValueFactory<>("skills"));
-
+        // Set the items in the ComboBox
+        fieldField.setItems(fieldOptions);
+        fieldField.setValue(null);
         // Clear all fields to ensure no pre-filled data
         clearFields();
+        loadServices();
+    }
+    @FXML
+    private void loadServices() {
+        List<ServiceOffre> services = serviceOffreService.getAll();
+        serviceList.setAll(services);
+        serviceTable.setItems(serviceList);
     }
 
     @FXML
     private void handleSubmit() {
         try {
             // Validate that required fields are not empty
-            if (titleField.getText().isEmpty() || priceField.getText().isEmpty()) {
+            if (titleField.getText().isEmpty() || priceField.getText().isEmpty()|| fieldField.getValue() == null) {
                 showAlert("Validation Error", "Title and Price are required fields.", Alert.AlertType.WARNING);
                 return;
             }
@@ -62,23 +89,24 @@ public class ServiceOffreController {
                 showAlert("Invalid Input", "Please enter a valid numeric value for the price.", Alert.AlertType.ERROR);
                 return;
             }
-
+            String selectedField = fieldField.getValue();
             // Create new ServiceOffre object with user inputs
             ServiceOffre newService = new ServiceOffre(
                     loggedInUserId,                       // Simulated logged-in user ID (int)
                     serviceIdCounter++,                   // Auto-generated service ID (int)
                     titleField.getText(),                 // Title (String)
                     descriptionField.getText(),           // Description (String)
-                    Date.valueOf(dateField.getText()),    // Convert String to java.sql.Date
-                    fieldField.getText(),                 // Field (String)
+                    java.sql.Date.valueOf(dateField.getValue()),     // Convert String to java.sql.Date
+                    selectedField,                 // Field (String)
                     Double.parseDouble(priceField.getText()), // Price (double) - parse from String
                     requiredExperienceField.getText(),    // Required Experience (String)
                     requiredEducationField.getText(),     // Required Education (String)
                     skillsField.getText()                 // Skills (String)
             );
 
-            // Add the new service to the TableView
-            serviceTable.getItems().add(newService);
+          serviceOffreService.add(newService);
+          loadServices();
+
 
             // Clear input fields
             clearFields();
@@ -93,16 +121,59 @@ public class ServiceOffreController {
     /**
      * Clear all input fields after a service is submitted or canceled.
      */
+    @FXML
     private void clearFields() {
         titleField.clear();
         descriptionField.clear();
-        fieldField.clear();
+        fieldField.setValue(null);
         priceField.clear();
-        dateField.clear();
+        dateField.setValue(null);
         requiredExperienceField.clear();
         requiredEducationField.clear();
         skillsField.clear();
     }
+    @FXML
+    private void handleUpdate() {
+        ServiceOffre selected = serviceTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Warning", "Please select a service to update.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            selected.setTitle(titleField.getText());
+            selected.setDescription(descriptionField.getText());
+            // Corrected DatePicker handling
+            if (dateField.getValue() != null) {
+                selected.setDate_posted(java.sql.Date.valueOf(dateField.getValue()));
+            }
+            selected.setField(fieldField.getValue());
+
+            selected.setPrice(Double.parseDouble(priceField.getText()));
+            selected.setRequired_experience(requiredExperienceField.getText());
+            selected.setRequired_education(requiredEducationField.getText());
+            selected.setSkills(skillsField.getText());
+
+            serviceOffreService.update(selected);
+            loadServices();
+        } catch (Exception e) {
+            showAlert("Error", "Invalid input. Please check your fields.", Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleDelete() {
+        ServiceOffre selected = serviceTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Warning", "Please select a service to delete.",Alert.AlertType.ERROR);
+            return;
+        }
+
+        serviceOffreService.delete(selected.getId_service());
+        loadServices();
+    }
+
+
 
     /**
      * Utility method to display alerts.
@@ -118,4 +189,5 @@ public class ServiceOffreController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 }

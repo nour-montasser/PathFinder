@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -8,66 +10,77 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.collections.FXCollections?>
 
-<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ServiceOffreController">
+<HBox alignment="CENTER" spacing="20" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ServiceOffreController">
     <children>
-        <!-- Title Input -->
-        <HBox spacing="10">
-            <Label text="Title:" />
-            <TextField fx:id="titleField" promptText="Enter title" />
-        </HBox>
+        <!-- Form Section -->
+        <VBox spacing="10" style="-fx-background-color: #502B0F; -fx-padding: 10;">
 
-        <!-- Description Input -->
-        <HBox spacing="10">
-            <Label text="Description:" />
-            <TextArea fx:id="descriptionField" prefHeight="100" prefWidth="300" promptText="Enter description" />
-        </HBox>
+            <!-- Title Field -->
+            <HBox spacing="10">
+                <Label text="Title:" style="-fx-text-fill: white;" />
+                <TextField fx:id="titleField" promptText="Enter title" />
+            </HBox>
 
-        <!-- Field Input -->
-        <HBox spacing="10">
-            <Label text="Field:" />
-            <TextField fx:id="fieldField" promptText="Enter field" />
-        </HBox>
+            <!-- Description Field -->
+            <HBox spacing="10">
+                <Label text="Description:" style="-fx-text-fill: white;" />
+                <TextArea fx:id="descriptionField" prefHeight="100" prefWidth="300" promptText="Enter description" />
+            </HBox>
 
-        <!-- Price Input -->
-        <HBox spacing="10">
-            <Label text="Price:" />
-            <TextField fx:id="priceField" promptText="Enter price" />
-        </HBox>
+            <!-- Field Dropdown -->
+            <HBox spacing="10">
+                <Label text="Field:" style="-fx-text-fill: white;" />
+                <ComboBox fx:id="fieldField" promptText="Select field" />
+            </HBox>
 
-        <!-- Required Experience -->
-        <HBox spacing="10">
-            <Label text="Required Experience:" />
-            <TextField fx:id="requiredExperienceField" promptText="Enter experience" />
-        </HBox>
+            <!-- Price Field -->
+            <HBox spacing="10">
+                <Label text="Price:" style="-fx-text-fill: white;" />
+                <TextField fx:id="priceField" promptText="Enter price" />
+            </HBox>
 
-        <HBox spacing="10">
-            <Label text="Date Posted:" />
-            <TextField fx:id="dateField" promptText="Enter date (YYYY-MM-DD)" />
-        </HBox>
-        <!-- Required Education -->
-        <HBox spacing="10">
-            <Label text="Required Education:" />
-            <TextField fx:id="requiredEducationField" promptText="Enter education level" />
-        </HBox>
+            <!-- Required Experience Field -->
+            <HBox spacing="10">
+                <Label text="Required Experience:" style="-fx-text-fill: white;" />
+                <TextField fx:id="requiredExperienceField" promptText="Enter experience" />
+            </HBox>
 
-        <!-- Skills -->
-        <HBox spacing="10">
-            <Label text="Skills:" />
-            <TextField fx:id="skillsField" promptText="Enter skills" />
-        </HBox>
+            <!-- Date Posted Picker -->
+            <HBox spacing="10">
+                <Label text="Date Posted:" style="-fx-text-fill: white;" />
+                <DatePicker fx:id="dateField" />
+            </HBox>
 
-        <!-- Submit Button -->
-        <Button onAction="#handleSubmit" text="Submit" />
+            <!-- Required Education Field -->
+            <HBox spacing="10">
+                <Label text="Required Education:" style="-fx-text-fill: white;" />
+                <TextField fx:id="requiredEducationField" promptText="Enter education level" />
+            </HBox>
 
-        <!-- TableView to Display Inserted Data -->
-        <TableView fx:id="serviceTable" prefHeight="300" prefWidth="600">
+            <!-- Skills Field -->
+            <HBox spacing="10">
+                <Label text="Skills:" style="-fx-text-fill: white;" />
+                <TextField fx:id="skillsField" promptText="Enter skills" />
+            </HBox>
+
+            <!-- Buttons Section -->
+            <HBox spacing="10">
+                <Button onAction="#handleSubmit" text="Submit" />
+                <Button onAction="#handleUpdate" text="Update" />
+                <Button onAction="#handleDelete" text="Delete" />
+            </HBox>
+        </VBox>
+
+        <!-- Table Section -->
+        <TableView fx:id="serviceTable" prefHeight="400" prefWidth="600">
             <columns>
                 <TableColumn text="ID Service" fx:id="idServiceColumn" prefWidth="75" />
                 <TableColumn text="ID User" fx:id="idUserColumn" prefWidth="75" />
                 <TableColumn text="Title" fx:id="titleColumn" prefWidth="100" />
                 <TableColumn text="Description" fx:id="descriptionColumn" prefWidth="150" />
-                <TableColumn text="Date Posted" fx:id="datePostedColumn" prefWidth="100" />
+                <TableColumn text="Date Posted" fx:id="dateColumn" prefWidth="100" />
                 <TableColumn text="Field" fx:id="fieldColumn" prefWidth="100" />
                 <TableColumn text="Price" fx:id="priceColumn" prefWidth="75" />
                 <TableColumn text="Experience" fx:id="experienceColumn" prefWidth="100" />
@@ -76,4 +89,4 @@
             </columns>
         </TableView>
     </children>
-</VBox>
+</HBox>

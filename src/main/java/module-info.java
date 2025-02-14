@@ -18,4 +18,5 @@ module com.example.pathfinder {
     opens org.example.pathfinder.Controller to javafx.fxml;
     opens org.example.pathfinder.Model to javafx.fxml;
     opens org.example.pathfinder.Service to javafx.fxml;
+
 }

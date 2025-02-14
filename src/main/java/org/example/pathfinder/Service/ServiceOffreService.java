@@ -10,12 +10,12 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     private Connection cnx;
 
     public ServiceOffreService() {
-        this.cnx = DatabaseConnection.instance.getCnx();
+        this.cnx = DatabaseConnection.getInstance().getCnx();
     }
 
     @Override
     public void add(ServiceOffre serviceOffre) {
-        String req = "INSERT INTO service_offre (id_user, title, description, date_posted, field, price, required_experience, required_education, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO serviceoffre (id_user, title, description, date_posted, field, price, required_experience, required_education, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
@@ -37,7 +37,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public void update(ServiceOffre serviceOffre) {
-        String req = "UPDATE service_offre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?, required_experience = ?, required_education = ?, skills = ? WHERE id_service = ?";
+        String req = "UPDATE serviceoffre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?, required_experience = ?, required_education = ?, skills = ? WHERE id_service = ?";
 
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
@@ -59,7 +59,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public void delete(int id) {
-        String req = "DELETE FROM service_offre WHERE id_service = ?";
+        String req = "DELETE FROM serviceoffre WHERE id_service = ?";
 
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
@@ -77,7 +77,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public ServiceOffre getById(int id) {
-        String req = "SELECT * FROM service_offre WHERE id_service = ?";
+        String req = "SELECT * FROM serviceoffre WHERE id_service = ?";
         ServiceOffre serviceOffre = null;
 
         try {
@@ -106,7 +106,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     @Override
     public List<ServiceOffre> getAll() {
         List<ServiceOffre> services = new ArrayList<>();
-        String req = "SELECT * FROM service_offre";
+        String req = "SELECT * FROM serviceoffre";
 
         try {
             Statement stm = cnx.createStatement();

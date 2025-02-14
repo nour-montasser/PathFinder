@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.pathfinder.Controller.ShowApplicationDetailsController"
+            fitToWidth="true"
+            style="-fx-background-color: #2B2B2B;">
+
+    <content>
+        <VBox fx:id="applicationsContainer" spacing="10" style="-fx-padding: 20;">
+            <Label text="Application Details"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+
+            <!-- Dynamic content: Each application will be added here as an HBox -->
+        </VBox>
+    </content>
+</ScrollPane>
