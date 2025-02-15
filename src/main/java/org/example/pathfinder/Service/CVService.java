@@ -132,6 +132,7 @@ public class CVService implements Services<CV> {
                             resultSetLang.getString("language_name"),
                             resultSetLang.getString("level") // ✅ Assuming level is a String
                     );
+
                     cv.addLanguage(language);
                 }
 

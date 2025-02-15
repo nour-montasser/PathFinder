@@ -2,6 +2,7 @@ package org.example.pathfinder.Service;
 
 import java.util.List;
 
+
 public interface Services<T> {
     // Create or add an entity
     void add(T entity);

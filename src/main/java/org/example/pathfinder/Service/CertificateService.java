@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.SQLException;
 public class CertificateService implements Services<Certificate> {
     private final Connection connection;
 
@@ -132,4 +133,30 @@ public class CertificateService implements Services<Certificate> {
         }
         return certificates;
     }
+    public List<Certificate> getByCvId(int cvId) {
+        List<Certificate> certificates = new ArrayList<>();
+        String query = "SELECT * FROM certificate WHERE id_cv = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, cvId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Certificate certificate = new Certificate(
+                        resultSet.getInt("id_certificate"),
+                        resultSet.getInt("id_cv"),
+                        resultSet.getString("title"),
+                        resultSet.getString("description"),
+                        resultSet.getString("media"),
+                        resultSet.getString("issued_by"),
+                        resultSet.getDate("issue_date")
+                );
+                certificates.add(certificate);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching certificates: " + e.getMessage());
+        }
+        return certificates;
+    }
+
 }

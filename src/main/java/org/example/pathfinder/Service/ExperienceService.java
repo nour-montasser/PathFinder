@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
+
 
 public class ExperienceService implements Services<Experience> {
     private final Connection connection;
@@ -89,6 +91,7 @@ public class ExperienceService implements Services<Experience> {
         return null;
     }
 
+
     @Override
     public List<Experience> getAll() {
         List<Experience> experiences = new ArrayList<>();
@@ -112,4 +115,31 @@ public class ExperienceService implements Services<Experience> {
         }
         return experiences;
     }
+    // ✅ **Newly added function: Get all experiences by CV ID**
+    public List<Experience> getByCvId(int cvId) {
+        List<Experience> experiences = new ArrayList<>();
+        String query = "SELECT * FROM experience WHERE id_cv = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, cvId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                experiences.add(new Experience(
+                        resultSet.getInt("id_experience"),
+                        resultSet.getInt("id_cv"),
+                        resultSet.getString("type"),
+                        resultSet.getString("position"),
+                        resultSet.getString("location_name"),
+                        resultSet.getString("start_date"),
+                        resultSet.getString("end_date"),
+                        resultSet.getString("description")
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error fetching experiences by CV ID: " + e.getMessage());
+        }
+        return experiences;
+    }
+
 }

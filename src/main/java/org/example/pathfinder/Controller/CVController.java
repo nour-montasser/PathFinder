@@ -89,7 +89,7 @@ public class CVController {
     @FXML
     private DatePicker endDatePicker;
 
-    private final List<Experience> experiences = new ArrayList<>();
+    private  List<Experience> experiences = new ArrayList<>();
     private Experience editingExperience = null; // To track editing mode
     private Certificate editingCertificate = null; // To track editing mode
 
@@ -121,7 +121,7 @@ public class CVController {
     private TextArea certificateDescriptionField; // Added description field for certificates
 
 
-    private final List<Certificate> certificates = new ArrayList<>();
+    private  List<Certificate> certificates = new ArrayList<>();
 
     private final CertificateService certificateService = new CertificateService();
     @FXML
@@ -140,7 +140,7 @@ public class CVController {
 
     private final ObservableList<String> allLanguages = FXCollections.observableArrayList();
 
-    private final List<Language> languages = new ArrayList<>();
+    private  List<Language> languages = new ArrayList<>();
 
     private final LanguageService languageService = new LanguageService();
     private String selectedLanguageLevel = ""; // Stores the selected level as text
@@ -370,8 +370,8 @@ public class CVController {
     private void addLanguage() {
         String selectedLanguage = languagesDropdown.getValue();
 
-        if (selectedLanguage == null || !allLanguages.contains(selectedLanguage)) {
-            showAlert(Alert.AlertType.WARNING, "Please select a valid language from the dropdown.");
+        if (selectedLanguage == null || selectedLanguage.trim().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Please select a valid language.");
             return;
         }
 
@@ -382,28 +382,38 @@ public class CVController {
 
         String levelText = convertDotsToLevel(selectedLevel);
 
-        // Check if this language was edited
+        // Check if the language already exists
         for (Language lang : languages) {
-            if (lang.getName().equals(selectedLanguage)) {
+            if (lang.getName().equalsIgnoreCase(selectedLanguage)) {
+                // Update existing language's level
                 lang.setLevel(levelText);
-                updateLanguageDots(levelDots.getChildren(), selectedLevel);
-                return; // Exit early, no need to add again
+                refreshLanguageContainer(); // Refresh UI to reflect changes
+                return; // Exit early to prevent duplicate entry
             }
         }
 
-        // Create and store new language
-        Language language = new Language(0, selectedLanguage, levelText);
-        languages.add(language);
-        addLanguageBox(language);
+        // If language does not exist, add it as a new entry
+        Language newLanguage = new Language(0, selectedLanguage, levelText);
+        languages.add(newLanguage);
+        addLanguageBox(newLanguage);
 
-        // Remove selected language from dropdown to prevent re-selection
+        // Remove selected language from dropdown to prevent duplicate addition
         allLanguages.remove(selectedLanguage);
         languagesDropdown.setItems(allLanguages);
 
+        // Reset selections
         languagesDropdown.getSelectionModel().clearSelection();
         selectedLevel = 0;
         languageLevelContainer.setVisible(false);
     }
+    @FXML
+    private void refreshLanguageContainer() {
+        languageContainer.getChildren().clear();
+        for (Language language : languages) {
+            addLanguageBox(language);
+        }
+    }
+
 
 
     @FXML
@@ -658,38 +668,73 @@ public class CVController {
                 editingCV.setSkills(skills);
                 cvService.update(editingCV);
 
-                // ✅ UPDATE EXISTING EXPERIENCES
+                // ✅ Handle Experiences
+                List<Experience> originalExperiences = experienceService.getByCvId(editingCV.getIdCV());
+                for (Experience originalExp : originalExperiences) {
+                    boolean stillExists = false;
+                    for (Experience currentExp : experiences) {
+                        if (originalExp.getIdExperience() == currentExp.getIdExperience()) {
+                            stillExists = true;
+                            break;
+                        }
+                    }
+                    if (!stillExists) {
+                        experienceService.delete(originalExp.getIdExperience()); // 🔥 DELETE from DB
+                    }
+                }
                 for (Experience experience : experiences) {
                     if (experience.getIdExperience() == 0) {
-                        // New Experience, add it
                         experience.setIdCv(editingCV.getIdCV());
                         experienceService.add(experience);
                     } else {
-                        // Existing Experience, update it
                         experienceService.update(experience);
                     }
                 }
 
-                // ✅ UPDATE EXISTING CERTIFICATES
+                // ✅ Handle Certificates
+                List<Certificate> originalCertificates = certificateService.getByCvId(editingCV.getIdCV());
+                for (Certificate originalCert : originalCertificates) {
+                    boolean stillExists = false;
+                    for (Certificate currentCert : certificates) {
+                        if (originalCert.getIdCertificate() == currentCert.getIdCertificate()) {
+                            stillExists = true;
+                            break;
+                        }
+                    }
+                    if (!stillExists) {
+                        certificateService.delete(originalCert.getIdCertificate()); // 🔥 DELETE from DB
+                    }
+                }
                 for (Certificate certificate : certificates) {
                     if (certificate.getIdCertificate() == 0) {
-                        // New Certificate, add it
                         certificate.setIdCv(editingCV.getIdCV());
                         certificateService.add(certificate);
                     } else {
-                        // Existing Certificate, update it
                         certificateService.update(certificate);
                     }
                 }
 
-                // ✅ UPDATE EXISTING LANGUAGES
+                // ✅ Handle Languages
+                List<Language> originalLanguages = languageService.getByCvId(editingCV.getIdCV());
+                System.out.println(originalLanguages);
+                for (Language originalLang : originalLanguages) {
+                    boolean stillExists = false;
+
+                    for (Language currentLang : languages) {
+                        if (originalLang.getIdLanguage() == currentLang.getIdLanguage()) {
+                            stillExists = true;
+                            break;
+                        }
+                    }
+                    if (!stillExists) {
+                        languageService.delete(originalLang.getIdLanguage()); // 🔥 DELETE from DB
+                    }
+                }
                 for (Language language : languages) {
                     if (language.getIdLanguage() == 0) {
-                        // New Language, add it
                         language.setCvId(editingCV.getIdCV());
                         languageService.add(language);
                     } else {
-                        // Existing Language, update it
                         languageService.update(language);
                     }
                 }
@@ -738,6 +783,7 @@ public class CVController {
             showAlert(Alert.AlertType.ERROR, "An error occurred while saving the CV.");
         }
     }
+
 
 
     @FXML
@@ -960,7 +1006,7 @@ public class CVController {
             languageContainer.getChildren().clear();
 
             // 🔥 Load Experiences
-            List<Experience> experiences = editingCV.getExperiences();
+            experiences = editingCV.getExperiences();
             if (experiences != null) {
                 for (Experience experience : experiences) {
                     addExperienceBox(experience);
@@ -968,7 +1014,7 @@ public class CVController {
             }
 
             // 🔥 Load Certificates
-            List<Certificate> certificates = editingCV.getCertificates();
+          certificates = editingCV.getCertificates();
             if (certificates != null) {
                 for (Certificate certificate : certificates) {
                     addCertificateBox(certificate);
@@ -976,7 +1022,8 @@ public class CVController {
             }
 
             // 🔥 Load Languages
-            List<Language> languages = editingCV.getLanguageList();
+         languages = editingCV.getLanguageList();
+
             if (languages != null) {
                 for (Language language : languages) {
                     addLanguageBox(language);

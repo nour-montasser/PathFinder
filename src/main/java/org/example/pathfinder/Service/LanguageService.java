@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
 
 public class LanguageService implements Services<Language> {
     private final Connection connection;
@@ -18,7 +19,7 @@ public class LanguageService implements Services<Language> {
 
     @Override
     public void add(Language language) {
-        String query = "INSERT INTO languages (id_cv, language_name ,test level) VALUES (?, ?, ?)";
+        String query = "INSERT INTO languages (id_cv, language_name ,level) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, language.getCvId());
             statement.setString(2, language.getName());
@@ -47,15 +48,29 @@ public class LanguageService implements Services<Language> {
 
     @Override
     public void delete(int id) {
+        System.out.println("🔍 Attempting to delete Language with ID: " + id);
+
+        if (id <= 0) {
+            System.err.println("❌ Invalid Language ID: " + id + " (Deletion Skipped)");
+            return;
+        }
+
         String query = "DELETE FROM languages WHERE id_language = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
-            statement.executeUpdate();
-            System.out.println("Language deleted successfully.");
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("✅ Language deleted successfully (ID: " + id + ").");
+            } else {
+                System.err.println("⚠️ No language found with ID: " + id + " (Nothing deleted).");
+            }
+
         } catch (Exception e) {
-            System.err.println("Error deleting Language: " + e.getMessage());
+            System.err.println("❌ Error deleting Language (ID: " + id + "): " + e.getMessage());
         }
     }
+
 
     @Override
     public Language getById(int id) {
@@ -117,4 +132,31 @@ public class LanguageService implements Services<Language> {
         }
         return languages;
     }
+    public List<Language> getByCvId(int cvId) {
+        List<Language> languages = new ArrayList<>();
+        String query = "SELECT id_language, id_cv, language_name, level FROM languages WHERE id_cv = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, cvId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int idLanguage = resultSet.getInt("id_language"); // 🔥 Ensure this is correctly fetched
+                System.out.println("✅ Retrieved Language ID: " + idLanguage); // Debugging output
+
+                languages.add(new Language(
+                        idLanguage, // 🔥 Set the correct ID
+                        resultSet.getInt("id_cv"),
+                        resultSet.getString("language_name"),
+                        resultSet.getString("level")
+                ));
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Error retrieving Languages for CV ID " + cvId + ": " + e.getMessage());
+        }
+
+        return languages;
+    }
+
+
 }
