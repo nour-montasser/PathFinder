@@ -25,6 +25,17 @@ public class Experience {
         this.endDate = endDate;
         this.description = description;
     }
+    public Experience(Experience original) {
+        this.idExperience = 0; // Reset ID to ensure it's treated as a new entry
+        this.idCv = original.idCv; // Will be reassigned when copying the CV
+        this.type = original.type;
+        this.position = original.position;
+        this.locationName = original.locationName;
+        this.startDate = original.startDate;
+        this.endDate = original.endDate;
+        this.description = original.description;
+    }
+
 
     public Experience(int idCv, String type, String position, String locationName, String startDate, String endDate, String description) {
         this.idCv = idCv;

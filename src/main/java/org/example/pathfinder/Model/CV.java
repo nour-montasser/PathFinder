@@ -15,6 +15,8 @@ public class CV {
     private List<Experience> experiences; // List of associated experiences
     private List<Language> languageList; // List of associated languages
     private List<Certificate> certificates; // List of associated certificates
+    private Timestamp lastViewed;
+
 
     // Default constructor
     public CV() {
@@ -24,17 +26,47 @@ public class CV {
     }
 
     // Constructor with all fields
-    public CV(int idCV, int userId, String title, String introduction, String skills, Timestamp dateCreation) {
+    public CV(int idCV, int userId, String title, String introduction, String skills, Timestamp dateCreation, Timestamp lastViewed) {
         this.idCV = idCV;
         this.userId = userId;
         this.title = title;
         this.introduction = introduction;
         this.skills = skills;
         this.dateCreation = dateCreation;
-        this.experiences = new ArrayList<>(); // Initialize the experiences list
-        this.languageList = new ArrayList<>(); // Initialize the languages list
-        this.certificates = new ArrayList<>(); // Initialize the certificates list
+
+        this.lastViewed = lastViewed;
+
+        this.experiences = new ArrayList<>();
+        this.languageList = new ArrayList<>();
+        this.certificates = new ArrayList<>();
     }
+
+    public CV(CV original) {
+        this.idCV = 0; // Reset ID to ensure it's treated as a new entry
+        this.userId = original.userId;
+        this.title = original.title + " (Copy)"; // Append "(Copy)" to differentiate
+        this.introduction = original.introduction;
+        this.skills = original.skills;
+        this.dateCreation = new Timestamp(System.currentTimeMillis()); // Set new creation date
+
+        // Deep Copy Lists to avoid reference issues
+        this.experiences = new ArrayList<>();
+        for (Experience exp : original.experiences) {
+            this.experiences.add(new Experience(exp)); // Assuming Experience has a copy constructor
+        }
+
+        this.languageList = new ArrayList<>();
+        for (Language lang : original.languageList) {
+            this.languageList.add(new Language(lang)); // Assuming Language has a copy constructor
+        }
+
+        this.certificates = new ArrayList<>();
+        for (Certificate cert : original.certificates) {
+            this.certificates.add(new Certificate(cert)); // Assuming Certificate has a copy constructor
+        }
+    }
+
+
 
     // Constructor for creating a new CV (without ID or dateCreation)
     public CV(int userId, String title, String introduction, String skills) {
@@ -42,11 +74,17 @@ public class CV {
         this.title = title;
         this.introduction = introduction;
         this.skills = skills;
-        this.dateCreation = new Timestamp(System.currentTimeMillis()); // Default to current timestamp
-        this.experiences = new ArrayList<>(); // Initialize the experiences list
-        this.languageList = new ArrayList<>(); // Initialize the languages list
-        this.certificates = new ArrayList<>(); // Initialize the certificates list
+        this.dateCreation = new Timestamp(System.currentTimeMillis());
+
+        // Generate unique file name from introduction
+
+        this.lastViewed = new Timestamp(System.currentTimeMillis());
+
+        this.experiences = new ArrayList<>();
+        this.languageList = new ArrayList<>();
+        this.certificates = new ArrayList<>();
     }
+
 
     // Getters and Setters
     public int getIdCV() {
@@ -136,6 +174,16 @@ public class CV {
         this.certificates.add(certificate);
     }
 
+
+    public Timestamp getLastViewed() {
+        return lastViewed;
+    }
+
+    public void setLastViewed(Timestamp lastViewed) {
+        this.lastViewed = lastViewed;
+    }
+
+
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -172,4 +220,5 @@ public class CV {
                 ", certificates=" + certificates +
                 '}';
     }
+
 }

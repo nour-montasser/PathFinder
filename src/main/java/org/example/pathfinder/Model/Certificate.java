@@ -25,6 +25,16 @@ public class Certificate {
         this.association = association;
         this.date = date;
     }
+    public Certificate(Certificate original) {
+        this.idCertificate = 0; // Reset ID to ensure it's treated as a new entry
+        this.idCv = original.idCv; // Will be reassigned when copying the CV
+        this.title = original.title;
+        this.description = original.description;
+        this.media = original.media;
+        this.association = original.association;
+        this.date = new Date(original.date.getTime()); // Deep copy of the Date object
+    }
+
 
     // Constructor without ID (For inserting new records)
     public Certificate(int idCv, String title, String description, String media, String association, Date date) {

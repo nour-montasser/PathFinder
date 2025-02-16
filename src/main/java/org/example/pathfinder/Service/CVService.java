@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,18 +22,53 @@ public class CVService implements Services<CV> {
 
     @Override
     public void add(CV cv) {
-        String query = "INSERT INTO CV (id_user, title, introduction, skills) VALUES (?, ?, ?, ?)";
+        // ✅ Ensure the title is unique before inserting
+        String uniqueTitle = generateUniqueTitle(cv.getTitle(), cv.getUserId());
+
+        String query = "INSERT INTO CV (id_user, title, introduction, skills, date_creation, last_viewed) VALUES (?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, cv.getUserId());
-            statement.setString(2, cv.getTitle());
+            statement.setString(2, uniqueTitle); // 🔹 Ensure unique title
             statement.setString(3, cv.getIntroduction());
             statement.setString(4, cv.getSkills());
+            statement.setTimestamp(5, new Timestamp(System.currentTimeMillis())); // ✅ Set creation date
+            statement.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // ✅ Initialize last_viewed
+
             statement.executeUpdate();
-            System.out.println("CV added successfully.");
+            System.out.println("✅ CV added successfully with unique title.");
         } catch (Exception e) {
-            System.err.println("Error adding CV: " + e.getMessage());
+            System.err.println("❌ Error adding CV: " + e.getMessage());
         }
     }
+
+    private String generateUniqueTitle(String baseTitle, int userId) {
+        String newTitle = baseTitle;
+        int copyNumber = 1;
+
+        String checkQuery = "SELECT COUNT(*) FROM CV WHERE title = ? AND id_user = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(checkQuery)) {
+            do {
+                statement.setString(1, newTitle);
+                statement.setInt(2, userId);
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    // If the title exists, generate a new one
+                    copyNumber++;
+                    newTitle = baseTitle + " (" + copyNumber + ")";
+                } else {
+                    break; // Exit loop when a unique title is found
+                }
+            } while (true);
+        } catch (Exception e) {
+            System.err.println("❌ Error generating unique title: " + e.getMessage());
+        }
+
+        return newTitle;
+    }
+
+
 
     @Override
     public void update(CV cv) {
@@ -86,8 +120,12 @@ public class CVService implements Services<CV> {
                         resultSetCV.getString("title"),
                         resultSetCV.getString("introduction"),
                         resultSetCV.getString("skills"),
-                        resultSetCV.getTimestamp("date_creation")
+                        resultSetCV.getTimestamp("date_creation"),
+                        resultSetCV.getTimestamp("last_viewed") // ✅ Fetch lastViewed
                 );
+
+                // 🔹 Update `last_viewed` every time the CV is retrieved
+                updateLastViewed(id);
 
                 // Fetch associated experiences
                 statementExp.setInt(1, id);
@@ -101,23 +139,23 @@ public class CVService implements Services<CV> {
                             resultSetExp.getString("location_name"),
                             resultSetExp.getString("start_date"),
                             resultSetExp.getString("end_date"),
-                            resultSetExp.getString("description") // ✅ Now correctly ordered
+                            resultSetExp.getString("description")
                     );
                     cv.addExperience(experience);
                 }
 
-                // Fetch associated certificates (**✅ Now follows your constructor order**)
+                // Fetch associated certificates
                 statementCert.setInt(1, id);
                 ResultSet resultSetCert = statementCert.executeQuery();
                 while (resultSetCert.next()) {
                     Certificate certificate = new Certificate(
-                            resultSetCert.getInt("id_certificate"), // 🔹 idCertificate
-                            resultSetCert.getInt("id_cv"), // 🔹 idCv
-                            resultSetCert.getString("title"), // 🔹 title
-                            resultSetCert.getString("description"), // 🔹 description
-                            resultSetCert.getString("media"), // 🔹 media
-                            resultSetCert.getString("issued_by"), // 🔹 association
-                            resultSetCert.getDate("issue_date") // 🔹 date
+                            resultSetCert.getInt("id_certificate"),
+                            resultSetCert.getInt("id_cv"),
+                            resultSetCert.getString("title"),
+                            resultSetCert.getString("description"),
+                            resultSetCert.getString("media"),
+                            resultSetCert.getString("issued_by"),
+                            resultSetCert.getDate("issue_date")
                     );
                     cv.addCertificate(certificate);
                 }
@@ -130,9 +168,8 @@ public class CVService implements Services<CV> {
                             resultSetLang.getInt("id_language"),
                             resultSetLang.getInt("id_cv"),
                             resultSetLang.getString("language_name"),
-                            resultSetLang.getString("level") // ✅ Assuming level is a String
+                            resultSetLang.getString("level")
                     );
-
                     cv.addLanguage(language);
                 }
 
@@ -143,6 +180,22 @@ public class CVService implements Services<CV> {
         }
         return null;
     }
+    public void updateLastViewed(int cvId) {
+        String query = "UPDATE CV SET last_viewed = ? WHERE id_cv = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setTimestamp(1, new Timestamp(System.currentTimeMillis())); // 🔥 Set current timestamp
+            statement.setInt(2, cvId);
+
+            statement.executeUpdate();
+            System.out.println("✅ Last viewed timestamp updated for CV ID: " + cvId);
+        } catch (Exception e) {
+            System.err.println("❌ Error updating last viewed: " + e.getMessage());
+        }
+    }
+
+
+
 
 
 
@@ -163,7 +216,8 @@ public class CVService implements Services<CV> {
                         resultSetCV.getString("title"),
                         resultSetCV.getString("introduction"),
                         resultSetCV.getString("skills"),
-                        resultSetCV.getTimestamp("date_creation")
+                        resultSetCV.getTimestamp("date_creation"),
+                        resultSetCV.getTimestamp("last_viewed") // ✅ Fetch lastViewed
                 );
 
                 // Fetch associated experiences for this CV
@@ -178,7 +232,7 @@ public class CVService implements Services<CV> {
                             resultSetExp.getString("location_name"),
                             resultSetExp.getString("start_date"),
                             resultSetExp.getString("end_date"),
-                            resultSetExp.getString("description") // ✅ NOW INCLUDING DESCRIPTION
+                            resultSetExp.getString("description")
                     );
                     cv.addExperience(experience);
                 }
@@ -186,10 +240,11 @@ public class CVService implements Services<CV> {
                 cvs.add(cv);
             }
         } catch (Exception e) {
-            System.err.println("Error retrieving CVs: " + e.getMessage());
+            System.err.println("❌ Error retrieving CVs: " + e.getMessage());
         }
         return cvs;
     }
+
     public int getLatestCVId() {
         String query = "SELECT MAX(id_cv) FROM CV";
         try (PreparedStatement statement = connection.prepareStatement(query);
@@ -205,7 +260,7 @@ public class CVService implements Services<CV> {
 
     public List<CV> getCVsByUserId(int userId) {
         List<CV> cvs = new ArrayList<>();
-        String query = "SELECT id_cv, title, date_creation FROM CV WHERE id_user = ?";
+        String query = "SELECT id_cv, title, date_creation,  last_viewed FROM CV WHERE id_user = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, userId);
@@ -218,14 +273,77 @@ public class CVService implements Services<CV> {
                         resultSet.getString("title"),
                         "", // No introduction needed
                         "", // No skills needed
-                        resultSet.getTimestamp("date_creation")
+                        resultSet.getTimestamp("date_creation"),
+
+                        resultSet.getTimestamp("last_viewed")
                 );
                 cvs.add(cv);
             }
         } catch (Exception e) {
-            System.err.println("Error retrieving CVs for user: " + e.getMessage());
+            System.err.println("❌ Error retrieving CVs for user: " + e.getMessage());
         }
         return cvs;
+    }
+
+    public void makeCopyOfCV(int originalCvId) {
+        ExperienceService experienceService = new ExperienceService();
+        LanguageService languageService = new LanguageService();
+        CertificateService certificateService = new CertificateService();
+
+        // 🔥 Retrieve the original CV from the database
+        CV originalCV = getById(originalCvId);
+
+        if (originalCV == null) {
+            System.err.println("❌ Original CV not found. Copy operation aborted.");
+            return;
+        }
+
+        // ✅ Generate a Unique Title
+        String newTitle = generateUniqueTitle(originalCV.getTitle(), originalCV.getUserId());
+
+        // ✅ Create a duplicate CV with a unique title
+        CV copiedCV = new CV(originalCV);
+
+        // ✅ Insert the new CV into the database
+        add(copiedCV);
+
+        // 🔥 Retrieve the newly inserted CV's ID
+        int newCvId = getLatestCVId();
+        if (newCvId == -1) {
+            System.err.println("❌ Failed to retrieve the new CV ID.");
+            return;
+        }
+
+        // ✅ Copy Experiences
+        List<Experience> originalExperiences = experienceService.getByCvId(originalCvId);
+        for (Experience exp : originalExperiences) {
+            Experience copiedExp = new Experience(
+                    0, newCvId, exp.getType(), exp.getPosition(), exp.getLocationName(),
+                    exp.getStartDate(), exp.getEndDate(), exp.getDescription()
+            );
+            experienceService.add(copiedExp);
+        }
+
+        // ✅ Copy Certificates
+        List<Certificate> originalCertificates = certificateService.getByCvId(originalCvId);
+        for (Certificate cert : originalCertificates) {
+            Certificate copiedCert = new Certificate(
+                    0, newCvId, cert.getTitle(), cert.getDescription(), cert.getMedia(),
+                    cert.getAssociation(), cert.getDate()
+            );
+            certificateService.add(copiedCert);
+        }
+
+        // ✅ Copy Languages
+        List<Language> originalLanguages = languageService.getByCvId(originalCvId);
+        for (Language lang : originalLanguages) {
+            Language copiedLang = new Language(
+                    0, newCvId, lang.getName(), lang.getLevel()
+            );
+            languageService.add(copiedLang);
+        }
+
+        System.out.println("✅ CV Copy Successful! New CV ID: " + newCvId);
     }
 
 

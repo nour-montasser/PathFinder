@@ -22,6 +22,13 @@ public class Language {
         this.name = name;
         this.level = level;
     }
+    public Language(Language original) {
+        this.idLanguage = 0; // Reset ID to ensure it's treated as a new entry
+        this.cvId = original.cvId; // Will be reassigned when copying the CV
+        this.name = original.name;
+        this.level = original.level;
+    }
+
 
     // Getters and Setters
     public int getIdLanguage() {
