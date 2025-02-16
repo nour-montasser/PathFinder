@@ -46,7 +46,7 @@ public class ShowApplicationDetailsController {
 
         if (applications.isEmpty()) {
             Label noDataLabel = new Label("No applications available for this service.");
-            noDataLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+            noDataLabel.setStyle("-fx-text-fill: black; -fx-font-size: 14px;");
             applicationsContainer.getChildren().add(noDataLabel);
             return;
         }
@@ -66,8 +66,7 @@ public class ShowApplicationDetailsController {
         row.setMinHeight(60);
 
         // Labels for displaying application details
-        Label appIdLabel = new Label("🔹 ID: " + app.getIdApplication());
-        appIdLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
 
         Label priceLabel = new Label(app.getPriceOffre() > 0 ? "💰 Price Offered: $" + app.getPriceOffre() : "💲 Negotiable");
         priceLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
@@ -75,8 +74,6 @@ public class ShowApplicationDetailsController {
         Label statusLabel = new Label("📌 Status: " + app.getStatus());
         statusLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
 
-        Label serviceIdLabel = new Label("🆔 Service ID: " + app.getIdService());
-        serviceIdLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
 
         // Accept Button
         Button acceptButton = new Button("✔ Accept");
@@ -89,7 +86,7 @@ public class ShowApplicationDetailsController {
         rejectButton.setOnAction(e -> updateApplicationStatus(app, "Rejected"));
 
         // Add components to row
-        row.getChildren().addAll(appIdLabel, priceLabel, statusLabel, serviceIdLabel, acceptButton, rejectButton);
+        row.getChildren().addAll( priceLabel, statusLabel, acceptButton, rejectButton);
 
         return row;
     }

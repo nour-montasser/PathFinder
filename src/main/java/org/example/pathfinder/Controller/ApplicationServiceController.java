@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -28,6 +29,10 @@ public class ApplicationServiceController {
 
     @FXML
     private TextField searchField; // Search bar
+
+    @FXML
+    private PieChart revenuePieChart;
+
 
     private final ServiceOffreService serviceOffreService = new ServiceOffreService();
     private List<ServiceOffre> allServices; // Store all services initially
@@ -90,7 +95,7 @@ public class ApplicationServiceController {
     }
 
     private Button createDetailsButton(ServiceOffre service) {
-        Button detailsButton = new Button("Show Details");
+        Button detailsButton = new Button("View Requests");
         detailsButton.setStyle("-fx-background-color: #98BFD1; " + // Sky Blue
                 "-fx-text-fill: white; " +
                 "-fx-font-size: 16px; " +
@@ -104,10 +109,14 @@ public class ApplicationServiceController {
         MenuButton menuButton = new MenuButton("⋮");
         MenuItem editItem = new MenuItem("Edit");
         MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem viewStatsItem = new MenuItem("View Statistics");
 
-        menuButton.getItems().addAll(editItem, deleteItem);
+        menuButton.getItems().addAll(editItem, deleteItem,viewStatsItem);
         editItem.setOnAction(event -> handleEditService(service));
         deleteItem.setOnAction(event -> handleDeleteService(service));
+        viewStatsItem.setOnAction(event -> openFreelancerStats());
+
+
 
         return menuButton;
     }
@@ -139,7 +148,9 @@ public class ApplicationServiceController {
             modalStage.setScene(new Scene(root));
             modalStage.setTitle("Add a New Service");
             modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(addServiceButton.getScene().getWindow());
+            if (addServiceButton != null && addServiceButton.getScene() != null) {
+                modalStage.initOwner(addServiceButton.getScene().getWindow());
+            }
             modalStage.setResizable(false);
             modalStage.showAndWait();
 
@@ -207,4 +218,19 @@ public class ApplicationServiceController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    private void openFreelancerStats() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/stats.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Revenue Statistics");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

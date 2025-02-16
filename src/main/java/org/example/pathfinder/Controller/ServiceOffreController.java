@@ -114,27 +114,43 @@ public class ServiceOffreController {
         if (!validateInputs()) return;
 
         try {
-            ServiceOffre newService = new ServiceOffre(
-                    loggedInUserId,
-                    0,
-                    titleField.getText(),
-                    descriptionField.getText(),
-                    Date.valueOf(dateField.getValue()),
-                    fieldField.getValue(),
-                    Double.parseDouble(priceField.getText()),
-                    requiredExperienceField.getText(),
-                    requiredEducationField.getText(),
-                    skillsField.getText()
-            );
+            // 🔥 If we are editing, update the service instead of adding
+            if (selectedService != null) {
+                selectedService.setTitle(titleField.getText());
+                selectedService.setDescription(descriptionField.getText());
+                selectedService.setDate_posted(Date.valueOf(dateField.getValue()));
+                selectedService.setField(fieldField.getValue());
+                selectedService.setPrice(Double.parseDouble(priceField.getText()));
+                selectedService.setRequired_experience(requiredExperienceField.getText());
+                selectedService.setRequired_education(requiredEducationField.getText());
+                selectedService.setSkills(skillsField.getText());
 
-            serviceOffreService.add(newService);
+                // ✅ Call the update method instead of add
+                serviceOffreService.update(selectedService);
+                showAlert("Success", "Service updated successfully!", Alert.AlertType.INFORMATION);
+            } else {
+                // ✅ If there's no selected service, it's a new one
+                ServiceOffre newService = new ServiceOffre(
+                        loggedInUserId,
+                        0, // ID is auto-generated in DB
+                        titleField.getText(),
+                        descriptionField.getText(),
+                        Date.valueOf(dateField.getValue()),
+                        fieldField.getValue(),
+                        Double.parseDouble(priceField.getText()),
+                        requiredExperienceField.getText(),
+                        requiredEducationField.getText(),
+                        skillsField.getText()
+                );
+
+                serviceOffreService.add(newService);
+                showAlert("Success", "Service added successfully!", Alert.AlertType.INFORMATION);
+            }
+
             loadServices();
             clearFields();
-
             Stage stage = (Stage) submitNewButton.getScene().getWindow();
-            stage.close();
-
-            showAlert("Success", "Service added successfully!", Alert.AlertType.INFORMATION);
+            stage.close(); // Close the form after submission
         } catch (Exception e) {
             showAlert("Error", "Unexpected error: " + e.getMessage(), Alert.AlertType.ERROR);
         }
@@ -181,6 +197,8 @@ public class ServiceOffreController {
         serviceOffreService.update(selectedService);
         loadServices();
     }
+
+
 
     @FXML
     private void handleDelete(ServiceOffre selected) {

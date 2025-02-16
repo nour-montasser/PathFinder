@@ -25,6 +25,15 @@ public class DatabaseConnection {
             throw new RuntimeException(e);
         }
     }
+    public boolean isConnectionClosed() {
+        try {
+            return cnx == null || cnx.isClosed();
+        } catch (SQLException e) {
+            System.out.println("❌ Error checking connection status: " + e.getMessage());
+            return true; // Assume closed if there's an error
+        }
+    }
+
 
     public static DatabaseConnection getInstance() {
         if(instance==null){

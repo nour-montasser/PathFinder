@@ -1,10 +1,13 @@
 package org.example.pathfinder.Service;
 
+import javafx.scene.chart.PieChart;
 import org.example.pathfinder.Model.ServiceOffre;
 import org.example.pathfinder.App.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceOffreService implements Services<ServiceOffre> {
     private Connection cnx;
@@ -132,6 +135,37 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         }
         return services;
     }
+    public Map<String, Double> getRevenueBreakdownForFreelancer(int freelancerId) {
+        Map<String, Double> revenueMap = new HashMap<>();
+        String query = "SELECT so.title AS service_name, SUM(a.price_offre) AS total_earnings " +
+                "FROM applicationservice a " +
+                "JOIN serviceoffre so ON a.id_service = so.id_service " +
+                "WHERE a.status = 'Accepted' AND so.id_user = ? " +
+                "GROUP BY so.title";
+
+        // Ensure the connection is open before executing the query
+        if (DatabaseConnection.getInstance().isConnectionClosed()) {
+            System.out.println("⚠ Database connection was closed. Reconnecting...");
+            DatabaseConnection.getInstance(); // Ensure connection is re-established
+        }
+
+        try (PreparedStatement stm = DatabaseConnection.getInstance().getCnx().prepareStatement(query)) {
+            stm.setInt(1, freelancerId);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                String serviceName = rs.getString("service_name");
+                double totalEarnings = rs.getDouble("total_earnings");
+                System.out.println("📊 Service: " + serviceName + " | Earnings: " + totalEarnings);
+                revenueMap.put(serviceName, totalEarnings);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("❌ Error fetching revenue breakdown: " + e.getMessage());
+        }
+        return revenueMap;
+    }
+
 
 
 
