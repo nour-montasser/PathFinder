@@ -6,89 +6,70 @@
 <BorderPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.pathfinder.Controller.ServiceOffreController"
-            style="-fx-background-color: #D5B195; -fx-padding: 20px;">
+            prefWidth="1000" prefHeight="600"
+            style="-fx-background-color: #F5F5F5; -fx-padding: 20px;">
 
     <!-- HEADER SECTION -->
     <top>
-        <Label text="Add a New Service" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+        <Label text="Manage Services"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #512E1B;
+                      -fx-alignment: center; -fx-padding: 10px;"/>
     </top>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT: Left (Form) & Right (Table) -->
     <center>
-        <GridPane hgap="15" vgap="15">
-            <columnConstraints>
-                <ColumnConstraints halignment="RIGHT"/>
-                <ColumnConstraints hgrow="ALWAYS"/>
-            </columnConstraints>
+        <HBox spacing="20">
+            <!-- Left Section: Form -->
+            <VBox spacing="12" prefWidth="400">
+                <Label text="Title:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <TextField fx:id="titleField" promptText="Enter title"/>
 
-            <!-- TITLE -->
-            <Label text="Title:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <TextField fx:id="titleField" promptText="Enter title"
-                       style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <Label text="Description:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <TextArea fx:id="descriptionField" prefHeight="80" promptText="Enter description"/>
 
-            <!-- DESCRIPTION -->
-            <Label text="Description:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <TextArea fx:id="descriptionField" prefHeight="100" promptText="Enter description"
-                      style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <Label text="Field:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <ComboBox fx:id="fieldField" promptText="Select field"/>
 
-            <!-- FIELD -->
-            <Label text="Field:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <ComboBox fx:id="fieldField" promptText="Select field"
-                      style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <Label text="Price:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <TextField fx:id="priceField" promptText="Enter price"/>
 
-            <!-- PRICE -->
-            <Label text="Price:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <TextField fx:id="priceField" promptText="Enter price"
-                       style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <Label text="Experience:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <TextField fx:id="requiredExperienceField" promptText="Enter experience"/>
 
-            <!-- REQUIRED EXPERIENCE -->
-            <Label text="Required Experience:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <TextField fx:id="requiredExperienceField" promptText="Enter experience"
-                       style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <Label text="Date Posted:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <DatePicker fx:id="dateField"/>
 
-            <!-- DATE POSTED -->
-            <Label text="Date Posted:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <DatePicker fx:id="dateField" style="-fx-background-radius: 10;"/>
+                <Label text="Education:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <TextField fx:id="requiredEducationField" promptText="Enter education level"/>
 
-            <!-- REQUIRED EDUCATION -->
-            <Label text="Required Education:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <TextField fx:id="requiredEducationField" promptText="Enter education level"
-                       style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <Label text="Skills:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+                <TextField fx:id="skillsField" promptText="Enter skills"/>
 
-            <!-- SKILLS -->
-            <Label text="Skills:" style="-fx-text-fill: #512E1B; -fx-font-weight: bold;"/>
-            <TextField fx:id="skillsField" promptText="Enter skills"
-                       style="-fx-background-radius: 10; -fx-padding: 8px;"/>
+                <!-- Buttons -->
+                <HBox spacing="10">
+                    <Button text="Submit" onAction="#handleSubmit"
+                            style="-fx-background-color: #6A8283; -fx-text-fill: white;"/>
 
-            <!-- BUTTONS -->
-            <HBox spacing="10" GridPane.columnSpan="2">
-                <Button text="Submit" onAction="#handleSubmit"
-                        style="-fx-background-color: #6A8283; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 10px;"/>
-                <Button text="Update" onAction="#handleUpdate"
-                        style="-fx-background-color: #98BFD1; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 10px;"/>
-                <Button text="Delete" onAction="#handleDelete"
-                        style="-fx-background-color: #B71C1C; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 10px;"/>
-            </HBox>
+                </HBox>
+            </VBox>
 
-        </GridPane>
+            <!-- Right Section: Table -->
+            <TableView fx:id="serviceTable" prefWidth="600" prefHeight="450">
+                <columns>
+                    <TableColumn text="ID" fx:id="idServiceColumn" prefWidth="50"/>
+                    <TableColumn text="User ID" fx:id="idUserColumn" prefWidth="50"/>
+                    <TableColumn text="Title" fx:id="titleColumn" prefWidth="120"/>
+                    <TableColumn text="Description" fx:id="descriptionColumn" prefWidth="200"/>
+                    <TableColumn text="Date" fx:id="dateColumn" prefWidth="100"/>
+                    <TableColumn text="Field" fx:id="fieldColumn" prefWidth="100"/>
+                    <TableColumn text="Price" fx:id="priceColumn" prefWidth="75"/>
+                    <TableColumn text="Experience" fx:id="experienceColumn" prefWidth="100"/>
+                    <TableColumn text="Education" fx:id="educationColumn" prefWidth="100"/>
+                    <TableColumn text="Skills" fx:id="skillsColumn" prefWidth="150"/>
+                    <TableColumn text="Actions" fx:id="actionColumn" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </HBox>
     </center>
-
-    <!-- TABLE SECTION -->
-    <bottom>
-        <TableView fx:id="serviceTable" prefHeight="300">
-            <columns>
-                <TableColumn text="ID Service" fx:id="idServiceColumn" prefWidth="75"/>
-                <TableColumn text="ID User" fx:id="idUserColumn" prefWidth="75"/>
-                <TableColumn text="Title" fx:id="titleColumn" prefWidth="120"/>
-                <TableColumn text="Description" fx:id="descriptionColumn" prefWidth="150"/>
-                <TableColumn text="Date Posted" fx:id="dateColumn" prefWidth="100"/>
-                <TableColumn text="Field" fx:id="fieldColumn" prefWidth="100"/>
-                <TableColumn text="Price" fx:id="priceColumn" prefWidth="75"/>
-                <TableColumn text="Experience" fx:id="experienceColumn" prefWidth="100"/>
-                <TableColumn text="Education" fx:id="educationColumn" prefWidth="100"/>
-                <TableColumn text="Skills" fx:id="skillsColumn" prefWidth="150"/>
-            </columns>
-        </TableView>
-    </bottom>
 
 </BorderPane>

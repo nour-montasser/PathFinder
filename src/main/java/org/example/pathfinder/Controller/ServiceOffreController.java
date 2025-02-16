@@ -3,12 +3,19 @@ package org.example.pathfinder.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.ServiceOffre;
 import org.example.pathfinder.Service.ServiceOffreService;
 
+import javafx.geometry.Side;
+
+
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,11 +39,15 @@ public class ServiceOffreController {
     @FXML
     private TableColumn<ServiceOffre, Double> priceColumn;
     @FXML
+    private TableColumn<ServiceOffre, Void> actionColumn;
+    @FXML
     private Button submitNewButton;
 
     private final int loggedInUserId = 10; // Simulated logged-in user ID
     private final ServiceOffreService serviceOffreService = new ServiceOffreService();
     private final ObservableList<ServiceOffre> serviceList = FXCollections.observableArrayList();
+
+    private ServiceOffre selectedService = null; // Track the selected service for editing
 
     @FXML
     public void initialize() {
@@ -51,21 +62,51 @@ public class ServiceOffreController {
         educationColumn.setCellValueFactory(new PropertyValueFactory<>("required_education"));
         skillsColumn.setCellValueFactory(new PropertyValueFactory<>("skills"));
 
-        // Initialize field dropdown options
+        // Initialize dropdown values
         fieldField.setItems(FXCollections.observableArrayList(
                 "Art", "Computer Science", "Engineering", "Accounting", "Business", "Design", "Health"
         ));
         fieldField.setValue(null);
 
-        clearFields();
+        // Load services and setup actions
         loadServices();
+        setupActionColumn();
     }
 
-    @FXML
     private void loadServices() {
         List<ServiceOffre> services = serviceOffreService.getAll();
         serviceList.setAll(services);
         serviceTable.setItems(serviceList);
+    }
+
+    private void setupActionColumn() {
+        actionColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button optionsButton = new Button("⋮");
+            private final ContextMenu contextMenu = new ContextMenu();
+
+            {
+                optionsButton.setStyle("-fx-font-size: 14px; -fx-background-color: #6A8283; -fx-text-fill: white;");
+
+                MenuItem editItem = new MenuItem("Edit");
+                editItem.setOnAction(event -> handleEdit(getTableView().getItems().get(getIndex())));
+
+                MenuItem deleteItem = new MenuItem("Delete");
+                deleteItem.setOnAction(event -> handleDelete(getTableView().getItems().get(getIndex())));
+
+                contextMenu.getItems().addAll(editItem, deleteItem);
+                optionsButton.setOnAction(event -> contextMenu.show(optionsButton, Side.BOTTOM, 0, 0));
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(optionsButton);
+                }
+            }
+        });
     }
 
     @FXML
@@ -73,13 +114,12 @@ public class ServiceOffreController {
         if (!validateInputs()) return;
 
         try {
-            // Create a new ServiceOffre object
             ServiceOffre newService = new ServiceOffre(
-                    loggedInUserId,                          // Simulated user ID
-                    0,                                      // Auto-incremented in DB
+                    loggedInUserId,
+                    0,
                     titleField.getText(),
                     descriptionField.getText(),
-                    Date.valueOf(dateField.getValue()),     // Convert LocalDate to SQL Date
+                    Date.valueOf(dateField.getValue()),
                     fieldField.getValue(),
                     Double.parseDouble(priceField.getText()),
                     requiredExperienceField.getText(),
@@ -87,12 +127,10 @@ public class ServiceOffreController {
                     skillsField.getText()
             );
 
-            // Save the new service offer
             serviceOffreService.add(newService);
             loadServices();
             clearFields();
 
-            // Close modal if applicable
             Stage stage = (Stage) submitNewButton.getScene().getWindow();
             stage.close();
 
@@ -103,58 +141,95 @@ public class ServiceOffreController {
     }
 
     @FXML
+    private void handleEdit(ServiceOffre service) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/ServiceForum.fxml"));
+            Parent root = loader.load();
+
+            ServiceOffreController controller = loader.getController();
+            controller.loadServiceData(service);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Edit Service");
+            stage.showAndWait();
+
+            loadServices();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void handleUpdate() {
-        ServiceOffre selected = serviceTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Warning", "Please select a service to update.", Alert.AlertType.WARNING);
+        if (selectedService == null) {
+            showAlert("Warning", "No service selected for update.", Alert.AlertType.WARNING);
             return;
         }
 
         if (!validateInputs()) return;
 
-        try {
-            selected.setTitle(titleField.getText());
-            selected.setDescription(descriptionField.getText());
-            selected.setDate_posted(Date.valueOf(dateField.getValue()));
-            selected.setField(fieldField.getValue());
-            selected.setPrice(Double.parseDouble(priceField.getText()));
-            selected.setRequired_experience(requiredExperienceField.getText());
-            selected.setRequired_education(requiredEducationField.getText());
-            selected.setSkills(skillsField.getText());
+        selectedService.setTitle(titleField.getText());
+        selectedService.setDescription(descriptionField.getText());
+        selectedService.setDate_posted(Date.valueOf(dateField.getValue()));
+        selectedService.setField(fieldField.getValue());
+        selectedService.setPrice(Double.parseDouble(priceField.getText()));
+        selectedService.setRequired_experience(requiredExperienceField.getText());
+        selectedService.setRequired_education(requiredEducationField.getText());
+        selectedService.setSkills(skillsField.getText());
 
-            serviceOffreService.update(selected);
-            loadServices();
-        } catch (Exception e) {
-            showAlert("Error", "Invalid input. Please check your fields.", Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void handleDelete() {
-        ServiceOffre selected = serviceTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Warning", "Please select a service to delete.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        serviceOffreService.delete(selected.getId_service());
+        serviceOffreService.update(selectedService);
         loadServices();
     }
 
-    /**
-     * **🚀 Input Validation Method**
-     */
+    @FXML
+    private void handleDelete(ServiceOffre selected) {
+        if (selected == null) {
+            showAlert("Warning", "Please select a service to delete.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Ask for confirmation before deleting
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirm Deletion");
+        confirmation.setHeaderText("Delete Service: " + selected.getTitle());
+        confirmation.setContentText("Are you sure you want to delete this service? This action cannot be undone.");
+
+        confirmation.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                serviceOffreService.delete(selected.getId_service());
+                loadServices(); // Refresh the service list
+                showAlert("Success", "Service deleted successfully!", Alert.AlertType.INFORMATION);
+            }
+        });
+    }
+
+
+
+    public void loadServiceData(ServiceOffre service) {
+        if (service == null) return;
+
+        titleField.setText(service.getTitle());
+        descriptionField.setText(service.getDescription());
+        dateField.setValue(service.getDate_posted().toLocalDate());
+        fieldField.setValue(service.getField());
+        priceField.setText(String.valueOf(service.getPrice()));
+        requiredExperienceField.setText(service.getRequired_experience());
+        requiredEducationField.setText(service.getRequired_education());
+        skillsField.setText(service.getSkills());
+
+        selectedService = service;
+    }
+
     private boolean validateInputs() {
         String errorMessage = "";
 
-        // 🚀 Validate Date (Must be today)
         if (dateField.getValue() == null) {
             errorMessage += "❌ Date cannot be empty!\n";
         } else if (!dateField.getValue().equals(LocalDate.now())) {
             errorMessage += "❌ Date must be today's date!\n";
         }
 
-        // 🚀 Validate Price (Must be a positive number)
         try {
             double price = Double.parseDouble(priceField.getText());
             if (price < 1.0) {
@@ -164,19 +239,6 @@ public class ServiceOffreController {
             errorMessage += "❌ Price must be a numeric value!\n";
         }
 
-        // 🚀 Validate Description (Min 10, Max 500 characters)
-        String description = descriptionField.getText().trim();
-        if (description.length() < 10 || description.length() > 500) {
-            errorMessage += "❌ Description must be between 10 and 500 characters!\n";
-        }
-
-        // 🚀 Validate Skills (Only letters & commas, no numbers)
-        String skills = skillsField.getText().trim();
-        if (!skills.matches("[a-zA-Z, ]+")) {
-            errorMessage += "❌ Skills must contain only letters and commas!\n";
-        }
-
-        // ❌ Show error messages if there are any issues
         if (!errorMessage.isEmpty()) {
             showAlert("Input Validation Error", errorMessage, Alert.AlertType.ERROR);
             return false;
@@ -196,9 +258,7 @@ public class ServiceOffreController {
         skillsField.clear();
     }
 
-    /**
-     * **🛑 Utility Method for Alerts**
-     */
+
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -206,4 +266,6 @@ public class ServiceOffreController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
 }

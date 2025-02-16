@@ -106,7 +106,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     @Override
     public List<ServiceOffre> getAll() {
         List<ServiceOffre> services = new ArrayList<>();
-        String req = "SELECT * FROM serviceoffre";
+        String req = "SELECT * FROM serviceoffre ORDER BY date_posted DESC";
 
         try {
             Statement stm = cnx.createStatement();
@@ -132,4 +132,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         }
         return services;
     }
+
+
+
 }
