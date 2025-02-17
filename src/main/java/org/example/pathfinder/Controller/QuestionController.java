@@ -16,6 +16,7 @@ import java.util.List;
 
 public class QuestionController {
     private ObservableList<Question> questionList = FXCollections.observableArrayList();
+    private Question selectedQuestion; //
 
     @FXML private TextField questionField;
     @FXML private TextField responseField;
@@ -27,6 +28,14 @@ public class QuestionController {
     @FXML
     public void initialize() {
         questionListView.setItems(FXCollections.observableArrayList()); // Bind ListView to ObservableList
+
+        // ✅ Handle question selection from the list for editing
+        questionListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) { // Double-click
+                String selectedText = questionListView.getSelectionModel().getSelectedItem();
+                loadQuestionForEditing(selectedText);
+            }
+        });
     }
 
     @FXML
@@ -54,6 +63,48 @@ public class QuestionController {
     }
 
     @FXML
+    public void updateQuestionNotBase() {
+        if (selectedQuestion == null) {
+            showAlert("Error", "No question selected for update.");
+            return;
+        }
+
+        try {
+            selectedQuestion.setQuestion(questionField.getText().trim());
+            selectedQuestion.setResponses(responseField.getText().trim());
+            selectedQuestion.setCorrectResponse(correctResponseField.getText().trim());
+            selectedQuestion.setScore(Integer.parseInt(scoreField.getText().trim()));
+
+
+
+
+
+            int index = questionList.indexOf(selectedQuestion);
+            if (index != -1) {
+                questionList.set(index, selectedQuestion); // ✅ Update ObservableList
+                questionListView.getItems().set(index, selectedQuestion.getQuestion()); // ✅ Update ListView
+            }
+
+            clearFields();
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Please enter a valid number for the score.");
+        }
+    }
+
+    private void loadQuestionForEditing(String questionText) {
+        for (Question q : questionList) {
+            if (q.getQuestion().equals(questionText)) {
+                selectedQuestion = q;
+                questionField.setText(q.getQuestion());
+                responseField.setText(q.getResponses());
+                correctResponseField.setText(q.getCorrectResponse());
+                scoreField.setText(String.valueOf(q.getScore()));
+                return;
+            }
+        }
+    }
+
+    @FXML
     public void goToSkillTestScreen() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/SkillTest.fxml"));
@@ -65,15 +116,16 @@ public class QuestionController {
 
             // Switch scenes
             Stage stage = (Stage) questionListView.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root, 1000, 600); // ✅ Use 'root' instead of 'fxmlLoader.load()'
+
+            stage.setScene(scene); // ✅ Corrected line
+            stage.show(); // ✅ Ensure the window updates properly
 
         } catch (IOException e) {
             showAlert("Error", "Failed to load the Skill Test screen.");
             e.printStackTrace();
         }
     }
-
-
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -89,5 +141,6 @@ public class QuestionController {
         responseField.clear();
         correctResponseField.clear();
         scoreField.clear();
+        selectedQuestion = null;
     }
 }

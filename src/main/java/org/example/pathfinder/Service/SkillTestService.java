@@ -43,6 +43,20 @@ public class SkillTestService {
 
         return jobOffers;
     }
+    public boolean exists(String title) {
+        String query = "SELECT COUNT(*) FROM skilltest WHERE title = ?";
+        try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
+            pstmt.setString(1, title);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking for duplicate skill test", e);
+        }
+        return false;
+    }
+
 
 
 
@@ -62,14 +76,14 @@ public class SkillTestService {
                     if (generatedKeys.next()) {
                         long generatedId = generatedKeys.getLong(1);
                         skillTest.setIdTest(generatedId);
-                        return generatedId;  // ✅ Return the newly generated ID
+                        return generatedId;
                     }
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error while saving SkillTest to the database.", e);
         }
-        return -1; // ✅ Return -1 if insertion fails
+        return -1;
     }
 
 

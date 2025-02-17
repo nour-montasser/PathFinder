@@ -1,46 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.QuestionController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="org.example.pathfinder.Controller.QuestionController">
+
+    <!-- 🔹 Navigation Bar -->
     <top>
-        <Label text=" Add your Questions" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10px;"/>
+        <HBox spacing="20" style="-fx-background-color: #c19d7b; -fx-padding: 15px;">
+         <ImageView fitHeight="32.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../Sources/pathfinder_logo_compass.png.png" />
+            </image>
+         </ImageView>
+            <Label style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;" text="PathFinder" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="Freelance" />
+            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="FindAjob" />
+            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="Messages" />
+            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="My Profile" />
+            <Button style="-fx-background-color: #6d4c41; -fx-text-fill: white; -fx-padding: 5px 15px; -fx-font-weight: bold;" text="Home" />
+        </HBox>
     </top>
+
+    <!-- 🔹 Main Content -->
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <GridPane hgap="10" vgap="10">
-                <Label text="Question:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="questionField" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+        <GridPane hgap="20" style="-fx-padding: 30px;" vgap="20" GridPane.hgrow="ALWAYS">
 
-                <Label text="Responses (comma-separated):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="responseField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <!-- Left Section: Question Form -->
+            <VBox spacing="20" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+                <Label style="-fx-font-size: 28px; -fx-font-weight: bold;" text="Question Phase" />
 
-                <Label text="Correct Response:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="correctResponseField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <!-- Question Input -->
+                <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 5px; -fx-padding: 10px;">
+                    <Label style="-fx-font-weight: bold;" text="Question" />
+                    <TextField fx:id="questionField" prefWidth="300" />
+                </VBox>
 
-                <Label text="Score:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="scoreField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-            </GridPane>
+                <!-- Responses Input -->
+                <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 5px; -fx-padding: 10px;">
+                    <Label style="-fx-font-weight: bold;" text="Responses (&quot;,&quot;):" />
+                    <TextField fx:id="responseField" />
+                    <Label style="-fx-font-weight: bold;" text="Correct Response:" />
+                    <TextField fx:id="correctResponseField" />
+                </VBox>
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="Add Question" onAction="#addQuestion" style="-fx-background-color: #28a745; -fx-text-fill: white;"/>
-                <Button text="Clear Fields" onAction="#clearFields" style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
-            </HBox>
-        </VBox>
+                <!-- Score Input -->
+                <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 5px; -fx-padding: 10px;">
+                    <Label style="-fx-font-weight: bold;" text="Score:" />
+                    <TextField fx:id="scoreField" prefWidth="150" />
+                </VBox>
+
+                <!-- Buttons -->
+                <HBox spacing="15">
+                    <Button onAction="#addQuestion" style="-fx-background-color: #708671; -fx-text-fill: white;" text="Add Question" />
+                    <Button onAction="#updateQuestionNotBase" style="-fx-background-color: #c19d7b; -fx-text-fill: black;" text="Update Question" />
+                    <Button onAction="#clearFields" style="-fx-background-color: #d9534f; -fx-text-fill: white;" text="Clear Fields" />
+                </HBox>
+            </VBox>
+
+            <!-- Right Section: Question List -->
+            <VBox spacing="10" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Question List:" />
+                <ListView fx:id="questionListView" prefHeight="250" style="-fx-border-color: #c19d7b;" />
+
+                <!-- ✅ "Go to Skill Test" Button - Moved to the Right Side Below the Question List -->
+                <Button onAction="#goToSkillTestScreen" style="-fx-background-color: #6d4c41; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px;" text="Go to Skill Test" />
+            </VBox>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+        </GridPane>
     </center>
-    <bottom>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <Label text="Question List:" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="questionListView" prefHeight="200"/>
-            <Button text="Go to Skill Test" onAction="#goToSkillTestScreen" style="-fx-background-color: #007bff; -fx-text-fill: white;"/>
-        </VBox>
-    </bottom>
+
 </BorderPane>

@@ -13,6 +13,7 @@ public class ViewSkillTestController {
     @FXML private Label skillTestTitle;
     @FXML private Label skillTestDescription;
     @FXML private VBox questionsContainer;
+    @FXML private ScrollPane scrollPane; // ✅ Added ScrollPane reference
 
     private SkillTest currentSkillTest;
 
@@ -34,7 +35,7 @@ public class ViewSkillTestController {
             ToggleGroup toggleGroup = new ToggleGroup();
             VBox answersBox = new VBox(5);
 
-            // 🔥 Now properly separating answers using commas!
+            // 🔥 Properly separating answers using commas!
             String[] responses = question.getResponses().split(",");
             for (String response : responses) {
                 RadioButton radioButton = new RadioButton(response.trim());
@@ -45,6 +46,10 @@ public class ViewSkillTestController {
             questionBox.getChildren().addAll(questionLabel, answersBox);
             questionsContainer.getChildren().add(questionBox);
         }
+
+        // ✅ Fix ScrollPane Issue: Force JavaFX to recalculate layout
+        scrollPane.applyCss();
+        scrollPane.layout();
     }
 
     @FXML

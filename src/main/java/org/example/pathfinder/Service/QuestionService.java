@@ -38,6 +38,28 @@ public class QuestionService {
             throw new RuntimeException(e);
         }
     }
+    public void update(Question question) {
+        if (question.getIdQuestion() == null) {
+            throw new RuntimeException("Cannot update question with null ID.");
+        }
+
+        String req = "UPDATE questions SET question = ?, responses = ?, correct_response = ?, score = ? WHERE id_question = ?";
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
+            stm.setString(1, question.getQuestion());
+            stm.setString(2, question.getResponses());
+            stm.setString(3, question.getCorrectResponse());
+            stm.setInt(4, question.getScore());
+            stm.setLong(5, question.getIdQuestion()); // Ensure idQuestion is not null
+
+            int rowsUpdated = stm.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("⚠️ No question updated. Check if the ID exists.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating question in the database.", e);
+        }
+    }
+
 
     public List<Question> getAllQuestions() {
         List<Question> questions = new ArrayList<>();
