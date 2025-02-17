@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.JobOfferService;
 
@@ -63,6 +64,11 @@ public class JobOfferUpdateController {
             String type = typeComboBox.getValue();
             String skills = skillsField.getText(); // Assuming skills are comma-separated
 
+            if (!currentJobOffer.getTitle().equals(title) && !jobOfferService.isJobOfferTitleUnique(title)) {
+                showAlert(Alert.AlertType.ERROR, "Duplicate Job Offer", "A job offer with the same title already exists.");
+                return;
+            }
+
             // Update the JobOffer object with new values
             currentJobOffer.setTitle(title);
             currentJobOffer.setDescription(description);
@@ -78,8 +84,8 @@ public class JobOfferUpdateController {
             // Show success message
             showAlert(Alert.AlertType.INFORMATION, "Job Offer Updated", "The job offer was successfully updated.");
 
-            // Clear the form
-            clearForm();
+            Stage stage = (Stage) titleField.getScene().getWindow();
+            stage.close();
 
         } catch (Exception e) {
             // Handle exception and show error message
@@ -151,7 +157,10 @@ public class JobOfferUpdateController {
 
     @FXML
     private void handleCancelButtonClick() {
-        clearForm();
+        Stage stage = (Stage) descriptionField.getScene().getWindow();
+        if (stage != null) {
+            stage.close();
+        }
     }
 
     // This method will be used to populate the form with the existing job offer data

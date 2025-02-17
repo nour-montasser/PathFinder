@@ -28,6 +28,10 @@ public class JobOffer {
         this.skills = skills;
     }
 
+    public JobOffer() {
+
+    }
+
     // Getters and setters
     public Long getIdOffer() {
         return id_Offer;

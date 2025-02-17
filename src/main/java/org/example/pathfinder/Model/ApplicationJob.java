@@ -7,13 +7,24 @@ public class ApplicationJob {
     private Long id_Application;
     private Long id_JobOffer;
     private Long id_User;
+    private Long id_Cv;
     private Timestamp dateApplication;
     private String status; // pending, accepted, rejected
 
     // Constructor with current timestamp as default for dateApplication
-    public ApplicationJob(Long id_JobOffer, Long id_User) {
+    public ApplicationJob(Long id_JobOffer, Long id_User, Long id_Cv) {
         this.id_JobOffer = id_JobOffer;
         this.id_User = id_User;
+        this.id_Cv = id_Cv;
+        this.dateApplication = new Timestamp(System.currentTimeMillis());
+        this.status = "pending";
+    }
+
+    public ApplicationJob(Long id_Application,Long id_JobOffer, Long id_User, Long id_Cv) {
+        this.id_Application = id_Application;
+        this.id_JobOffer = id_JobOffer;
+        this.id_User = id_User;
+        this.id_Cv = id_Cv;
         this.dateApplication = new Timestamp(System.currentTimeMillis());
         this.status = "pending";
     }
@@ -62,6 +73,13 @@ public class ApplicationJob {
     public void setStatus(String status) {
         this.status = status;
     }
+    public Long getCvId() {
+        return id_Cv;
+    }
+
+    public void setCvId(Long id_Cv) {
+        this.id_Cv = id_Cv;
+    }
 
     @Override
     public String toString() {
@@ -70,6 +88,7 @@ public class ApplicationJob {
                 ", id_JobOffer=" + id_JobOffer +
                 ", id_User=" + id_User +
                 ", dateApplication=" + dateApplication +
+                ", idCv=" + id_Cv +
                 ", status='" + status + '\'' +
                 '}';
     }
@@ -83,11 +102,12 @@ public class ApplicationJob {
                 Objects.equals(id_JobOffer, that.id_JobOffer) &&
                 Objects.equals(id_User, that.id_User) &&
                 Objects.equals(dateApplication, that.dateApplication) &&
-                Objects.equals(status, that.status);
+                Objects.equals(status, that.status) &&
+                Objects.equals(id_Cv, that.id_Cv);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id_Application, id_JobOffer, id_User, dateApplication, status);
+        return Objects.hash(id_Application, id_JobOffer, id_User, dateApplication, status, id_Cv);
     }
 }

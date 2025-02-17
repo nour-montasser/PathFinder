@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -60,10 +61,43 @@ public class JobOfferListCardController {
     @FXML
     private VBox cardContainer;
 
+    @FXML
+    private Button applyButton;
+
     private boolean isExpanded = false;
     private JobOffer jobOffer;
     private JobOfferService jobOfferService = new JobOfferService();
     private JobOfferListController parentController;
+
+
+    @FXML
+    private Label numberOfSpotsLabel;  // Add a Label for the number of spots
+    @FXML
+    private Button menuButton;
+
+    private ContextMenu contextMenu;
+
+    @FXML
+    private void initialize() {
+        // Create the context menu
+        contextMenu = new ContextMenu();
+
+        // Create MenuItems
+        MenuItem updateItem = new MenuItem("Update");
+        updateItem.setOnAction(event -> handleUpdate()); // Handle update action
+
+        MenuItem deleteItem = new MenuItem("Delete");
+        deleteItem.setOnAction(event -> handleDelete()); // Handle delete action
+
+        // Add items to the context menu
+        contextMenu.getItems().addAll(updateItem, deleteItem);
+
+        // Set up the action for the menu button to show the context menu
+        menuButton.setOnAction(event -> {
+            contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0); // Show context menu below the button
+            event.consume(); // Prevent toggleDetails from being triggered
+        });
+    }
 
 
 
@@ -80,6 +114,7 @@ public class JobOfferListCardController {
         requiredEducationLabel.setText("Required Education: " + jobOffer.getRequiredEducation());
         requiredExperienceLabel.setText("Required Experience: " + jobOffer.getRequiredExperience());
         skillsLabel.setText("Skills: " + jobOffer.getSkills());
+        numberOfSpotsLabel.setText("Number of Spots: " + jobOffer.getNumberOfSpots());  // Update the number of spots label
 
         additionalDetails.setVisible(false);
         additionalDetails.setManaged(false);
@@ -87,6 +122,7 @@ public class JobOfferListCardController {
         titleLabel.setOnMouseClicked(event -> openJobOfferDetailScene());
         cardContainer.setOnMouseClicked(event -> toggleDetails());
     }
+
 
     public void setParentController(JobOfferListController parentController) {
         this.parentController = parentController;
@@ -129,18 +165,32 @@ public class JobOfferListCardController {
 
             Stage stage = new Stage();
             stage.setTitle("Update Job Offer");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(form));
+            stage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
+
+            // Remove default decorations and prevent resizing
+            stage.initStyle(javafx.stage.StageStyle.UNDECORATED);
+            stage.setResizable(false);
+
+            // Create an overlay for the transparent effect
+            StackPane overlay = new StackPane();
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3);");  // Semi-transparent background
+
+            overlay.getChildren().add(form);
+
+            Scene overlayScene = new Scene(overlay);
+            stage.setScene(overlayScene);
             stage.showAndWait();
 
+            // Refresh job offer list after closing the form
             parentController.refreshJobOfferList();
         } catch (IOException e) {
-            System.err.println("Error opening Update Job Offer form: " + e.getMessage());
+            System.err.println("❌ Error opening Update Job Offer form: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    @FXML
+
+    /*@FXML
     public void handleApply() {
         try {
             Long loggedInUserId = 1L;
@@ -153,7 +203,8 @@ public class JobOfferListCardController {
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Application Failed", "Error Submitting Application", "An error occurred while submitting your application: " + e.getMessage());
         }
-    }
+    }*/
+
 
     private void openJobOfferDetailScene() {
         try {
@@ -167,8 +218,13 @@ public class JobOfferListCardController {
             Stage currentStage = (Stage) skillsLabel.getScene().getWindow();
             currentStage.setScene(detailScene);
             currentStage.setTitle("Job Offer Details");
-            currentStage.setWidth(Screen.getPrimary().getBounds().getWidth());
-            currentStage.setHeight(Screen.getPrimary().getBounds().getHeight());
+            currentStage.setMaximized(false); // Temporarily disable maximization
+            currentStage.setMaximized(true);
+            detailScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/styles.css").toExternalForm());
+
+           /* currentStage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+            currentStage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());*/
+            currentStage.show();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Unable to load details", "An error occurred while loading the job offer details.");
         } catch (SQLException e) {
@@ -184,4 +240,61 @@ public class JobOfferListCardController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showSuccess(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    //--------------------------------------------------------------------------
+    @FXML
+    public void handleApply() {
+        // Check if the number of spots is zero
+        if (jobOffer.getNumberOfSpots() == 0) {
+            showError("Sorry, there are no available spots for this job offer.");
+            return; // Exit the method to prevent opening the application form
+        }
+
+        try {
+            // Load the application form FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferApplicationForm.fxml"));
+            VBox form = loader.load();
+
+            // Get the controller of the application form
+            JobOfferApplicationFormController controller = loader.getController();
+            controller.setJobOffer(jobOffer); // Pass the selected job offer
+
+            // Create a new window (Stage) for the application form
+            Stage applicationFormStage = new Stage();
+            applicationFormStage.setTitle("Job Application Form");
+            applicationFormStage.initModality(Modality.APPLICATION_MODAL);  // Make it modal (block interaction with other windows)
+            applicationFormStage.setResizable(false);
+            applicationFormStage.initStyle(javafx.stage.StageStyle.UNDECORATED);
+
+            // Create a stack pane for the overlay
+            StackPane overlay = new StackPane();
+            overlay.getChildren().add(form);
+
+            // Set the scene for the application form window
+            Scene applicationFormScene = new Scene(overlay);
+            applicationFormStage.setScene(applicationFormScene);
+            applicationFormStage.showAndWait();
+        } catch (IOException e) {
+            showError("Error opening application form: " + e.getMessage());
+        }
+    }
+
+
+
+
 }

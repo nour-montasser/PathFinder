@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Button?>
+
+<?import javafx.scene.control.ComboBox?>
+<VBox alignment="TOP_LEFT" spacing="12.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.pathfinder.Controller.JobOfferApplicationFormController"
+      style="-fx-background-color: #f4f4f4;
+             -fx-padding: 25;
+             -fx-border-color: #333;
+             -fx-border-width: 2;
+             -fx-border-radius: 10;
+             -fx-background-radius: 10;
+             -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);">
+
+    <!-- Title -->
+    <Label text="Job Offer Application" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <!-- CV Selection -->
+    <Label text="Select CV:" style="-fx-font-weight: bold;" />
+    <ComboBox fx:id="cvDropdown" prefWidth="500.0" />
+
+    <!-- Cover letter subject-->
+    <Label text="Cover Letter Title:" style="-fx-font-weight: bold;" />
+    <TextField fx:id="CoverLetterField" prefWidth="500.0" style="-fx-border-color: #ccc; -fx-border-radius: 5; " />
+
+    <!-- Cover Letter Field -->
+    <Label text="Cover Letter:" style="-fx-font-weight: bold;" />
+    <TextArea fx:id="coverLetterField" prefWidth="500.0" prefHeight="150.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+
+    <!-- Buttons -->
+    <Region prefHeight="10.0"/>  <!-- Spacer -->
+    <HBox spacing="15.0" alignment="CENTER">
+        <Button fx:id="applyButton" text="Apply"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;
+                       -fx-background-radius: 8; -fx-padding: 8 16;" onAction="#handleApplyButtonClick"/>
+        <Button fx:id="cancelButton" text="Cancel"
+                style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;
+                       -fx-background-radius: 8; -fx-padding: 8 16;" onAction="#handleCancelButtonClick"/>
+    </HBox>
+
+</VBox>

@@ -1,8 +1,8 @@
 package org.example.pathfinder.Service;
 
-
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.App.DatabaseConnection;
+import org.example.pathfinder.Model.JobOffer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,13 +17,14 @@ public class ApplicationService implements Services<ApplicationJob> {
 
     @Override
     public void add(ApplicationJob applicationJob) {
-        String req = "INSERT INTO Application_job (job_offer_id, id_user, date_application, status) VALUES (?, ?, ?, ?)";
+        String req = "INSERT INTO Application_job (job_offer_id, id_user, date_application, status, cv_id) VALUES (?, ?, ?, ?, ?)";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
             stm.setLong(1, applicationJob.getJobOfferId());
-            stm.setLong(2,1);
+            stm.setLong(2, 1); // Assuming user ID is hardcoded, replace with dynamic user ID if necessary
             stm.setTimestamp(3, applicationJob.getDateApplication());
             stm.setString(4, applicationJob.getStatus());
+            stm.setLong(5, applicationJob.getCvId()); // Adding CV ID
             stm.executeUpdate();
             System.out.println("Application added successfully.");
         } catch (SQLException e) {
@@ -33,11 +34,12 @@ public class ApplicationService implements Services<ApplicationJob> {
 
     @Override
     public void update(ApplicationJob applicationJob) {
-        String req = "UPDATE Application_job SET status = ? WHERE application_id = ?";
+        String req = "UPDATE Application_job SET status = ?, cv_id = ? WHERE application_id = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
             stm.setString(1, applicationJob.getStatus());
-            stm.setLong(2, applicationJob.getApplicationId());
+            stm.setLong(2, applicationJob.getCvId()); // Update CV ID if necessary
+            stm.setLong(3, applicationJob.getApplicationId());
             stm.executeUpdate();
             System.out.println("Application updated successfully.");
         } catch (SQLException e) {
@@ -68,11 +70,13 @@ public class ApplicationService implements Services<ApplicationJob> {
             while (rs.next()) {
                 ApplicationJob applicationJob = new ApplicationJob(
                         rs.getLong("job_offer_id"),
-                        rs.getLong("id_user")
+                        rs.getLong("id_user"),
+                        rs.getLong("cv_id")
                 );
                 applicationJob.setApplicationId(rs.getLong("application_id"));
                 applicationJob.setDateApplication(rs.getTimestamp("date_application"));
                 applicationJob.setStatus(rs.getString("status"));
+                applicationJob.setCvId(rs.getLong("cv_id")); // Retrieve CV ID
                 applications.add(applicationJob);
             }
         } catch (SQLException e) {
@@ -83,18 +87,20 @@ public class ApplicationService implements Services<ApplicationJob> {
 
     @Override
     public ApplicationJob getone() {
-        String req = "SELECT * FROM Application_job LIMIT 1";
+        String req = "SELECT * FROM Application_job ORDER BY application_id DESC LIMIT 1";
         try {
             Statement stm = cnx.createStatement();
             ResultSet rs = stm.executeQuery(req);
             if (rs.next()) {
                 ApplicationJob applicationJob = new ApplicationJob(
                         rs.getLong("job_offer_id"),
-                        rs.getLong("id_user")
+                        rs.getLong("id_user"),
+                        rs.getLong("cv_id")
                 );
                 applicationJob.setApplicationId(rs.getLong("application_id"));
                 applicationJob.setDateApplication(rs.getTimestamp("date_application"));
                 applicationJob.setStatus(rs.getString("status"));
+                applicationJob.setCvId(rs.getLong("cv_id")); // Retrieve CV ID
                 return applicationJob;
             }
         } catch (SQLException e) {
@@ -106,7 +112,7 @@ public class ApplicationService implements Services<ApplicationJob> {
     public List<ApplicationJob> getApplicationsForJobOffer(Long jobOfferId) throws SQLException {
         List<ApplicationJob> applications = new ArrayList<>();
 
-        // SQL query to fetch applications where job_offer_id = jobOfferId and user_id = 1
+        // SQL query to fetch applications where job_offer_id = jobOfferId
         String query = "SELECT * FROM Application_job WHERE job_offer_id = ?";
 
         try (PreparedStatement stmt = cnx.prepareStatement(query)) {
@@ -120,10 +126,146 @@ public class ApplicationService implements Services<ApplicationJob> {
                 application.setIdUser(resultSet.getLong("id_user"));
                 application.setDateApplication(resultSet.getTimestamp("date_application"));
                 application.setStatus(resultSet.getString("status"));
+                application.setCvId(resultSet.getLong("cv_id")); // Retrieve CV ID
                 applications.add(application);
             }
         }
 
         return applications;
     }
+
+    public List<String> getUserCVTitles(Long userId) {
+        List<String> cvTitleList = new ArrayList<>();
+        String query = "SELECT title FROM CV WHERE id_user = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                cvTitleList.add(rs.getString("title"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving CV titles: " + e.getMessage(), e);
+        }
+        return cvTitleList;
+    }
+
+    public List<Long> getUserCVIds(Long userId) {
+        List<Long> cvIdList = new ArrayList<>();
+        String query = "SELECT id_cv FROM CV WHERE id_user = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                cvIdList.add(rs.getLong("id_cv"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving CV IDs: " + e.getMessage(), e);
+        }
+        return cvIdList;
+    }
+
+    public String getCVTitleById(Long cvId) {
+        String cvTitle = "";
+        String query = "SELECT title FROM CV WHERE id_cv = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, cvId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                cvTitle = rs.getString("title");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving CV title: " + e.getMessage(), e);
+        }
+
+        return cvTitle;
+    }
+
+    public JobOffer getJobOfferById(Long jobOfferId) {
+        JobOffer jobOffer = null;
+        String query = "SELECT * FROM Job_offer WHERE id_offer = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, jobOfferId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                jobOffer = new JobOffer();
+                jobOffer.setIdOffer(rs.getLong("id_offer"));
+                jobOffer.setTitle(rs.getString("title"));
+                jobOffer.setIdUser(rs.getLong("id_user"));
+                jobOffer.setDescription(rs.getString("description"));
+                jobOffer.setDatePosted(rs.getTimestamp("datePosted"));
+                jobOffer.setType(rs.getString("type"));
+                jobOffer.setNumberOfSpots(rs.getInt("number_of_spots"));
+                jobOffer.setRequiredEducation(rs.getString("required_education"));
+                jobOffer.setRequiredExperience(rs.getString("required_experience"));
+                jobOffer.setSkills(rs.getString("skills"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving JobOffer: " + e.getMessage(), e);
+        }
+
+        return jobOffer;
+    }
+
+
+
+    public List<ApplicationJob> getApplicationsForUser(Long userId) throws SQLException {
+        List<ApplicationJob> applications = new ArrayList<>();
+
+        // SQL query to fetch applications where job_offer_id = jobOfferId
+        String query = "SELECT * FROM Application_job WHERE id_user = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, userId);
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()) {
+                ApplicationJob application = new ApplicationJob();
+                application.setApplicationId(resultSet.getLong("application_id"));
+                application.setJobOfferId(resultSet.getLong("job_offer_id"));
+                application.setIdUser(resultSet.getLong("id_user"));
+                application.setDateApplication(resultSet.getTimestamp("date_application"));
+                application.setStatus(resultSet.getString("status"));
+                application.setCvId(resultSet.getLong("cv_id")); // Retrieve CV ID
+                applications.add(application);
+            }
+        }
+
+        return applications;
+    }
+
+    public ApplicationJob getApplicationByJobOfferAndUser(Long jobOfferId, Long userId) {
+        ApplicationJob application = null;
+        String query = "SELECT * FROM Application_job WHERE job_offer_id = ? AND id_user = ?";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
+            statement.setLong(1, jobOfferId);
+            statement.setLong(2, userId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                application = new ApplicationJob(
+                        resultSet.getLong("application_id"),
+                        resultSet.getLong("job_offer_id"),
+                        resultSet.getLong("id_user"),
+                        resultSet.getLong("cv_id")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return application;
+    }
+
+
 }

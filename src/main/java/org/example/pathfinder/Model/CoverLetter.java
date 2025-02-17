@@ -14,6 +14,16 @@ public class CoverLetter {
         this.content = content;
         this.subject = subject;
     }
+    public CoverLetter(Long id_CoverLetter, Long id_App, String content, String subject) {
+        this.id_CoverLetter = id_CoverLetter;
+        this.id_App = id_App;
+        this.content = content;
+        this.subject = subject;
+    }
+
+    public CoverLetter() {
+
+    }
 
     // Getters and setters
     public Long getIdCoverLetter() {

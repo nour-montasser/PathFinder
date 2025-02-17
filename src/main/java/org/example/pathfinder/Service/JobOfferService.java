@@ -122,4 +122,20 @@ public class JobOfferService implements Services<JobOffer> {
         }
         return null;
     }
+
+    public boolean isJobOfferTitleUnique(String title) {
+        String query = "SELECT COUNT(*) FROM Job_Offer WHERE title = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setString(1, title);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) == 0; // If count is 0, it means the title is unique
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking job offer title uniqueness: " + e.getMessage(), e);
+        }
+        return false;
+    }
 }

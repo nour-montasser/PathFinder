@@ -1,18 +1,24 @@
 package org.example.pathfinder.Controller;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.ApplicationService;
+import org.example.pathfinder.Service.JobOfferService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,14 +42,18 @@ public class JobOfferApplicationList {
 
     @FXML
     private ListView<ApplicationJob> applicationsListView;
+    @FXML
+    private ImageView searchIcon;
 
     private ObservableList<ApplicationJob> applicationsObservableList = FXCollections.observableArrayList();
     private JobOffer jobOffer;
     private ApplicationService applicationService = new ApplicationService();
+    private JobOfferService jobOfferService = new JobOfferService();
 
     public void setJobOffer(JobOffer jobOffer) throws SQLException {
         this.jobOffer = jobOffer;
-
+        String imagePath = getClass().getResource("/org/example/pathfinder/Sources/pathfinder_logo_compass.png").toString();
+        searchIcon.setImage(new Image(imagePath));
         // Set job offer details
         jobOfferTitle.setText(jobOffer.getTitle());
         jobOfferDescription.setText(jobOffer.getDescription());
@@ -59,6 +69,7 @@ public class JobOfferApplicationList {
         applicationsObservableList.addAll(applicationService.getApplicationsForJobOffer(jobOffer.getIdOffer()));
         applicationsListView.setItems(applicationsObservableList);
 
+        // Set the custom cell factory for the ListView
         applicationsListView.setCellFactory(param -> new ListCell<ApplicationJob>() {
             @Override
             protected void updateItem(ApplicationJob item, boolean empty) {
@@ -67,53 +78,62 @@ public class JobOfferApplicationList {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    VBox card = new VBox(5);
-                    card.setStyle("-fx-padding: 10; -fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: white;");
+                    // Create a VBox to represent the card
+                    VBox card = new VBox(3);
+                    card.setStyle("-fx-padding: 7; -fx-border-radius: 10; -fx-background-color: white; -fx-border-color: lightgray;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 2, 5); -fx-margin: 10 0 10 0;-fx-background-radius: 10;");
 
                     Label userLabel = new Label("User ID: " + item.getIdUser());
-                    userLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+                    userLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
 
                     Label statusLabel = new Label("Status: " + item.getStatus());
-                    statusLabel.setStyle("-fx-text-fill: " + (item.getStatus().equals("Accepted") ? "#4CAF50" : item.getStatus().equals("Rejected") ? "#f44336" : "#777") + ";");
+                    statusLabel.setStyle("-fx-text-fill: " + (item.getStatus().equals("Accepted") ? "#4CAF50" :
+                            item.getStatus().equals("Rejected") ? "#f44336" : "#777") + ";");
 
                     Label dateLabel = new Label("Applied on: " + item.getDateApplication());
                     dateLabel.setStyle("-fx-text-fill: #777;");
 
-                    VBox buttonBox = new VBox(10);
+                    // Create a HBox for the action buttons
+                    HBox buttonBox = new HBox(5);
+                    buttonBox.setStyle("-fx-alignment: center-right;");
 
-                    // Accept and Reject buttons only for Pending status
+                    // Show the "Accept" and "Reject" buttons only when the status is "pending"
                     if ("pending".equals(item.getStatus())) {
                         Button acceptButton = new Button("Accept");
-                        acceptButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand;");
+                        acceptButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12px;");
                         acceptButton.setOnAction(event -> handleStatusUpdate(item, "Accepted"));
 
                         Button rejectButton = new Button("Reject");
-                        rejectButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-cursor: hand;");
+                        rejectButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12px;");
                         rejectButton.setOnAction(event -> handleStatusUpdate(item, "Rejected"));
 
-                        HBox actionButtons = new HBox(10, acceptButton, rejectButton);
-                        buttonBox.getChildren().add(actionButtons);
+                        buttonBox.getChildren().addAll(acceptButton, rejectButton);
                     }
 
-                    // Delete button (always visible)
-                    Button deleteButton = new Button("Delete");
-                    deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-cursor: hand;");
-                    deleteButton.setOnAction(event -> handleDelete(item));
+                    // Create a HBox for the "Delete" button (always visible for "pending" applications)
+                    HBox deleteBox = new HBox(5);
+                    deleteBox.setStyle("-fx-alignment: center-left;");
 
-                    buttonBox.getChildren().add(deleteButton);
 
-                    card.getChildren().addAll(userLabel, statusLabel, dateLabel, buttonBox);
+
+
+                        card.getChildren().addAll(userLabel, statusLabel, dateLabel, buttonBox);
+
+
                     setGraphic(card);
                 }
             }
         });
-
-
     }
+
+
+
+
+
 
     private void handleStatusUpdate(ApplicationJob application, String newStatus) {
         if (!"pending".equals(application.getStatus())) {
-            showAlert(Alert.AlertType.WARNING, "Status Update Not Allowed", null, "you cant change the status of this application again");
+            showAlert(Alert.AlertType.WARNING, "Status Update Not Allowed", null, "You can't change the status of this application again.");
             return;
         }
 
@@ -127,12 +147,29 @@ public class JobOfferApplicationList {
                 application.setStatus(newStatus);
                 applicationService.update(application);  // Assuming update() is a method in ApplicationService
                 applicationsListView.refresh();  // Refresh the ListView to reflect changes
+
+                // Decrement the number of spots available for the job offer if accepted
+                if ("Accepted".equals(newStatus)) {
+                    decrementJobOfferSpots();
+                }
+
                 showAlert(Alert.AlertType.INFORMATION, "Status Updated", null, "The application status has been updated to " + newStatus + ".");
             }
         });
     }
 
-    private void handleDelete(ApplicationJob application) {
+    private void decrementJobOfferSpots() {
+        int currentSpots = jobOffer.getNumberOfSpots();
+        if (currentSpots > 0) {
+            jobOffer.setNumberOfSpots(currentSpots - 1);
+            jobOfferService.update(jobOffer);  // Assuming updateJobOffer() method in ApplicationService to update the job offer in DB
+        } else {
+            showAlert(Alert.AlertType.WARNING, "No Available Spots" ,null,"The job offer has no available spots left.");
+        }
+    }
+
+
+    /*private void handleDelete(ApplicationJob application) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Application");
         alert.setHeaderText("Are you sure you want to delete this application?");
@@ -145,22 +182,34 @@ public class JobOfferApplicationList {
                 showAlert(Alert.AlertType.INFORMATION, "Application Deleted", null, "The application has been successfully deleted.");
             }
         });
-    }
+    }*/
 
     @FXML
     private void handleClose() {
         try {
+            // Load the Job Offer List scene
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/JobOfferList.fxml"));
             Parent root = loader.load();
+            // Get the current stage (the window)
             Stage stage = (Stage) jobOfferTitle.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            // Set the new scene
+            Scene newScene = new Scene(root);
+            stage.setScene(newScene);
+            stage.setMaximized(false); // Temporarily disable maximization
             stage.setMaximized(true);
+            // Optional: Set the window size to full screen (maximized) or custom size
+            /*stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+            stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());*/
+            // Show the stage with the new scene
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to load the Job Offer List", e.getMessage());
         }
     }
+
+
+
 
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);

@@ -3,3 +3,34 @@
     -fx-background-color: inherit;
     -fx-effect: null;
 }
+
+/* Remove blue selection highlight */
+.list-cell:filled:selected,
+.list-cell:filled:selected:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: black; /* Keeps text color normal */
+}
+
+/* Remove hover effect */
+.list-cell:hover {
+    -fx-background-color: transparent;
+}
+
+
+/* Remove blue selection highlight */
+.list-cell:filled:selected,
+.list-cell:filled:selected:hover {
+    -fx-background-color: transparent; /* Makes the selection background transparent */
+    -fx-text-fill: black; /* Keeps text color normal */
+}
+
+/* Remove hover effect */
+.list-cell:hover {
+    -fx-background-color: transparent;
+}
+
+/* Add spacing between items */
+.list-cell {
+    -fx-padding: 10px; /* Increase padding to add spacing */
+}
+
