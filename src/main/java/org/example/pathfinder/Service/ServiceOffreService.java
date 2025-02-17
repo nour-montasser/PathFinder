@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ServiceOffreService implements Services<ServiceOffre> {
     private Connection cnx;
@@ -166,6 +167,38 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         return revenueMap;
     }
 
+    public List<ServiceOffre> getAllSortedByPrice() {
+        List<ServiceOffre> services = new ArrayList<>();
+        String req = "SELECT * FROM serviceoffre ORDER BY price ASC"; // ✅ Sorting by price (least to most)
+
+        try {
+            Statement stm = cnx.createStatement();
+            ResultSet rs = stm.executeQuery(req);
+
+            while (rs.next()) {
+                ServiceOffre s = new ServiceOffre();
+                s.setId_service(rs.getInt("id_service"));
+                s.setTitle(rs.getString("title"));
+                s.setDescription(rs.getString("description"));
+                s.setDate_posted(rs.getDate("date_posted"));
+                s.setField(rs.getString("field"));
+                s.setPrice(rs.getDouble("price")); // ✅ Sorting based on this
+                s.setRequired_experience(rs.getString("required_experience"));
+                s.setRequired_education(rs.getString("required_education"));
+                s.setSkills(rs.getString("skills"));
+                services.add(s);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return services;
+    }
+    public List<ServiceOffre> getAllSortedByPriceDesc() {
+        return getAllSortedByPrice().stream()
+                .sorted((s1, s2) -> Double.compare(s2.getPrice(), s1.getPrice()))
+                .collect(Collectors.toList());
+    }
 
 
 

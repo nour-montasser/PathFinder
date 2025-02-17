@@ -25,7 +25,7 @@ public class ApplicationServiceController {
     private GridPane servicesGrid; // Grid for displaying services
 
     @FXML
-    private Button addServiceButton; // Floating "Add Service" button
+    private Button addServiceButton , sortPriceButton; // Floating "Add Service" button
 
     @FXML
     private TextField searchField; // Search bar
@@ -36,11 +36,17 @@ public class ApplicationServiceController {
 
     private final ServiceOffreService serviceOffreService = new ServiceOffreService();
     private List<ServiceOffre> allServices; // Store all services initially
+    private boolean sortAscending = true;
 
     @FXML
     public void initialize() {
         loadServices(); // Load services at startup
         searchField.textProperty().addListener((obs, oldVal, newVal) -> onSearchTextChanged(newVal));
+
+        // Attach event to sorting button
+        if (sortPriceButton != null) {
+            sortPriceButton.setOnAction(event -> sortServicesByPrice());
+        }
     }
 
     private void loadServices() {
@@ -96,7 +102,7 @@ public class ApplicationServiceController {
 
     private Button createDetailsButton(ServiceOffre service) {
         Button detailsButton = new Button("View Requests");
-        detailsButton.setStyle("-fx-background-color: #98BFD1; " + // Sky Blue
+        detailsButton.setStyle("-fx-background-color: #512E1B; " + // Sky Blue
                 "-fx-text-fill: white; " +
                 "-fx-font-size: 16px; " +
                 "-fx-border-radius: 8px; " +
@@ -136,6 +142,21 @@ public class ApplicationServiceController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    @FXML
+    private void sortServicesByPrice() {
+        if (sortAscending) {
+            allServices = serviceOffreService.getAllSortedByPrice();
+            sortPriceButton.setText("Sort by Price (High to Low)");
+        } else {
+            allServices = serviceOffreService.getAllSortedByPriceDesc();
+            sortPriceButton.setText("Sort by Price (Low to High)");
+        }
+
+        sortAscending = !sortAscending; // Toggle sorting order
+        displayServices(allServices);
     }
 
     @FXML
@@ -232,5 +253,7 @@ public class ApplicationServiceController {
             e.printStackTrace();
         }
     }
+
+
 
 }

@@ -26,11 +26,18 @@
                        style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
         </HBox>
 
+        <!-- Sort Button -->
+        <Button fx:id="sortPriceButton" text="Sort by Price (Low to High)" onAction="#sortServicesByPrice"
+                style="-fx-background-color: #512E1B; -fx-text-fill: white; -fx-font-size: 14px;
+                   -fx-padding: 10 20; -fx-border-radius: 5px;"/>
+
         <!-- Add New Service Button -->
         <Button fx:id="addServiceButton" text="+" onAction="#openServiceForumModal"
                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 28px;
                 -fx-min-width: 60px; -fx-min-height: 60px; -fx-border-radius: 50%;
                 -fx-font-weight: bold;"/>
+
+
     </HBox>
 
 

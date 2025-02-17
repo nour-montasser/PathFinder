@@ -73,12 +73,6 @@ public class ServiceOffreController {
         setupActionColumn();
     }
 
-    private void loadServices() {
-        List<ServiceOffre> services = serviceOffreService.getAll();
-        serviceList.setAll(services);
-        serviceTable.setItems(serviceList);
-    }
-
     private void setupActionColumn() {
         actionColumn.setCellFactory(param -> new TableCell<>() {
             private final Button optionsButton = new Button("⋮");
@@ -283,6 +277,20 @@ public class ServiceOffreController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+
+    @FXML
+    private void loadServices() {
+        List<ServiceOffre> services = serviceOffreService.getAllSortedByPrice(); // ✅ Fetch sorted services
+        serviceList.setAll(services);
+        serviceTable.setItems(serviceList);
+    }
+    @FXML
+    private void sortServicesByPrice() {
+        List<ServiceOffre> sortedServices = serviceOffreService.getAllSortedByPrice();
+        serviceList.setAll(sortedServices);
+        serviceTable.setItems(serviceList);
     }
 
 
