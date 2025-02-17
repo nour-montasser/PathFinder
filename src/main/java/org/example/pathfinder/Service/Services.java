@@ -9,7 +9,7 @@ public interface Services<T> {
     public void add(T t);
     public void update(T t);
 
-    void delete(T t, ListView<String> listView); // Delete & update UI
+    void delete(T t); // Delete & update UI
 
     public List<T> getall();
 

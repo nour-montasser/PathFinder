@@ -1,10 +1,7 @@
 package org.example.pathfinder.Service;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-import org.example.pathfinder.Model.Message;
 import org.example.pathfinder.App.DatabaseConnection;
-
+import org.example.pathfinder.Model.Message;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +12,10 @@ public class MessageService implements Services<Message> {
 
     public MessageService() {
         cnx = DatabaseConnection.getInstance().getCnx();
+
     }
+    private List<Message> allMessages = new ArrayList<>();
+
 
     @Override
     public void add(Message message) {
@@ -63,7 +63,7 @@ public class MessageService implements Services<Message> {
 
 
     @Override
-    public void delete(Message message, ListView<String> messageListView) {
+    public void delete(Message message) {
         String req = "DELETE FROM Message WHERE id_message = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
@@ -72,10 +72,6 @@ public class MessageService implements Services<Message> {
 
             if (rowsAffected > 0) {
                 System.out.println("Message deleted successfully.");
-
-                // Remove message from ListView
-                ObservableList<String> items = messageListView.getItems();
-                items.remove(message.getContent());
             } else {
                 System.out.println("Message not found.");
             }
@@ -84,6 +80,7 @@ public class MessageService implements Services<Message> {
             throw new RuntimeException("Error deleting message: " + e.getMessage(), e);
         }
     }
+
 
 
 
@@ -132,4 +129,87 @@ public class MessageService implements Services<Message> {
         }
         return null;
     }
+    public List<Message> getMessagesByChannelID(Long channelId) {
+        List<Message> messages = new ArrayList<>();
+        String query = "SELECT * FROM messages WHERE id_channel = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, channelId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String content = rs.getString("content");
+                    Long senderId = rs.getLong("sender_id");
+                    Long receiverId = rs.getLong("receiver_id");
+                    String messageType = rs.getString("message_type");
+
+                    messages.add(new Message(content, senderId, receiverId, messageType, channelId));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return messages;
+    }
+
+    public List<Message> getMessagesForChannel(long channelId) {
+        List<Message> messagesForChannel = new ArrayList<>();
+        for (Message message : allMessages) {
+            if (message.getIdChannel().equals(channelId)) {
+                messagesForChannel.add(message);
+            }
+        }
+        return messagesForChannel;
+    }
+    public List<Message> getMessagesByChannelId(long channelId) {
+        List<Message> messages = new ArrayList<>();
+        String req = "SELECT * FROM Message WHERE id_channel = ?";  // Use placeholder for parameter
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {  // Use PreparedStatement to avoid SQL injection
+            stm.setLong(1, channelId);  // Set the channelId parameter
+
+            ResultSet rs = stm.executeQuery();  // Execute query
+
+            while (rs.next()) {
+                Message message = new Message(
+                        rs.getString("content"),
+                        rs.getLong("id_message"),
+                        rs.getLong("id_user_sender"),
+                        rs.getString("media"),
+                        rs.getLong("id_channel")
+                );
+                messages.add(message);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving messages: " + e.getMessage(), e);
+        }
+        return messages;
+    }
+    public long getChannelIdBetweenUsers(long userId, long selectedUserId) {
+        String req = "SELECT id_channel " +
+                "FROM Channel " +
+                "WHERE (id_user1 = ? AND id_user2 = ?) OR (id_user1 = ? AND id_user2 = ?)";
+
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
+            stm.setLong(1, userId);  // Set the first userId
+            stm.setLong(2, selectedUserId);  // Set the second selectedUserId
+            stm.setLong(3, selectedUserId);  // Set the second userId first
+            stm.setLong(4, userId);  // Set the first userId second
+
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return rs.getLong("id_channel");  // Return the channelId
+            } else {
+                throw new RuntimeException("No channel found between the two users.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving channel ID: " + e.getMessage(), e);
+        }
+    }
+
+
+
+
+
+
 }

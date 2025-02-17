@@ -1,16 +1,24 @@
 package org.example.pathfinder.Controller;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import org.example.pathfinder.Service.MessageService;
 import org.example.pathfinder.Model.Message;
+import org.example.pathfinder.Service.ChannelService;
+import org.example.pathfinder.Service.MessageService;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MessageController {
+    private UserController userController;
+    private ChannelService channelService;
 
     @FXML
     private TextField messageInput;  // Message input field
@@ -23,13 +31,24 @@ public class MessageController {
 
     private MessageService messageService;
 
+
     public MessageController() {
-        messageService = new MessageService();  // Initialize the message service
+        messageService = new MessageService();
+        userController = new UserController();
+        channelService = new ChannelService();  // Initialize ChannelService
     }
+
 
     @FXML
     private void initialize() {
-        // Handle the button click for sending the message
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Channel.fxml"));
+        Parent root = null;  // Load the FXML layout
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Scene scene = new Scene(root);
         sendButton.setOnMouseClicked(event -> sendMessage());
 
     }
@@ -43,7 +62,7 @@ public class MessageController {
             return;
         }
 
-        Message message = new Message(content, 1L, 1L, "text", 2L);
+        Message message = new Message(content, 1L, 1L, "text", 9L);
         messageService.add(message);  // Add to database
 
         // Update UI after adding the message
@@ -64,7 +83,12 @@ public class MessageController {
         // Find the message in the database by content
         for (Message message : messageService.getall()) {
             if (message.getContent().equals(selectedMessage)) {
-                messageService.delete(message, messageListView);  // Call delete method
+                messageService.delete(message);  // Call delete method
+
+                // Remove the deleted message from ListView
+                ObservableList<String> items = messageListView.getItems();
+                items.remove(selectedMessage);
+
                 showAlert(Alert.AlertType.INFORMATION, "Message Deleted", "Message has been deleted successfully.");
                 return;
             }
@@ -72,6 +96,8 @@ public class MessageController {
 
         showAlert(Alert.AlertType.ERROR, "Error", "Message not found in database.");
     }
+
+
 
     @FXML
     private void updateMessage() {
@@ -120,4 +146,15 @@ public class MessageController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    private void displayMessages(List<Message> messages) {
+        // Clear any previous messages from the ListView
+        messageListView.getItems().clear();
+
+        // Loop through the messages and add each one to the ListView
+        for (Message message : messages) {
+            messageListView.getItems().add(message.getContent()); // Assuming you're showing the message content
+        }
+    }
+
+
 }
