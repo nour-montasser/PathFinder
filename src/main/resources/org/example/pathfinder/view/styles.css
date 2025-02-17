@@ -1,0 +1,5 @@
+.vbox:focused {
+    -fx-border-color: transparent;
+    -fx-background-color: inherit;
+    -fx-effect: null;
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="523.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.LoginController">
+    <VBox alignment="CENTER" prefHeight="522.0" prefWidth="350.0" spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10;">
+      <ImageView fitHeight="82.0" fitWidth="84.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../Sources/pathfinder_logo_compass.png" />
+         </image>
+      </ImageView>
+
+        <!-- Title -->
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Login Form" />
+
+        <!-- Toggle Login/Signup -->
+        <HBox spacing="5" />
+
+        <!-- Email Field -->
+        <TextField fx:id="EmailAddressText" promptText="Email Address" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+        <!-- Password Field -->
+        <PasswordField fx:id="passwordText" promptText="Password" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+        <!-- Signup Button -->
+        <Button onMouseClicked="#signInClicked" style="-fx-background-color: #b49474; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5;" text="Sign in" />
+
+        <!-- Login Link -->
+        <HBox spacing="5">
+            <Label style="-fx-font-size: 12px;" text="Already have an account?" />
+            <Label onMouseClicked="#registerChange" style="-fx-text-fill: #b49474; -fx-font-size: 12px; -fx-cursor: hand;" text="Register here" textFill="#b49474" />
+        </HBox>
+    </VBox>
+</AnchorPane>
