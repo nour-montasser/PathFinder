@@ -1,0 +1,40 @@
+/* Global Styling */
+* {
+    -fx-font-family: "Arial";
+}
+
+/* Navbar Styling */
+.navbar {
+    -fx-background-color: #3B261D; /* Dark Brown */
+    -fx-pref-height: 60px;
+}
+
+.navbar-content {
+    -fx-padding: 10px 50px;
+    -fx-pref-width: 100%;
+    -fx-alignment: center;
+}
+
+/* Navigation Items */
+.nav-item {
+    -fx-text-fill: #F5E4C3; /* Light Beige */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.nav-item:hover {
+    -fx-text-fill: #D1B590; /* Slightly darker beige for hover effect */
+    -fx-underline: true;
+}
+
+/* Main Content Area */
+.main-content {
+    -fx-background-color: #F5EDE1; /* Soft Beige */
+    -fx-pref-height: 100%;
+    -fx-alignment: center;
+}
+
+/* Logo Styling */
+#logoImage {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.pathfinder.Controller.CVController"
+           prefWidth="1000" prefHeight="700">
+
+    <!-- Main Split Screen -->
+    <SplitPane dividerPositions="0.5">
+
+        <!-- Left Side (Scrollable Input Fields) -->
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <VBox spacing="15" alignment="TOP_CENTER" style="-fx-padding: 20;">
+
+                <!-- 🔹 Title -->
+                <Label text="Create CV" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+
+                <!-- CV Form -->
+                <VBox spacing="12" alignment="CENTER_LEFT">
+
+                    <!-- CV Title -->
+                    <TextField fx:id="titleField" promptText="CV Title"
+                               style="-fx-background-color: white; -fx-border-color: #3B261D; -fx-border-radius: 5;"/>
+
+                    <!-- CV Introduction -->
+                    <TextArea fx:id="introductionField" promptText="CV Introduction" prefRowCount="3"
+                              style="-fx-background-color: white; -fx-border-color: #3B261D; -fx-border-radius: 5;"/>
+
+                    <!-- Skills Dropdown -->
+                    <Label text="Select a Skill:" style="-fx-text-fill: #3B261D; -fx-font-size: 16px;"/>
+                    <ComboBox fx:id="skillsDropdown" maxWidth="300" promptText="Select a skill"
+                              style="-fx-background-color: white; -fx-border-color: #3B261D;"/>
+                    <Button text="Fetch Skills" onAction="#fetchSkills"
+                            style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
+
+                </VBox>
+
+                <!-- 🔹 Language Section -->
+                <VBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Languages" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+                    <VBox fx:id="languageContainer" spacing="10"/>
+
+                    <!-- Language Selection -->
+                    <ComboBox fx:id="languagesDropdown" editable="true" maxWidth="300" promptText="Select a language"
+                              onAction="#showLanguageLevelSelection"
+                              style="-fx-background-color: white; -fx-border-color: #3B261D;"/>
+
+                    <!-- Language Level Selection -->
+                    <HBox fx:id="languageLevelContainer" spacing="5" visible="false">
+                        <Label text="Select Level:" style="-fx-text-fill: #3B261D;"/>
+                        <HBox fx:id="levelDots" spacing="5">
+                            <Label text="●" style="-fx-font-size: 16px; -fx-text-fill: gray;" onMouseClicked="#setLanguageLevel1"/>
+                            <Label text="●" style="-fx-font-size: 16px; -fx-text-fill: gray;" onMouseClicked="#setLanguageLevel2"/>
+                            <Label text="●" style="-fx-font-size: 16px; -fx-text-fill: gray;" onMouseClicked="#setLanguageLevel3"/>
+                            <Label text="●" style="-fx-font-size: 16px; -fx-text-fill: gray;" onMouseClicked="#setLanguageLevel4"/>
+                            <Label text="●" style="-fx-font-size: 16px; -fx-text-fill: gray;" onMouseClicked="#setLanguageLevel5"/>
+                        </HBox>
+                    </HBox>
+
+                    <Button text="Add Language" onAction="#addLanguage"
+                            style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
+                </VBox>
+
+                <!-- 🔹 Experience Section -->
+                <VBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Experiences" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+                    <VBox fx:id="experienceContainer" spacing="10"/>
+                    <Button text="Add Experience" onAction="#showExperienceModal"
+                            style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
+                </VBox>
+
+                <!-- 🔹 Certificate Section -->
+                <VBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Certificates" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+                    <VBox fx:id="certificateContainer" spacing="10"/>
+                    <Button text="Add Certificate" onAction="#showCertificateModal"
+                            style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
+                </VBox>
+
+                <!-- 🔹 Submit Button -->
+                <Button text="Submit CV" onAction="#submitCV"
+                        style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 16px; -fx-border-radius: 5;"/>
+            </VBox>
+        </ScrollPane>
+
+        <!-- Right Side (Fixed CV Preview) -->
+        <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+            <Label text="CV Preview" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+            <TextArea fx:id="cvPreview" editable="false" wrapText="true" prefHeight="600"
+                      style="-fx-background-color: white; -fx-border-color: #3B261D; -fx-border-radius: 5;"/>
+        </VBox>
+
+
+    </SplitPane>
+
+    <!-- Experience Modal Overlay (Gray Background) -->
+    <StackPane fx:id="experienceModalOverlay"
+               visible="false"
+               style="-fx-background-color: rgba(0, 0, 0, 0.5);"
+               onMouseClicked="#hideExperienceModal">
+
+        <!-- Centered Modal Box -->
+        <VBox fx:id="experienceModal"
+              spacing="10"
+              alignment="CENTER"
+             style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #3B261D; -fx-border-radius: 5;"
+              maxWidth="400" maxHeight="350"
+              onMouseClicked="#consumeClick">
+
+            <Label text="Add Experience" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;" />
+            <ComboBox fx:id="typeDropdown" />
+            <TextField fx:id="positionField" promptText="Position" />
+            <TextField fx:id="locationField" promptText="Location Name" />
+            <TextArea fx:id="descriptionField" promptText="Description" prefRowCount="3" />
+            <DatePicker fx:id="startDatePicker" promptText="Start Date" />
+            <DatePicker fx:id="endDatePicker" promptText="End Date" />
+
+            <HBox spacing="10">
+                <Button text="Add" onAction="#addExperience" />
+                <Button text="Cancel" onAction="#hideExperienceModalCancel" />
+            </HBox>
+        </VBox>
+    </StackPane>
+
+    <!-- Certificate Modal Overlay (Gray Background) -->
+    <StackPane fx:id="certificateModalOverlay"
+               visible="false"
+               style="-fx-background-color: rgba(0, 0, 0, 0.5);"
+               onMouseClicked="#hideCertificateModal">
+
+        <!-- Centered Modal Box -->
+        <VBox fx:id="certificateModal"
+              spacing="10"
+              alignment="CENTER"
+              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #3B261D; -fx-border-radius: 5;"
+              maxWidth="400" maxHeight="400"
+              onMouseClicked="#consumeClick">
+
+            <Label text="Add Certificate" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;" />
+            <TextField fx:id="certificateNameField" promptText="Certificate Name" />
+            <TextField fx:id="certificateAssociationField" promptText="Issuing Organization" />
+            <TextArea fx:id="certificateDescriptionField" promptText="Description" prefRowCount="3" /> <!-- Added Description -->
+            <DatePicker fx:id="certificateDatePicker" promptText="Issue Date" />
+
+            <!-- Upload File Button -->
+            <Button text="Upload Media" onAction="#uploadCertificateMedia" />
+            <Label fx:id="certificateMediaLabel" text="No file selected" />
+
+            <HBox spacing="10">
+                <Button text="Add" onAction="#addCertificate" />
+                <Button text="Cancel" onAction="#hideCertificateModalCancel" />
+            </HBox>
+        </VBox>
+    </StackPane>
+
+</StackPane>

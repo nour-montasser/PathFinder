@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.example.pathfinder.Model.CV;
 
 import org.example.pathfinder.Service.CVService;
@@ -110,15 +109,22 @@ public class CVShowController implements Initializable {
     @FXML
     private void openCVForm() {
         try {
-            // Load the new FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/CV-forum.fxml"));
-            Parent newRoot = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/CV-Forum.fxml"));
+            Parent cvForumView = loader.load();
 
-            // Get the current stage
-            Stage stage = (Stage) addCVButton.getScene().getWindow();
-            stage.getScene().setRoot(newRoot); // Replace the current scene content with the new one
+            // Get the main FrontOfficeController from the scene
+            FrontOfficeController mainController = (FrontOfficeController)
+                    addCVButton.getScene().getUserData(); // 🔥 This gets the controller
+
+            if (mainController != null) {
+                mainController.loadView(cvForumView);
+            } else {
+                System.err.println("❌ FrontOfficeController is NULL");
+            }
+
         } catch (IOException e) {
-            System.err.println("❌ Error loading CV-Forum.fxml: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("❌ Failed to load CV-Forum.fxml");
         }
     }
 
@@ -390,20 +396,33 @@ public class CVShowController implements Initializable {
     @FXML
     private void openCVFormWithData(int cvId) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/CV-forum.fxml"));
-            Parent newRoot = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/CV-Forum.fxml"));
+            Parent cvForumView = loader.load();
+
+            // ✅ Update last viewed timestamp
             cvService.updateLastViewed(cvId);
-            // 🔥 Pass the CV ID to CVController
+
+            // ✅ Pass CV ID to CVController
             CVController cvController = loader.getController();
             cvController.loadCVData(cvId);
 
-            // 🔥 Get the current stage and update the scene
-            Stage stage = (Stage) cvGridPane.getScene().getWindow();
-            stage.getScene().setRoot(newRoot);
+            // ✅ Retrieve main FrontOfficeController from the scene
+            FrontOfficeController mainController = (FrontOfficeController)
+                    cvGridPane.getScene().getUserData(); // This gets the controller
+
+            if (mainController != null) {
+                mainController.loadView(cvForumView); // 🔥 Inject into main layout
+            } else {
+                System.err.println("❌ FrontOfficeController is NULL! Cannot load CV-Forum.");
+            }
+
         } catch (IOException e) {
-            System.err.println("❌ Error loading CV-Forum.fxml: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("❌ Failed to load CV-Forum.fxml");
         }
     }
+
+
 
     private void onSearchTextChanged(String searchText) {
         if (searchText == null || searchText.trim().isEmpty()) {

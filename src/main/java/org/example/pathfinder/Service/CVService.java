@@ -285,6 +285,7 @@ public class CVService implements Services<CV> {
         return cvs;
     }
 
+
     public void makeCopyOfCV(int originalCvId) {
         ExperienceService experienceService = new ExperienceService();
         LanguageService languageService = new LanguageService();
@@ -345,6 +346,7 @@ public class CVService implements Services<CV> {
 
         System.out.println("✅ CV Copy Successful! New CV ID: " + newCvId);
     }
+
 
 
 }

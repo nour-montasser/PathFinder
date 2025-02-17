@@ -420,20 +420,25 @@ public class CVController {
 
     private void addLanguageBox(Language language) {
         HBox languageBox = new HBox(10);
-        languageBox.setStyle("-fx-border-color: gray; -fx-border-width: 1; -fx-padding: 10;");
+        languageBox.setStyle("-fx-background-color: #F5EDE1; -fx-border-color: #3B261D; -fx-border-width: 2px; " +
+                "-fx-padding: 10px; -fx-border-radius: 8px; -fx-alignment: center-left;");
+
 
         Label languageLabel = new Label(language.getName() + " - " + language.getLevel());
+        languageLabel.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px; -fx-font-weight: bold;");
+
 
         HBox dotContainer = new HBox(5);
         for (int i = 1; i <= 5; i++) {
             Label dot = new Label(i <= convertLevelToDots(language.getLevel()) ? "⚫" : "⚪");
+            dot.setStyle("-fx-font-size: 14px; -fx-text-fill: #3B261D;");
             dotContainer.getChildren().add(dot);
         }
 
-        Button editButton = new Button("Edit");
+        Button editButton = createStyledButton("Edit", "#4CAF50", "#FFFFFF");
         editButton.setOnAction(e -> editLanguage(language, languageBox));
 
-        Button deleteButton = new Button("Delete");
+        Button deleteButton = createStyledButton("Delete", "#FF5555", "#FFFFFF");
         deleteButton.setOnAction(e -> deleteLanguage(language, languageBox));
 
         languageBox.getChildren().addAll(languageLabel, dotContainer, editButton, deleteButton);
@@ -561,15 +566,18 @@ public class CVController {
     @FXML
     private void addExperienceBox(Experience experience) {
         HBox experienceBox = new HBox(10);
-        experienceBox.setStyle("-fx-border-color: gray; -fx-border-width: 1; -fx-padding: 10;");
+
+        experienceBox.setStyle("-fx-background-color: #F5EDE1; -fx-border-color: #3B261D; -fx-border-width: 2px; " +
+                "-fx-padding: 10px; -fx-border-radius: 8px; -fx-alignment: center-left;");
 
         Label details = new Label(
                 experience.getType() + ": " + experience.getPosition() + " at " + experience.getLocationName() +
                         " (" + experience.getStartDate() + " to " + experience.getEndDate() + ")\n" +
                         "Description: " + experience.getDescription() // ADDED DESCRIPTION
         );
+        details.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        Button editButton = new Button("Edit");
+        Button editButton = createStyledButton("Edit", "#4CAF50", "#FFFFFF");
         editButton.setOnAction(e -> {
             editingExperience = experience;
             typeDropdown.setValue(experience.getType());
@@ -582,7 +590,7 @@ public class CVController {
             showExperienceModal();
         });
 
-        Button deleteButton = new Button("Delete");
+        Button deleteButton = createStyledButton("Delete", "#FF5555", "#FFFFFF");
         deleteButton.setOnAction(e -> {
             experiences.remove(experience);
             experienceContainer.getChildren().remove(experienceBox);
@@ -896,17 +904,20 @@ public class CVController {
     @FXML
     private void addCertificateBox(Certificate certificate) {
         HBox certificateBox = new HBox(10);
-        certificateBox.setStyle("-fx-border-color: gray; -fx-border-width: 1; -fx-padding: 10;");
+        certificateBox.setStyle("-fx-background-color: #F5EDE1; -fx-border-color: #3B261D; -fx-border-width: 2px; " +
+                "-fx-padding: 10px; -fx-border-radius: 8px; -fx-alignment: center-left;");
 
         Label details = new Label(
                 certificate.getTitle() + " (" + certificate.getAssociation() + ") - " + certificate.getDate() +
                         "\nDescription: " + certificate.getDescription() // Display description
         );
+        details.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        Button openFileButton = new Button("Open");
+
+        Button openFileButton = createStyledButton("Open", "#3B261D", "#FFFFFF");
         openFileButton.setOnAction(e -> openCertificateFile(certificate.getMedia()));
 
-        Button editButton = new Button("Edit");
+        Button editButton = createStyledButton("Edit", "#4CAF50", "#FFFFFF");
         editButton.setOnAction(e -> {
             editingCertificate = certificate;
             certificateNameField.setText(certificate.getTitle());
@@ -917,7 +928,7 @@ public class CVController {
             showCertificateModal();
         });
 
-        Button deleteButton = new Button("Delete");
+        Button deleteButton = createStyledButton("Delete", "#FF5555", "#FFFFFF");
         deleteButton.setOnAction(e -> {
             certificates.remove(certificate);
             certificateContainer.getChildren().remove(certificateBox);
@@ -1034,7 +1045,13 @@ public class CVController {
             System.err.println("❌ CV not found for ID: " + cvId);
         }
     }
-
+    // 🔥 Styled Button Factory
+    private Button createStyledButton(String text, String bgColor, String textColor) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + "; " +
+                "-fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 8px 12px; -fx-border-radius: 6px;");
+        return button;
+    }
 
 
 
