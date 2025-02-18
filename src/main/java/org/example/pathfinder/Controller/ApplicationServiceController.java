@@ -25,28 +25,29 @@ public class ApplicationServiceController {
     private GridPane servicesGrid; // Grid for displaying services
 
     @FXML
-    private Button addServiceButton , sortPriceButton; // Floating "Add Service" button
+    private Button addServiceButton; // Floating "Add Service" button
 
     @FXML
     private TextField searchField; // Search bar
 
     @FXML
-    private PieChart revenuePieChart;
+    private ComboBox<String> sortDropdown; // Sorting dropdown
 
+    @FXML
+    private PieChart revenuePieChart;
 
     private final ServiceOffreService serviceOffreService = new ServiceOffreService();
     private List<ServiceOffre> allServices; // Store all services initially
-    private boolean sortAscending = true;
 
     @FXML
     public void initialize() {
+
+
         loadServices(); // Load services at startup
         searchField.textProperty().addListener((obs, oldVal, newVal) -> onSearchTextChanged(newVal));
 
-        // Attach event to sorting button
-        if (sortPriceButton != null) {
-            sortPriceButton.setOnAction(event -> sortServicesByPrice());
-        }
+        // ✅ Ensure sorting dropdown is initialized
+        setupSortingDropdown();
     }
 
     private void loadServices() {
@@ -71,24 +72,31 @@ public class ApplicationServiceController {
 
     private StackPane createServiceCard(ServiceOffre service) {
         StackPane card = new StackPane();
-        card.setStyle("-fx-background-color: #6A8283; " + // Slate Gray
+        card.setStyle("-fx-background-color: #FFF; " +
                 "-fx-border-radius: 10px; " +
                 "-fx-padding: 15px; " +
                 "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 10, 0, 0, 5); " +
-                "-fx-min-width: 250px; " +
-                "-fx-min-height: 200px;");
+                "-fx-min-width: 300px; " +
+                "-fx-max-width: 300px; " +
+                "-fx-min-height: 220px; " +
+                "-fx-max-height: 220px;");
 
         VBox content = new VBox(10);
         content.getChildren().addAll(
-                createLabel("Service: " + service.getTitle(), 18, "white", true), // White text
-                createLabel("Price: $" + service.getPrice(), 16, "#98BFD1", true), // Sky Blue
-                createLabel("Description: " + service.getDescription(), 14, "white", false),
-                createLabel("Posted on: " + service.getDate_posted(), 14, "white", false),
-                createDetailsButton(service),
-                createMenuButton(service) // ✅ Restored Edit/Delete menu
+                createLabel("Service: " + service.getTitle(), 18, "black", true),
+                createLabel("Price: $" + service.getPrice(), 16, "#98BFD1", true),
+                createLabel("Posted on: " + service.getDate_posted(), 14, "black", false),
+                createDetailsButton(service)
         );
 
-        card.getChildren().add(content);
+        HBox topBar = new HBox();
+        topBar.setStyle("-fx-alignment: top-right;");
+        topBar.getChildren().add(createMenuButton(service));
+
+        VBox cardLayout = new VBox();
+        cardLayout.getChildren().addAll(topBar, content);
+
+        card.getChildren().add(cardLayout);
         return card;
     }
 
@@ -102,7 +110,7 @@ public class ApplicationServiceController {
 
     private Button createDetailsButton(ServiceOffre service) {
         Button detailsButton = new Button("View Requests");
-        detailsButton.setStyle("-fx-background-color: #512E1B; " + // Sky Blue
+        detailsButton.setStyle("-fx-background-color: #512E1B; " +
                 "-fx-text-fill: white; " +
                 "-fx-font-size: 16px; " +
                 "-fx-border-radius: 8px; " +
@@ -117,45 +125,56 @@ public class ApplicationServiceController {
         MenuItem deleteItem = new MenuItem("Delete");
         MenuItem viewStatsItem = new MenuItem("View Statistics");
 
-        menuButton.getItems().addAll(editItem, deleteItem,viewStatsItem);
+        menuButton.getItems().addAll(editItem, deleteItem, viewStatsItem);
         editItem.setOnAction(event -> handleEditService(service));
         deleteItem.setOnAction(event -> handleDeleteService(service));
         viewStatsItem.setOnAction(event -> openFreelancerStats());
 
-
-
         return menuButton;
     }
 
-    private void openApplicationDetails(int serviceId) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/showApplicationDetails.fxml"));
-            Parent root = loader.load();
-
-            ShowApplicationDetailsController controller = loader.getController();
-            controller.setServiceId(serviceId);
-
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Application Details");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void setupSortingDropdown() {
+        if (sortDropdown == null) {
+            System.out.println("⚠ sortDropdown is NULL! Check your FXML file.");
+            return;
         }
+
+        // ✅ Populate sorting options
+        sortDropdown.getItems().addAll(
+                "Price: Low to High",
+                "Price: High to Low",
+                "Newest First",
+                "Oldest First"
+        );
+
+        // ✅ Set default value
+        sortDropdown.setValue("Price: Low to High");
+
+        // ✅ Attach sorting logic
+        sortDropdown.setOnAction(event -> sortServices());
     }
 
+    private void sortServices() {
+        if (sortDropdown == null || sortDropdown.getValue() == null) return;
 
-    @FXML
-    private void sortServicesByPrice() {
-        if (sortAscending) {
-            allServices = serviceOffreService.getAllSortedByPrice();
-            sortPriceButton.setText("Sort by Price (High to Low)");
-        } else {
-            allServices = serviceOffreService.getAllSortedByPriceDesc();
-            sortPriceButton.setText("Sort by Price (Low to High)");
+        String selectedSort = sortDropdown.getValue();
+        switch (selectedSort) {
+            case "Price: Low to High":
+                allServices = serviceOffreService.getAllSortedByPrice();
+                break;
+            case "Price: High to Low":
+                allServices = serviceOffreService.getAllSortedByPriceDesc();
+                break;
+            case "Newest First":
+                allServices = serviceOffreService.getAllSortedByDateDesc();
+                break;
+            case "Oldest First":
+                allServices = serviceOffreService.getAllSortedByDate();
+                break;
+            default:
+                return;
         }
 
-        sortAscending = !sortAscending; // Toggle sorting order
         displayServices(allServices);
     }
 
@@ -188,6 +207,11 @@ public class ApplicationServiceController {
             Parent root = loader.load();
 
             ServiceOffreController controller = loader.getController();
+            // ✅ Ensure controller is properly initialized
+            if (controller == null) {
+                System.err.println("❌ ERROR: ServiceOffreController is NULL!");
+                return;
+            }
             controller.loadServiceData(service);
 
             Stage modalStage = new Stage();
@@ -240,6 +264,23 @@ public class ApplicationServiceController {
         alert.showAndWait();
     }
 
+    private void openApplicationDetails(int serviceId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/showApplicationDetails.fxml"));
+            Parent root = loader.load();
+
+            ShowApplicationDetailsController controller = loader.getController();
+            controller.setServiceId(serviceId);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Application Details");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void openFreelancerStats() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/stats.fxml"));
@@ -257,3 +298,4 @@ public class ApplicationServiceController {
 
 
 }
+

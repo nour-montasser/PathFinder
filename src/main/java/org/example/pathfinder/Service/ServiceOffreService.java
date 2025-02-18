@@ -1,6 +1,5 @@
 package org.example.pathfinder.Service;
 
-import javafx.scene.chart.PieChart;
 import org.example.pathfinder.Model.ServiceOffre;
 import org.example.pathfinder.App.DatabaseConnection;
 import java.sql.*;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ServiceOffreService implements Services<ServiceOffre> {
     private Connection cnx;
@@ -21,9 +19,8 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     public void add(ServiceOffre serviceOffre) {
         String req = "INSERT INTO serviceoffre (id_user, title, description, date_posted, field, price, required_experience, required_education, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try {
-            PreparedStatement stm = cnx.prepareStatement(req);
-            stm.setInt(1, serviceOffre.getId_user());  // Add user ID
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
+            stm.setInt(1, serviceOffre.getId_user());
             stm.setString(2, serviceOffre.getTitle());
             stm.setString(3, serviceOffre.getDescription());
             stm.setDate(4, serviceOffre.getDate_posted());
@@ -33,7 +30,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
             stm.setString(8, serviceOffre.getRequired_education());
             stm.setString(9, serviceOffre.getSkills());
             stm.executeUpdate();
-            System.out.println("Service added successfully!");
+            System.out.println("✅ Service added successfully!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -43,8 +40,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     public void update(ServiceOffre serviceOffre) {
         String req = "UPDATE serviceoffre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?, required_experience = ?, required_education = ?, skills = ? WHERE id_service = ?";
 
-        try {
-            PreparedStatement stm = cnx.prepareStatement(req);
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setString(1, serviceOffre.getTitle());
             stm.setString(2, serviceOffre.getDescription());
             stm.setDate(3, serviceOffre.getDate_posted());
@@ -55,7 +51,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
             stm.setString(8, serviceOffre.getSkills());
             stm.setInt(9, serviceOffre.getId_service());
             stm.executeUpdate();
-            System.out.println("Service updated successfully!");
+            System.out.println("✅ Service updated successfully!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,14 +61,13 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     public void delete(int id) {
         String req = "DELETE FROM serviceoffre WHERE id_service = ?";
 
-        try {
-            PreparedStatement stm = cnx.prepareStatement(req);
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setInt(1, id);
             int rowsAffected = stm.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Service deleted successfully!");
+                System.out.println("✅ Service deleted successfully!");
             } else {
-                System.out.println("No service found with the given ID.");
+                System.out.println("⚠ No service found with the given ID.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,21 +79,11 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         String req = "SELECT * FROM serviceoffre WHERE id_service = ?";
         ServiceOffre serviceOffre = null;
 
-        try {
-            PreparedStatement stm = cnx.prepareStatement(req);
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setInt(1, id);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                serviceOffre = new ServiceOffre();
-                serviceOffre.setId_service(rs.getInt("id_service"));
-                serviceOffre.setTitle(rs.getString("title"));
-                serviceOffre.setDescription(rs.getString("description"));
-                serviceOffre.setDate_posted(rs.getDate("date_posted"));
-                serviceOffre.setField(rs.getString("field"));
-                serviceOffre.setPrice(rs.getDouble("price"));
-                serviceOffre.setRequired_experience(rs.getString("required_experience"));
-                serviceOffre.setRequired_education(rs.getString("required_education"));
-                serviceOffre.setSkills(rs.getString("skills"));
+                serviceOffre = mapResultSetToService(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,33 +94,54 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public List<ServiceOffre> getAll() {
-        List<ServiceOffre> services = new ArrayList<>();
-        String req = "SELECT * FROM serviceoffre ORDER BY date_posted DESC";
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted DESC");
+    }
 
-        try {
-            Statement stm = cnx.createStatement();
-            ResultSet rs = stm.executeQuery(req);
+    public List<ServiceOffre> getAllSortedByPrice() {
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY price ASC"); // ✅ Least to most expensive
+    }
+
+    public List<ServiceOffre> getAllSortedByPriceDesc() {
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY price DESC"); // ✅ Most to least expensive
+    }
+
+    public List<ServiceOffre> getAllSortedByDate() {
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted ASC"); // ✅ Oldest first
+    }
+
+    public List<ServiceOffre> getAllSortedByDateDesc() {
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted DESC"); // ✅ Newest first
+    }
+
+    private List<ServiceOffre> getServicesByQuery(String query) {
+        List<ServiceOffre> services = new ArrayList<>();
+
+        try (Statement stm = cnx.createStatement();
+             ResultSet rs = stm.executeQuery(query)) {
 
             while (rs.next()) {
-                ServiceOffre s = new ServiceOffre();
-                s.setId_service(rs.getInt("id_service"));
-                s.setTitle(rs.getString("title"));
-                s.setDescription(rs.getString("description"));
-                s.setDate_posted(rs.getDate("date_posted"));
-                s.setField(rs.getString("field"));
-                s.setPrice(rs.getDouble("price"));
-                s.setRequired_experience(rs.getString("required_experience"));
-                s.setRequired_education(rs.getString("required_education"));
-                s.setSkills(rs.getString("skills"));
-                services.add(s);
+                services.add(mapResultSetToService(rs));
             }
-
-            return services;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return services;
     }
+
+    private ServiceOffre mapResultSetToService(ResultSet rs) throws SQLException {
+        ServiceOffre service = new ServiceOffre();
+        service.setId_service(rs.getInt("id_service"));
+        service.setTitle(rs.getString("title"));
+        service.setDescription(rs.getString("description"));
+        service.setDate_posted(rs.getDate("date_posted"));
+        service.setField(rs.getString("field"));
+        service.setPrice(rs.getDouble("price"));
+        service.setRequired_experience(rs.getString("required_experience"));
+        service.setRequired_education(rs.getString("required_education"));
+        service.setSkills(rs.getString("skills"));
+        return service;
+    }
+
     public Map<String, Double> getRevenueBreakdownForFreelancer(int freelancerId) {
         Map<String, Double> revenueMap = new HashMap<>();
         String query = "SELECT so.title AS service_name, SUM(a.price_offre) AS total_earnings " +
@@ -144,10 +150,9 @@ public class ServiceOffreService implements Services<ServiceOffre> {
                 "WHERE a.status = 'Accepted' AND so.id_user = ? " +
                 "GROUP BY so.title";
 
-        // Ensure the connection is open before executing the query
         if (DatabaseConnection.getInstance().isConnectionClosed()) {
             System.out.println("⚠ Database connection was closed. Reconnecting...");
-            DatabaseConnection.getInstance(); // Ensure connection is re-established
+            DatabaseConnection.getInstance();
         }
 
         try (PreparedStatement stm = DatabaseConnection.getInstance().getCnx().prepareStatement(query)) {
@@ -166,40 +171,4 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         }
         return revenueMap;
     }
-
-    public List<ServiceOffre> getAllSortedByPrice() {
-        List<ServiceOffre> services = new ArrayList<>();
-        String req = "SELECT * FROM serviceoffre ORDER BY price ASC"; // ✅ Sorting by price (least to most)
-
-        try {
-            Statement stm = cnx.createStatement();
-            ResultSet rs = stm.executeQuery(req);
-
-            while (rs.next()) {
-                ServiceOffre s = new ServiceOffre();
-                s.setId_service(rs.getInt("id_service"));
-                s.setTitle(rs.getString("title"));
-                s.setDescription(rs.getString("description"));
-                s.setDate_posted(rs.getDate("date_posted"));
-                s.setField(rs.getString("field"));
-                s.setPrice(rs.getDouble("price")); // ✅ Sorting based on this
-                s.setRequired_experience(rs.getString("required_experience"));
-                s.setRequired_education(rs.getString("required_education"));
-                s.setSkills(rs.getString("skills"));
-                services.add(s);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return services;
-    }
-    public List<ServiceOffre> getAllSortedByPriceDesc() {
-        return getAllSortedByPrice().stream()
-                .sorted((s1, s2) -> Double.compare(s2.getPrice(), s1.getPrice()))
-                .collect(Collectors.toList());
-    }
-
-
-
 }

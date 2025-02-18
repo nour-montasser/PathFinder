@@ -2,6 +2,7 @@ package org.example.pathfinder.Controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import org.example.pathfinder.Model.ApplicationService;
 import org.example.pathfinder.Model.ServiceOffre;
@@ -29,6 +30,9 @@ public class ClientDashboardController {
     @FXML
     private TextField searchField; // Search bar
 
+    @FXML
+    private ComboBox<String> sortDropdown; // Sorting dropdown menu
+
     private final ServiceOffreService serviceOffreService = new ServiceOffreService();
     private final ApplicationServiceService applicationServiceService = new ApplicationServiceService();
     private List<ServiceOffre> allServices; // Store all services initially
@@ -45,10 +49,11 @@ public class ClientDashboardController {
 
         loadServices(); // Load services at startup
 
-        // ✅ Add dynamic search listener
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldVal, newVal) -> onSearchTextChanged(newVal));
         }
+
+        setupSortingDropdown(); // Initialize sorting dropdown
     }
 
     /**
@@ -69,12 +74,11 @@ public class ClientDashboardController {
         }
 
         servicesGrid.getChildren().clear();
-
-        int column = 0;
-        int row = 0;
+        int column = 0, row = 0;
 
         for (ServiceOffre service : services) {
-            servicesGrid.add(createServiceCard(service), column++, row);
+            StackPane serviceCard = createServiceCard(service);
+            servicesGrid.add(serviceCard, column++, row);
 
             if (column == 3) { // 3 cards per row
                 column = 0;
@@ -92,21 +96,19 @@ public class ClientDashboardController {
                 "-fx-border-radius: 10px; " +
                 "-fx-padding: 15px; " +
                 "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 10, 0, 0, 5); " +
-                "-fx-min-width: 250px; " +
-                "-fx-min-height: 200px;");
+                "-fx-min-width: 300px; " +
+                "-fx-max-width: 300px; " +
+                "-fx-min-height: 220px; " +
+                "-fx-max-height: 220px;");
 
         VBox content = new VBox(10);
+        content.getChildren().addAll(
+                createLabel("Service: " + service.getTitle(), 18, "#512E1B", true),
+                createLabel("Price: $" + service.getPrice(), 16, "#98BFD1", true),
+                createLabel("Posted on: " + service.getDate_posted(), 14, "black", false),
+                createApplyButton(service)
+        );
 
-        Label titleLabel = createLabel("Service: " + service.getTitle(), 18, "#512E1B", true);
-        Label priceLabel = createLabel("Starting Price: $" + service.getPrice(), 16, "#98BFD1", true);
-        Label descriptionLabel = createLabel("Description: " + service.getDescription(), 14, "black", false);
-        Label dateLabel = createLabel("Posted on: " + service.getDate_posted(), 14, "black", false);
-
-        Button applyButton = new Button("Apply");
-        applyButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px;");
-        applyButton.setOnAction(event -> openApplicationModal(service));
-
-        content.getChildren().addAll(titleLabel, priceLabel, descriptionLabel, dateLabel, applyButton);
         card.getChildren().add(content);
         return card;
     }
@@ -120,6 +122,16 @@ public class ClientDashboardController {
                 "-fx-font-size: " + fontSize + "px; " +
                 (bold ? "-fx-font-weight: bold;" : ""));
         return label;
+    }
+
+    /**
+     * Creates an "Apply" button for clients.
+     */
+    private Button createApplyButton(ServiceOffre service) {
+        Button applyButton = new Button("Apply");
+        applyButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px;");
+        applyButton.setOnAction(event -> openApplicationModal(service));
+        return applyButton;
     }
 
     /**
@@ -151,9 +163,6 @@ public class ClientDashboardController {
         dialog.showAndWait();
     }
 
-    /**
-     * Handles submitting an application when the user clicks "Submit".
-     */
     private void handleSubmitApplication(ServiceOffre service, String priceText) {
         if (priceText.isEmpty()) {
             showErrorAlert("Error", "Please enter a valid price!");
@@ -168,22 +177,15 @@ public class ClientDashboardController {
             return;
         }
 
-        // ✅ Validate that the offered price is at least the service's starting price
         if (offeredPrice < service.getPrice()) {
             showErrorAlert("Error", "Your offered price must be at least $" + service.getPrice());
             return;
         }
 
-        // Create new application entry
         ApplicationService application = new ApplicationService(
-                0, // Auto-incremented ID
-                offeredPrice,
-                0, // Default user ID, update when user authentication is available
-                "Pending",
-                service.getId_service()
+                0, offeredPrice, 0, "Pending", service.getId_service()
         );
 
-        // ✅ Save the application
         try {
             applicationServiceService.add(application);
             showSuccessAlert("Success", "Your application has been submitted!");
@@ -192,9 +194,53 @@ public class ClientDashboardController {
         }
     }
 
-    /**
-     * Handles search filtering for services.
-     */
+    private void setupSortingDropdown() {
+        if (sortDropdown == null) {
+            System.out.println("⚠ sortDropdown is NULL! Check your FXML file.");
+            return;
+        }
+        sortDropdown.getItems().addAll("Price: Low to High", "Price: High to Low", "Newest First", "Oldest First");
+        sortDropdown.setValue("Price: Low to High");
+        sortDropdown.setOnAction(event -> sortServices());
+    }
+
+    private void sortServices() {
+        String selectedSort = sortDropdown.getValue();
+
+        switch (selectedSort) {
+            case "Price: Low to High":
+                allServices = serviceOffreService.getAllSortedByPrice();
+                break;
+            case "Price: High to Low":
+                allServices = serviceOffreService.getAllSortedByPriceDesc();
+                break;
+            case "Newest First":
+                allServices = serviceOffreService.getAllSortedByDateDesc();
+                break;
+            case "Oldest First":
+                allServices = serviceOffreService.getAllSortedByDate();
+                break;
+        }
+
+        displayServices(allServices);
+    }
+
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showSuccessAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     private void onSearchTextChanged(String searchText) {
         if (searchText == null || searchText.trim().isEmpty()) {
             displayServices(allServices); // Show all services when search is empty
@@ -208,29 +254,4 @@ public class ClientDashboardController {
 
         displayServices(filteredServices);
     }
-
-    /**
-     * Show an error message in an alert box.
-     */
-    private void showErrorAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    /**
-     * Show a success message in an alert box.
-     */
-    private void showSuccessAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-
-
 }
