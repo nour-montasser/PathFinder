@@ -69,7 +69,7 @@ public class BackOfficeController {
     @FXML
     private void loadJobOffersPage() {
         setActiveButton(jobOffersButton);
-        loadPage("JobOffers.fxml");
+        loadPage("JobOfferList.fxml");
     }
 
     @FXML

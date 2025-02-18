@@ -47,11 +47,11 @@ public class CoverLetterService implements Services<CoverLetter> {
     }
 
     @Override
-    public void delete(CoverLetter coverLetter) {
+    public void delete(long id) {
         String req = "DELETE FROM CoverLetter WHERE id_CoverLetter = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
-            stm.setLong(1, coverLetter.getIdCoverLetter());
+            stm.setLong(1, id);
             stm.executeUpdate();
             System.out.println("Cover letter deleted successfully.");
         } catch (SQLException e) {

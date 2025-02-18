@@ -11,7 +11,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.ComboBox?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" spacing="10" style="-fx-padding: 100 20 20 20" fx:controller="org.example.pathfinder.Controller.JobOfferApplicationListController">
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" spacing="10" style="-fx-padding: 20" fx:controller="org.example.pathfinder.Controller.JobOfferApplicationListController">
 
     <!-- Job Offer Details Section -->
     <Label fx:id="jobOfferTitle"

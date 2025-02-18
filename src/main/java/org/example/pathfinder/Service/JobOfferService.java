@@ -56,11 +56,11 @@ public class JobOfferService implements Services<JobOffer> {
     }
 
     @Override
-    public void delete(JobOffer jobOffer) {
+    public void delete(long id) {
         String req = "DELETE FROM Job_offer WHERE id_offer = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
-            stm.setLong(1, jobOffer.getIdOffer());
+            stm.setLong(1, id);
             stm.executeUpdate();
             System.out.println("Job offer deleted successfully.");
         } catch (SQLException e) {

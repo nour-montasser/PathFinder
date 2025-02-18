@@ -204,38 +204,31 @@ public class JobOfferListController {
 
 
 
+
     @FXML
     private void handleViewApplications() {
         try {
-            // Load the Application List scene (content view)
-            FXMLLoader applicationListLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ApplicationList.fxml"));
-            Parent applicationListView = applicationListLoader.load();
-
-            // Load the FrontOffice (navbar) view
+            // Charger la vue principale (navbar + contentArea)
             FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
             Parent frontOfficeView = frontOfficeLoader.load();
             FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
 
-            // Create a StackPane to hold both the FrontOffice navbar and the Application List content
-            StackPane root = new StackPane();
+            // Charger la liste des applications et l'injecter dans contentArea
+            Parent applicationListView = FXMLLoader.load(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ApplicationList.fxml"));
+            frontOfficeController.loadView(applicationListView); // Fonction à ajouter dans FrontOfficeController
 
-            // Add the FrontOffice navbar at the top (it will stay fixed)
-            root.getChildren().add(frontOfficeView);
+            // Obtenir la fenêtre actuelle (Stage)
+            Stage stage = (Stage) searchIcon.getScene().getWindow();
 
-            // Add the ApplicationList content as the main content area (this goes beneath the navbar)
-            root.getChildren().add(applicationListView);
-
-            // Create a new Scene with the combined layout (FrontOffice + Application List)
-            Scene newScene = new Scene(root);
+            // Recréer la scène avec le nouveau contenu
+            Scene newScene = new Scene(frontOfficeView);
             newScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
 
-            // Get the current stage (the window)
-            Stage stage = (Stage) searchIcon.getScene().getWindow();
-            // Set the new scene
+            // Appliquer la nouvelle scène et forcer le redimensionnement
             stage.setScene(newScene);
-            stage.setMaximized(false); // Temporarily disable maximization
-            stage.setMaximized(true);  // Re-enable maximization
-            // Show the stage with the new scene
+            stage.setMaximized(false);
+            stage.setMaximized(true);
+
             stage.show();
 
         } catch (IOException e) {

@@ -34,7 +34,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        long logged = 1L;
+        long logged = 2L;
         UserService userService = new UserService();
         User u= userService.getUserById(logged);
 

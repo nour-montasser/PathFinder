@@ -236,7 +236,7 @@ public class ApplicationListController {
 
 
     private void handleDeleteApplication(ApplicationJob application) {
-        applicationService.delete(application);
+        applicationService.delete(application.getApplicationId());
             applicationListView.getItems().remove(application);
             showInfo("Application deleted successfully.");
     }
@@ -257,44 +257,39 @@ public class ApplicationListController {
         alert.showAndWait();
     }
 
+
     @FXML
     private void handleBackToJobOffers() {
         try {
-            // Load the Job Offer List scene (content view)
-            FXMLLoader jobOfferListLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferList.fxml"));
-            Parent jobOfferListView = jobOfferListLoader.load();
-
-            // Load the FrontOffice (navbar) view
+            // Charger le layout principal (navbar + contentArea)
             FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
             Parent frontOfficeView = frontOfficeLoader.load();
             FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
 
-            // Create a StackPane to hold both the FrontOffice navbar and the Job Offer List content
-            StackPane root = new StackPane();
+            // Charger la page des offres d'emploi et l'injecter dans le contentArea du FrontOffice
+            Parent jobOfferListView = FXMLLoader.load(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferList.fxml"));
+            frontOfficeController.loadView(jobOfferListView);
 
-            // Add the FrontOffice navbar at the top (it will stay fixed)
-            root.getChildren().add(frontOfficeView);
+            // Obtenir la fenêtre actuelle (Stage)
+            Stage stage = (Stage) applicationListView.getScene().getWindow();
 
-            // Add the JobOfferList content as the main content area (this goes beneath the navbar)
-            root.getChildren().add(jobOfferListView);
-
-            // Create a new Scene with the combined layout (FrontOffice + JobOffer List)
-            Scene newScene = new Scene(root);
+            // Recréer la scène avec le nouveau contenu
+            Scene newScene = new Scene(frontOfficeView);
             newScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
 
-            // Get the current stage (the window)
-            Stage stage = (Stage) applicationListView.getScene().getWindow();
-            // Set the new scene
+            // Appliquer la nouvelle scène et forcer le redimensionnement
             stage.setScene(newScene);
-            stage.setMaximized(false); // Temporarily disable maximization
-            stage.setMaximized(true);  // Re-enable maximization
-            // Show the stage with the new scene
+            stage.setMaximized(false); // Désactiver temporairement la maximisation
+            stage.setMaximized(true);  // Réactiver pour forcer l'affichage correct
+
             stage.show();
 
         } catch (IOException e) {
             showError("Error opening job offers list: " + e.getMessage());
         }
     }
+
+
 
     @FXML
     private void handleShowCoverLetter(ApplicationJob application) {

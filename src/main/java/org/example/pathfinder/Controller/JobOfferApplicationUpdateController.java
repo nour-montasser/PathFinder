@@ -70,9 +70,6 @@ public class JobOfferApplicationUpdateController {
     }
 
     private void loadCvDropdown(Long cvId) {
-        // Assume the logged-in user ID is 1 for now
-
-
         // Fetch the list of CV titles for the logged-in user
         List<String> cvTitles = applicationService.getUserCVTitles(loggedInUserId);
 

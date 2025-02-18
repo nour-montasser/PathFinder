@@ -48,11 +48,11 @@ public class ApplicationService implements Services<ApplicationJob> {
     }
 
     @Override
-    public void delete(ApplicationJob applicationJob) {
+    public void delete(long id) {
         String req = "DELETE FROM Application_job WHERE application_id = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
-            stm.setLong(1, applicationJob.getApplicationId());
+            stm.setLong(1, id);
             stm.executeUpdate();
             System.out.println("Application deleted successfully.");
         } catch (SQLException e) {

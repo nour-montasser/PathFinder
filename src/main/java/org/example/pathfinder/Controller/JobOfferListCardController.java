@@ -164,7 +164,7 @@ public class JobOfferListCardController {
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                jobOfferService.delete(jobOffer);
+                jobOfferService.delete(jobOffer.getIdOffer());
 
                 ObservableList<JobOffer> jobOffers = parentController.getJobOffers();
                 jobOffers.remove(jobOffer);
@@ -229,37 +229,33 @@ public class JobOfferListCardController {
 
     private void openJobOfferDetailScene() {
         try {
-            // Load the Job Offer Detail page
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml"));
-            Parent jobOfferDetailView = loader.load();
-
-            // Load the controller of the JobOfferApplicationList
-            JobOfferApplicationListController controller = loader.getController();
-            controller.setJobOffer(jobOffer);
-
-            // Load the current FrontOffice view (which includes the navbar)
+            // Charger la vue principale (navbar + contentArea)
             FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
             Parent frontOfficeView = frontOfficeLoader.load();
             FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
 
-            // Create a StackPane to hold both the FrontOffice navbar and the JobOffer detail content
-            StackPane root = new StackPane();
+            // Charger la page des détails de l'offre d'emploi
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml"));
+            Parent jobOfferDetailView = loader.load();
 
-            // Add the FrontOffice navbar at the top (it will stay fixed)
-            root.getChildren().add(frontOfficeView);
+            // Obtenir le contrôleur et lui passer l'offre d'emploi
+            JobOfferApplicationListController controller = loader.getController();
+            controller.setJobOffer(jobOffer);
 
-            // Add the JobOffer detail view as the main content area
-            root.getChildren().add(jobOfferDetailView);
+            // Injecter la vue des détails dans le contentArea
+            frontOfficeController.loadView(jobOfferDetailView); // Méthode déjà ajoutée à FrontOfficeController
 
-            // Create a new Scene with the combined layout (FrontOffice + JobOffer Detail)
-            Scene detailScene = new Scene(root);
+            // Obtenir la fenêtre actuelle (Stage)
+            Stage currentStage = (Stage) skillsLabel.getScene().getWindow();
+
+            // Recréer la scène avec le layout mis à jour
+            Scene detailScene = new Scene(frontOfficeView);
             detailScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
 
-            // Get the current stage and set the new scene
-            Stage currentStage = (Stage) skillsLabel.getScene().getWindow();
+            // Appliquer la nouvelle scène et forcer le redimensionnement
             currentStage.setScene(detailScene);
             currentStage.setTitle("Job Offer Details");
-            currentStage.setMaximized(false); // Temporarily disable maximization
+            currentStage.setMaximized(false);
             currentStage.setMaximized(true);
             currentStage.show();
 

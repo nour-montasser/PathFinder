@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.pathfinder.Controller.JobOfferBackOfficeController" >
+    <children>
+        <VBox spacing="20" layoutX="20" layoutY="20" prefWidth="600" prefHeight="400" >
+            <!-- Title -->
+            <Label text="Job Offers Management" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+
+            <!-- Job Offers List -->
+            <ListView fx:id="jobOfferListView" prefWidth="580" prefHeight="250" style="-fx-background-color: #F5EDE1; -fx-border-color: #F5E4C3; -fx-font-size: 16px;" VBox.vgrow="ALWAYS">
+                <items>
+                    <!-- Dynamically populated job offers will appear here -->
+                </items>
+            </ListView>
+
+            <!-- Delete Button -->
+            <Button fx:id="deleteButton" text="Delete Selected Job Offer" onAction="#deleteSelectedJobOffer"
+                    style="-fx-background-color: #3b261d; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-border-radius: 5px; -fx-cursor: hand; -fx-padding: 10px 20px;">
+            </Button>
+        </VBox>
+    </children>
+</AnchorPane>
