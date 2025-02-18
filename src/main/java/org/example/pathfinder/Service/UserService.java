@@ -137,8 +137,28 @@ public class UserService implements Services<User> {
             throw new RuntimeException(e);
         }
         return user;
+
+
+    }
+    public String getProfilePictureById(long id) {
+        String query = "SELECT photo FROM profile WHERE id_user = ?";
+        String s="C:\\Users\\User\\Downloads\\PathFinder-CV\\PathFinder-CV\\src\\main\\resources\\img\\pathfinder_logo_compass.png.png" ;// Default profile picture
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    s = rs.getString("photo"); // Assign value to s
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return s; // Return either the retrieved photo or the default
     }
 
-
-
 }
+
+
+
+

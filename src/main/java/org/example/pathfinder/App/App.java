@@ -5,12 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.pathfinder.Model.Channel;
-import org.example.pathfinder.Model.Message;
-import org.example.pathfinder.Service.ChannelService;
 import org.example.pathfinder.Service.MessageService;
-
-import java.util.List;
 
 public class App extends Application {
     @Override
@@ -22,11 +17,7 @@ public class App extends Application {
 
         // Test MessageService (CRUD operations)
 
-        System.out.println("Retrieving all messages...");
-        List<Message> messages = messageService.getall();
-        for (Message msg : messages) {
-            System.out.println("Message ID: " + msg.getIdMessage() + ", Content: " + msg.getContent());
-        }
+
 
         // Load JavaFX interface
 

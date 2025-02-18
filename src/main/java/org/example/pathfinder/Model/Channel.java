@@ -13,14 +13,18 @@ public class Channel {
     // Constructor accepting id, user1Id, and user2Id
     public Channel(long id, Long user1Id, Long user2Id) {
         this.id = id;
-        this.user1Id = user1Id;
+        this.user1Id = user1Id ;
         this.user2Id = user2Id;
         this.messages = new ArrayList<>();  // Initialize the list of messages
     }
 
     // Constructor for initializing only id (for empty channel creation)
-    public Channel(long id) {
-        this(id, null, null); // Call the main constructor with null values for user1Id and user2Id
+
+    public Channel() {
+
+    }
+
+    public Channel(long channelId) {
     }
 
     // Getters and setters
@@ -33,7 +37,7 @@ public class Channel {
     }
 
     public Long getUser1Id() {
-        return user1Id;
+        return 1L;
     }
 
     public void setUser1Id(Long user1Id) {
