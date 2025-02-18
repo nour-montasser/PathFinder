@@ -16,7 +16,6 @@ import org.example.pathfinder.Service.QuestionService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class SkillTestController {
     private final SkillTestService skillTestService = new SkillTestService();
@@ -191,7 +190,7 @@ public class SkillTestController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/ViewSkillTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/ViewSkillTest.fxml"));
             Parent root = loader.load();
 
             ViewSkillTestController controller = loader.getController();

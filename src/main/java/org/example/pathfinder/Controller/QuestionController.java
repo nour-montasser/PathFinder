@@ -12,7 +12,6 @@ import org.example.pathfinder.Model.Question;
 import org.example.pathfinder.Service.QuestionService;
 
 import java.io.IOException;
-import java.util.List;
 
 public class QuestionController {
     private ObservableList<Question> questionList = FXCollections.observableArrayList();
@@ -29,7 +28,6 @@ public class QuestionController {
     public void initialize() {
         questionListView.setItems(FXCollections.observableArrayList()); // Bind ListView to ObservableList
 
-        // ✅ Handle question selection from the list for editing
         questionListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) { // Double-click
                 String selectedText = questionListView.getSelectionModel().getSelectedItem();
@@ -51,7 +49,6 @@ public class QuestionController {
                 return;
             }
 
-            // Create a new Question object (ID is initially null)
             Question question = new Question(null, questionText, null, responses, correctResponse, score);
 
             questionList.add(question);
@@ -107,7 +104,7 @@ public class QuestionController {
     @FXML
     public void goToSkillTestScreen() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/SkillTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/SkillTest.fxml"));
             Parent root = loader.load();
 
             // Pass the list of questions to the SkillTestController
@@ -116,10 +113,10 @@ public class QuestionController {
 
             // Switch scenes
             Stage stage = (Stage) questionListView.getScene().getWindow();
-            Scene scene = new Scene(root, 1000, 600); // ✅ Use 'root' instead of 'fxmlLoader.load()'
+            Scene scene = new Scene(root, 1000, 600);
 
-            stage.setScene(scene); // ✅ Corrected line
-            stage.show(); // ✅ Ensure the window updates properly
+            stage.setScene(scene);
+            stage.show();
 
         } catch (IOException e) {
             showAlert("Error", "Failed to load the Skill Test screen.");

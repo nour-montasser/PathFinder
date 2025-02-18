@@ -21,7 +21,7 @@
         <HBox spacing="20" style="-fx-background-color: #c19d7b; -fx-padding: 15px;">
          <ImageView fitHeight="32.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@../Sources/pathfinder_logo_compass.png.png" />
+               <Image url="@../../Sources/pathfinder_logo_compass.png.png" />
             </image>
          </ImageView>
             <Label style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;" text="PathFinder" />

@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.pathfinder.Service.TestResultService;
 
 import java.sql.Connection;
 
@@ -13,7 +12,7 @@ public class    App extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/Question.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/FrontOffice/main-frontoffice.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
             stage.setTitle("Skill Test Manager");
             stage.setScene(scene);

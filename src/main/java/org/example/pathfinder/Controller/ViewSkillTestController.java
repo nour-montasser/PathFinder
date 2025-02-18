@@ -35,7 +35,6 @@ public class ViewSkillTestController {
             ToggleGroup toggleGroup = new ToggleGroup();
             VBox answersBox = new VBox(5);
 
-            // 🔥 Properly separating answers using commas!
             String[] responses = question.getResponses().split(",");
             for (String response : responses) {
                 RadioButton radioButton = new RadioButton(response.trim());
@@ -47,7 +46,6 @@ public class ViewSkillTestController {
             questionsContainer.getChildren().add(questionBox);
         }
 
-        // ✅ Fix ScrollPane Issue: Force JavaFX to recalculate layout
         scrollPane.applyCss();
         scrollPane.layout();
     }
