@@ -21,7 +21,7 @@ public class ApplicationService implements Services<ApplicationJob> {
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
             stm.setLong(1, applicationJob.getJobOfferId());
-            stm.setLong(2, 1); // Assuming user ID is hardcoded, replace with dynamic user ID if necessary
+            stm.setLong(2, applicationJob.getIdUser());
             stm.setTimestamp(3, applicationJob.getDateApplication());
             stm.setString(4, applicationJob.getStatus());
             stm.setLong(5, applicationJob.getCvId()); // Adding CV ID
@@ -266,6 +266,92 @@ public class ApplicationService implements Services<ApplicationJob> {
 
         return application;
     }
+    public String getUserNameById(Long userId) {
+        String query = "SELECT name FROM app_user WHERE id_user = ?";
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("name");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Unknown User";
+    }
+    public String getUserProfilePicture(Long userId) {
+        String query = "SELECT photo FROM profile WHERE id_user = ?";
+        try (
+             PreparedStatement stmt = cnx.prepareStatement(query)) {
+
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("photo"); // Return the photo path directly
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ApplicationJob> getByStatus(String status) {
+        List<ApplicationJob> applications = new ArrayList<>();
+        String req = "SELECT * FROM Application_job";
+
+        if (!status.equalsIgnoreCase("All")) {
+            req += " WHERE status = ?";
+        }
+
+        try {
+            PreparedStatement pst = cnx.prepareStatement(req);
+            if (!status.equalsIgnoreCase("All")) {
+                pst.setString(1, status);
+            }
+
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                ApplicationJob applicationJob = new ApplicationJob(
+                        rs.getLong("job_offer_id"),
+                        rs.getLong("id_user"),
+                        rs.getLong("cv_id")
+                );
+                applicationJob.setApplicationId(rs.getLong("application_id"));
+                applicationJob.setDateApplication(rs.getTimestamp("date_application"));
+                applicationJob.setStatus(rs.getString("status"));
+                applications.add(applicationJob);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving applications: " + e.getMessage(), e);
+        }
+        return applications;
+    }
+
+    public boolean hasUserAppliedForJob(JobOffer jobOffer, long userId) {
+        String query = "SELECT COUNT(*) FROM Application_job a WHERE a.job_offer_id = ? AND a.id_user = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            // Set the parameters for job offer ID and user ID
+            stmt.setLong(1, jobOffer.getIdOffer());  // jobOfferId
+            stmt.setLong(2, userId);  // userId
+
+            // Execute the query
+            ResultSet rs = stmt.executeQuery();
+
+            // Check if the count is greater than 0 (meaning the user has applied)
+            if (rs.next()) {
+                return rs.getInt(1) > 0;  // Returns true if count is greater than 0
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;  // Return false if no result or error
+    }
+
 
 
 }

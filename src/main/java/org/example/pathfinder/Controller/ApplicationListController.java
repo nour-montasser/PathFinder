@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,14 +19,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.Model.CoverLetter;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.CoverLetterService;
+import org.example.pathfinder.Service.JobOfferService;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ApplicationListController {
 
@@ -36,23 +38,57 @@ public class ApplicationListController {
     @FXML
     private ImageView searchIcon;
     private ApplicationService applicationService;
+    private JobOfferService jobOfferService;
+    @FXML
+    private TextField searchField;
 
     private CoverLetterService coverLetterService;
-
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
     @FXML
     public void initialize() {
         applicationService = new ApplicationService();
-        String imagePath = getClass().getResource("/org/example/pathfinder/Sources/pathfinder_logo_compass.png").toString();
+        applicationService = new ApplicationService();
+        jobOfferService = new JobOfferService();
+        String imagePath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png").toString();
         searchIcon.setImage(new Image(imagePath));
         coverLetterService = new CoverLetterService();
         applicationListView.setItems(getApplicationsForUser());
         applicationListView.setCellFactory(param -> createApplicationCell());
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterApplicationsBySearch(newValue);
+
+        });
+    }
+
+    private void filterApplicationsBySearch(String searchText) {
+        ObservableList<ApplicationJob> filteredList;
+
+        if (searchText == null || searchText.trim().isEmpty()) {
+            // Recharger toutes les candidatures de l'utilisateur si le champ est vide
+            filteredList = getApplicationsForUser();
+        } else {
+            String lowerCaseSearch = searchText.toLowerCase();
+
+            // Filtrer les candidatures de l'utilisateur connecté uniquement
+            filteredList = FXCollections.observableArrayList(
+
+                    getApplicationsForUser().stream()
+                            .filter(application -> {
+                                String name = jobOfferService.getById(application.getJobOfferId()).getTitle();
+                                return name != null && name.toLowerCase().contains(lowerCaseSearch);
+                            })
+                            .collect(Collectors.toList())
+            );
+        }
+
+        applicationListView.setItems(filteredList);
     }
 
     private ObservableList<ApplicationJob> getApplicationsForUser() {
         ObservableList<ApplicationJob> applications = FXCollections.observableArrayList();
         try {
-            List<ApplicationJob> applicationList = applicationService.getApplicationsForUser(1L);  // Hardcoded user ID
+            List<ApplicationJob> applicationList = applicationService.getApplicationsForUser(loggedInUserId);
             applications.addAll(applicationList);
         } catch (SQLException e) {
             showError("Error retrieving applications: " + e.getMessage());
@@ -132,12 +168,14 @@ public class ApplicationListController {
             MenuItem updateItem = new MenuItem("Update");
             updateItem.setOnAction(event -> handleUpdateApplication(application));
 
-            MenuItem showCoverLetterItem = new MenuItem("Show Cover Letter");
-            showCoverLetterItem.setOnAction(event -> handleShowCoverLetter(application));
-            MenuItem showCvItem = new MenuItem("Show Cv");
 
-            actionsMenu.getItems().addAll(deleteItem, updateItem, showCoverLetterItem,showCvItem);
+
+            actionsMenu.getItems().addAll(deleteItem, updateItem);
         }
+        MenuItem showCoverLetterItem = new MenuItem("Show Cover Letter");
+        showCoverLetterItem.setOnAction(event -> handleShowCoverLetter(application));
+        MenuItem showCvItem = new MenuItem("Show Cv");
+        actionsMenu.getItems().addAll( showCoverLetterItem,showCvItem);
         return actionsMenu;
     }
 
@@ -165,7 +203,7 @@ public class ApplicationListController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferApplicationUpdate.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationUpdate.fxml"));
             VBox form = loader.load();
 
             JobOfferApplicationUpdateController controller = loader.getController();
@@ -222,18 +260,42 @@ public class ApplicationListController {
     @FXML
     private void handleBackToJobOffers() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferList.fxml"));
-            Parent jobOfferListView = loader.load();
+            // Load the Job Offer List scene (content view)
+            FXMLLoader jobOfferListLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferList.fxml"));
+            Parent jobOfferListView = jobOfferListLoader.load();
+
+            // Load the FrontOffice (navbar) view
+            FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
+            Parent frontOfficeView = frontOfficeLoader.load();
+            FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
+
+            // Create a StackPane to hold both the FrontOffice navbar and the Job Offer List content
+            StackPane root = new StackPane();
+
+            // Add the FrontOffice navbar at the top (it will stay fixed)
+            root.getChildren().add(frontOfficeView);
+
+            // Add the JobOfferList content as the main content area (this goes beneath the navbar)
+            root.getChildren().add(jobOfferListView);
+
+            // Create a new Scene with the combined layout (FrontOffice + JobOffer List)
+            Scene newScene = new Scene(root);
+            newScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
+
+            // Get the current stage (the window)
             Stage stage = (Stage) applicationListView.getScene().getWindow();
-            Scene jobOfferScene = new Scene(jobOfferListView);
-            stage.setScene(jobOfferScene);
-            stage.setMaximized(false);
-            stage.setMaximized(true);
+            // Set the new scene
+            stage.setScene(newScene);
+            stage.setMaximized(false); // Temporarily disable maximization
+            stage.setMaximized(true);  // Re-enable maximization
+            // Show the stage with the new scene
             stage.show();
+
         } catch (IOException e) {
             showError("Error opening job offers list: " + e.getMessage());
         }
     }
+
     @FXML
     private void handleShowCoverLetter(ApplicationJob application) {
         try {
@@ -241,7 +303,7 @@ public class ApplicationListController {
             CoverLetter coverLetter = coverLetterService.getCoverLetterByApplication(application.getApplicationId());
 
             if (coverLetter != null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/CoverLetterView.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/CoverLetterView.fxml"));
                 VBox showCoverLetterView = loader.load();
 
                 CoverLetterViewController controller = loader.getController();

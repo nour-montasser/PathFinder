@@ -4,11 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.JobOfferService;
 
 public class JobOfferFormController {
 
     private final JobOfferService jobOfferService;
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
 
     @FXML
     private TextField titleField;
@@ -57,7 +59,7 @@ public class JobOfferFormController {
             if (jobOfferService.isJobOfferTitleUnique(title)) {
                 // If unique, create a new JobOffer object and save it
                 JobOffer jobOffer = new JobOffer(
-                        1L, // Example user ID, replace with actual logged-in user ID
+                    loggedInUserId, // Example user ID, replace with actual logged-in user ID
                         title,
                         description,
                         type,

@@ -10,10 +10,10 @@
 <?import javafx.scene.control.ScrollPane?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ApplicationListController"
-      spacing="15" style="-fx-padding: 20;" >
+      spacing="15" style="-fx-padding: 100 20 20 20" >
 
     <!-- Title -->
-    <Label text="My Applications" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+    <Label text="My Applications" style="-fx-font-size: 24px; -fx-font-weight: bold; " />
 
     <!-- Search Bar -->
     <HBox alignment="CENTER" spacing="10" style="-fx-padding: 5; -fx-alignment: center-right;">
@@ -30,6 +30,6 @@
     <ListView fx:id="applicationListView" VBox.vgrow="ALWAYS" style="-fx-padding: 5;" />
 
     <!-- Back Button -->
-    <Button text="Back to Job Offers" onAction="#handleBackToJobOffers" style="-fx-font-size: 14px; -fx-padding: 10;" />
+    <Button text="Back to Job Offers" onAction="#handleBackToJobOffers" style="-fx-background-color: #3b261d; /* Green background */     -fx-text-fill: white;           /* White text */     -fx-font-size: 16px;            /* Font size */     -fx-font-weight: bold;          /* Bold text */     -fx-padding: 10px 20px;         /* Padding around the text */     -fx-border-radius: 25px;       /* Rounded corners */     -fx-cursor: hand;              /* Cursor to indicate a clickable button */     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 2, 2); /* Shadow effect */" />
 
 </VBox>

@@ -2,6 +2,7 @@ package org.example.pathfinder.Controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -9,15 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
-import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.Model.JobOffer;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.JobOfferService;
 
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,7 +45,7 @@ public class JobOfferListCardController {
     private Label skillsLabel;
 
     @FXML
-    private MenuButton actionsMenu;
+    private Button menuButton;
 
     @FXML
     private MenuItem updateMenuItem;
@@ -67,44 +66,52 @@ public class JobOfferListCardController {
     private boolean isExpanded = false;
     private JobOffer jobOffer;
     private JobOfferService jobOfferService = new JobOfferService();
+    private ApplicationService applicationService = new ApplicationService();
     private JobOfferListController parentController;
+    private String loggedUserRole = LoggedUser.getInstance().getRole();
+    private long loggedUserid = LoggedUser.getInstance().getUserId();
 
 
     @FXML
     private Label numberOfSpotsLabel;  // Add a Label for the number of spots
-    @FXML
-    private Button menuButton;
 
     private ContextMenu contextMenu;
-
     @FXML
     private void initialize() {
-        // Create the context menu
-        contextMenu = new ContextMenu();
+        menuButton.setVisible(false);
+        // Hide apply button and actions menu if the role is "COMPANY"
+        if (loggedUserRole.equals("COMPANY")) {
+            applyButton.setVisible(false);
 
-        // Create MenuItems
-        MenuItem updateItem = new MenuItem("Update");
-        updateItem.setOnAction(event -> handleUpdate()); // Handle update action
+            contextMenu = new ContextMenu();
+            // Create MenuItems
+            MenuItem updateItem = new MenuItem("Update");
+            updateItem.setOnAction(event -> handleUpdate()); // Handle update action
+            MenuItem deleteItem = new MenuItem("Delete");
+            deleteItem.setOnAction(event -> handleDelete()); // Handle delete action
 
-        MenuItem deleteItem = new MenuItem("Delete");
-        deleteItem.setOnAction(event -> handleDelete()); // Handle delete action
+            contextMenu.getItems().addAll(updateItem, deleteItem);
 
-        // Add items to the context menu
-        contextMenu.getItems().addAll(updateItem, deleteItem);
-
-        // Set up the action for the menu button to show the context menu
-        menuButton.setOnAction(event -> {
-            contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0); // Show context menu below the button
-            event.consume(); // Prevent toggleDetails from being triggered
-        });
+            menuButton.setOnAction(event -> {
+                if (!contextMenu.isShowing()) {
+                    contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0); // Show context menu below the button
+                    event.consume(); // Prevent other actions from firing
+                }
+            });
+        } else if (loggedUserRole.equals("SEEKER")) {
+            applyButton.setVisible(true);   // Make apply button visible for seekers
+            menuButton.setVisible(false); // Hide actions menu for seekers
+            titleLabel.setOnMouseClicked(event -> showError("You cannot view the details as a job seeker."));
+        }
     }
+
 
 
 
     public void setJobOffer(JobOffer jobOffer) {
         this.jobOffer = jobOffer;
-
-        File imageFile = new File("C:\\Users\\nourm\\Documents\\esprit\\3eme\\Project\\PathFinder\\src\\main\\resources\\org\\example\\pathfinder\\Sources\\pathfinder_logo_compass.png");
+        String url = applicationService.getUserProfilePicture(jobOffer.getIdUser());
+        File imageFile = new File(url);
         if (imageFile.exists()) {
             companyImage.setImage(new Image(imageFile.toURI().toString()));
         }
@@ -114,14 +121,28 @@ public class JobOfferListCardController {
         requiredEducationLabel.setText("Required Education: " + jobOffer.getRequiredEducation());
         requiredExperienceLabel.setText("Required Experience: " + jobOffer.getRequiredExperience());
         skillsLabel.setText("Skills: " + jobOffer.getSkills());
-        numberOfSpotsLabel.setText("Number of Spots: " + jobOffer.getNumberOfSpots());  // Update the number of spots label
+        numberOfSpotsLabel.setText("Number of Spots: " + jobOffer.getNumberOfSpots());
 
         additionalDetails.setVisible(false);
         additionalDetails.setManaged(false);
 
-        titleLabel.setOnMouseClicked(event -> openJobOfferDetailScene());
+        // Ensure menu button only appears if the logged-in user is the owner of the job offer
+        if (loggedUserRole.equals("COMPANY")) {
+            applyButton.setVisible(false);
+            menuButton.setVisible(jobOffer.getIdUser() == loggedUserid);
+            if(jobOffer.getIdUser() == loggedUserid) {titleLabel.setOnMouseClicked(event -> openJobOfferDetailScene()); menuButton.setOnAction(event -> {
+                if (!contextMenu.isShowing()) {
+                    contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0); // Show context menu below the button
+                    event.consume(); // Prevent other actions from firing
+                }
+            });}
+        } else {
+            applyButton.setVisible(true);
+            menuButton.setVisible(false);
+        }
         cardContainer.setOnMouseClicked(event -> toggleDetails());
     }
+
 
 
     public void setParentController(JobOfferListController parentController) {
@@ -157,7 +178,7 @@ public class JobOfferListCardController {
     @FXML
     public void handleUpdate() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferUpdate.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferUpdate.fxml"));
             VBox form = loader.load();
 
             JobOfferUpdateController updateController = loader.getController();
@@ -208,11 +229,31 @@ public class JobOfferListCardController {
 
     private void openJobOfferDetailScene() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferApplicationList.fxml"));
-            Scene detailScene = new Scene(loader.load());
+            // Load the Job Offer Detail page
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml"));
+            Parent jobOfferDetailView = loader.load();
 
-            JobOfferApplicationList controller = loader.getController();
+            // Load the controller of the JobOfferApplicationList
+            JobOfferApplicationListController controller = loader.getController();
             controller.setJobOffer(jobOffer);
+
+            // Load the current FrontOffice view (which includes the navbar)
+            FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
+            Parent frontOfficeView = frontOfficeLoader.load();
+            FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
+
+            // Create a StackPane to hold both the FrontOffice navbar and the JobOffer detail content
+            StackPane root = new StackPane();
+
+            // Add the FrontOffice navbar at the top (it will stay fixed)
+            root.getChildren().add(frontOfficeView);
+
+            // Add the JobOffer detail view as the main content area
+            root.getChildren().add(jobOfferDetailView);
+
+            // Create a new Scene with the combined layout (FrontOffice + JobOffer Detail)
+            Scene detailScene = new Scene(root);
+            detailScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
 
             // Get the current stage and set the new scene
             Stage currentStage = (Stage) skillsLabel.getScene().getWindow();
@@ -220,11 +261,8 @@ public class JobOfferListCardController {
             currentStage.setTitle("Job Offer Details");
             currentStage.setMaximized(false); // Temporarily disable maximization
             currentStage.setMaximized(true);
-            detailScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/styles.css").toExternalForm());
-
-           /* currentStage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
-            currentStage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());*/
             currentStage.show();
+
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Unable to load details", "An error occurred while loading the job offer details.");
         } catch (SQLException e) {
@@ -259,33 +297,45 @@ public class JobOfferListCardController {
     //--------------------------------------------------------------------------
     @FXML
     public void handleApply() {
+        // Get the logged user ID and role
+        String loggedUserRole = LoggedUser.getInstance().getRole();
+        long loggedUserId = LoggedUser.getInstance().getUserId();  // Assuming you have a method to get user ID
+
+        // Check if the logged user is a seeker
+        if (!loggedUserRole.equals("SEEKER")) {
+            showError("You do not have permission to apply for jobs.");
+            return;  // Prevent further processing
+        }
+
+        // Check if the user has already applied for the job
+        if (applicationService.hasUserAppliedForJob(jobOffer, loggedUserId)) {
+            showError("You have already applied for this job.");
+            return;  // Exit the method to prevent opening the application form
+        }
+
         // Check if the number of spots is zero
         if (jobOffer.getNumberOfSpots() == 0) {
             showError("Sorry, there are no available spots for this job offer.");
-            return; // Exit the method to prevent opening the application form
+            return;  // Exit the method to prevent opening the application form
         }
 
+        // Existing apply logic here
         try {
-            // Load the application form FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferApplicationForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationForm.fxml"));
             VBox form = loader.load();
 
-            // Get the controller of the application form
             JobOfferApplicationFormController controller = loader.getController();
             controller.setJobOffer(jobOffer); // Pass the selected job offer
 
-            // Create a new window (Stage) for the application form
             Stage applicationFormStage = new Stage();
             applicationFormStage.setTitle("Job Application Form");
-            applicationFormStage.initModality(Modality.APPLICATION_MODAL);  // Make it modal (block interaction with other windows)
+            applicationFormStage.initModality(Modality.APPLICATION_MODAL);  // Make it modal
             applicationFormStage.setResizable(false);
             applicationFormStage.initStyle(javafx.stage.StageStyle.UNDECORATED);
 
-            // Create a stack pane for the overlay
             StackPane overlay = new StackPane();
             overlay.getChildren().add(form);
 
-            // Set the scene for the application form window
             Scene applicationFormScene = new Scene(overlay);
             applicationFormStage.setScene(applicationFormScene);
             applicationFormStage.showAndWait();

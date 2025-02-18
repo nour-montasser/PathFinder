@@ -1,15 +1,15 @@
 package org.example.pathfinder.Controller;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -18,9 +18,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
+import org.example.pathfinder.Model.LoggedUser;
+import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.JobOfferService;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class JobOfferListController {
 
@@ -33,26 +36,90 @@ public class JobOfferListController {
     @FXML
     private ImageView searchIcon;
 
+    @FXML
+    private Button btnViewApplications;
+
+    @FXML
+    private ComboBox filterComboBox;
+
+    @FXML
+    private TextField searchField;
+    ApplicationService applicationService = new ApplicationService();
+
     private JobOfferService jobOfferService;
     private ObservableList<JobOffer> jobOffers;
+    private String loggedUserRole = LoggedUser.getInstance().getRole();
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
 
     @FXML
     public void initialize() {
 
-        String imagePath = String.valueOf(getClass().getResource("/org/example/pathfinder/Sources/pathfinder_logo_compass.png"));
+        String imagePath = String.valueOf(getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png"));
         searchIcon.setImage(new Image(imagePath));
         jobOfferService = new JobOfferService();
         jobOffers = FXCollections.observableArrayList();
         loadJobOffers();
         refreshJobOfferList();
+
+
+        if (loggedUserRole.equals("COMPANY")) {
+            btnViewApplications.setVisible(false);  // Hide the applications button for companies
+            filterComboBox.setOnAction(event -> {
+                String selectedFilter = filterComboBox.getSelectionModel().getSelectedItem ().toString();
+                // Call method to filter job offers based on the selected option
+                filterJobOffers(selectedFilter);
+            });
+        }else if(loggedUserRole.equals("SEEKER")) {
+            filterComboBox.setVisible(false);
+            addJobOfferButton.setVisible(false);
+        }
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterJobOffersBySearch(newValue);
+
+        });
         // Listen to width changes for responsive design
         jobOfferGridPane.widthProperty().addListener((obs, oldWidth, newWidth) -> refreshJobOfferList());
+
+
+    }
+
+    private void filterJobOffersBySearch(String searchText) {
+        if (searchText == null || searchText.trim().isEmpty()) {
+            jobOffers.setAll(jobOfferService.getall()); // Recharger toutes les offres si le champ est vide
+        } else {
+            String lowerCaseSearch = searchText.toLowerCase();
+
+            ObservableList<JobOffer> filteredList = FXCollections.observableArrayList(
+                    jobOfferService.getall().stream()
+                            .filter(jobOffer -> jobOffer.getTitle() != null && jobOffer.getTitle().toLowerCase().contains(lowerCaseSearch))
+                            .collect(Collectors.toList())
+            );
+
+
+            jobOffers.setAll(filteredList);
+        }
+        System.out.println("Search text: " + searchText);
+        System.out.println("Filtered list size: " + jobOffers.size());
+        refreshJobOfferList();
+    }
+
+    @FXML
+    private void filterJobOffers(String filter) {
+        if ("Show My Job Offers".equals(filter)) {
+            // Load only job offers belonging to the logged-in user
+            jobOffers.setAll(jobOfferService.getByUserId(loggedInUserId));
+        } else if ("Show All Job Offers".equals(filter)) {
+            // Load all job offers
+            jobOffers.setAll(jobOfferService.getall());
+        }
+        refreshJobOfferList(); // Refresh UI with new list
     }
 
     @FXML
     public void handleAddJobOffer() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml"));
             VBox form = loader.load();
 
             Stage stage = new Stage();
@@ -101,7 +168,7 @@ public class JobOfferListController {
 
         for (JobOffer jobOffer : jobOffers) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/JobOfferListCard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferListCard.fxml"));
                 VBox card = loader.load();
 
                 JobOfferListCardController controller = loader.getController();
@@ -119,7 +186,7 @@ public class JobOfferListController {
                 if (col == columns) {
                     col = 0;
                     row++;
-                }System.out.println("GridPane width: " + jobOfferGridPane.getWidth());
+                }//System.out.println("GridPane width: " + jobOfferGridPane.getWidth());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -136,25 +203,41 @@ public class JobOfferListController {
     }
 
 
+
     @FXML
-    public void handleViewApplications() {
+    private void handleViewApplications() {
         try {
-            // Load the FXML for the application list view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/View/ApplicationList.fxml"));
-            Parent applicationListView = loader.load();
+            // Load the Application List scene (content view)
+            FXMLLoader applicationListLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ApplicationList.fxml"));
+            Parent applicationListView = applicationListLoader.load();
 
-            // Get the current stage (assuming this is called from the main stage)
+            // Load the FrontOffice (navbar) view
+            FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
+            Parent frontOfficeView = frontOfficeLoader.load();
+            FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
+
+            // Create a StackPane to hold both the FrontOffice navbar and the Application List content
+            StackPane root = new StackPane();
+
+            // Add the FrontOffice navbar at the top (it will stay fixed)
+            root.getChildren().add(frontOfficeView);
+
+            // Add the ApplicationList content as the main content area (this goes beneath the navbar)
+            root.getChildren().add(applicationListView);
+
+            // Create a new Scene with the combined layout (FrontOffice + Application List)
+            Scene newScene = new Scene(root);
+            newScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
+
+            // Get the current stage (the window)
             Stage stage = (Stage) searchIcon.getScene().getWindow();
-
-
             // Set the new scene
-            Scene applicationListScene = new Scene(applicationListView);
-            stage.setScene(applicationListScene);
-            stage.setMaximized(false); //   Temporarily disable maximization
-            stage.setMaximized(true);
-            applicationListScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/styles.css").toExternalForm());
-
+            stage.setScene(newScene);
+            stage.setMaximized(false); // Temporarily disable maximization
+            stage.setMaximized(true);  // Re-enable maximization
+            // Show the stage with the new scene
             stage.show();
+
         } catch (IOException e) {
             showError("Error opening application list view: " + e.getMessage());
         }

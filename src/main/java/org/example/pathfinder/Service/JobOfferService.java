@@ -138,4 +138,66 @@ public class JobOfferService implements Services<JobOffer> {
         }
         return false;
     }
+
+
+    public List<JobOffer> getByUserId(Long userId) {
+        List<JobOffer> jobOffers = new ArrayList<>();
+        String req = "SELECT * FROM Job_offer WHERE id_user = ?";
+
+        try {
+            PreparedStatement pstmt = cnx.prepareStatement(req);
+            pstmt.setLong(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                JobOffer jobOffer = new JobOffer(
+                        rs.getLong("id_user"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("type"),
+                        rs.getInt("number_of_spots"),
+                        rs.getString("required_education"),
+                        rs.getString("required_experience"),
+                        rs.getString("skills")
+                );
+                jobOffer.setIdOffer(rs.getLong("id_offer"));
+                jobOffer.setDatePosted(rs.getTimestamp("datePosted"));
+                jobOffers.add(jobOffer);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving job offers for user: " + e.getMessage(), e);
+        }
+        return jobOffers;
+    }
+
+    public JobOffer getById(long jobOfferId) {
+        JobOffer jobOffer = null;
+        String query = "SELECT * FROM job_offer WHERE id_offer = ?";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)){
+
+            statement.setLong(1, jobOfferId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                jobOffer = new JobOffer(
+                        rs.getLong("id_user"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("type"),
+                        rs.getInt("number_of_spots"),
+                        rs.getString("required_education"),
+                        rs.getString("required_experience"),
+                        rs.getString("skills")
+                );
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error retrieving job offer by ID: " + e.getMessage());
+        }
+
+        return jobOffer;
+    }
+
+
 }

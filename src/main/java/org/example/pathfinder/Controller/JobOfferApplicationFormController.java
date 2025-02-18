@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.Model.CoverLetter;
 import org.example.pathfinder.Model.JobOffer;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.CoverLetterService;
 import java.util.List;
@@ -20,6 +21,7 @@ public class JobOfferApplicationFormController {
     private final CoverLetterService coverLetterService;
     private JobOffer jobOffer; // Store the job offer
     private Long selectedCvId; // Store selected CV ID
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
 
     @FXML
     private TextField CoverLetterField;
@@ -51,7 +53,7 @@ public class JobOfferApplicationFormController {
 
     private void loadCvDropdown() {
         // Assume the logged-in user ID is 1 for now
-        Long loggedInUserId = 1L;
+
 
         // Fetch the list of CV titles for the logged-in user
         List<String> cvTitles = applicationService.getUserCVTitles(loggedInUserId);
@@ -71,6 +73,7 @@ public class JobOfferApplicationFormController {
     @FXML
     private void handleApplyButtonClick() {
         try {
+           // System.out.println("logged"+loggedInUserId);
             if (jobOffer == null) {
                 showAlert(Alert.AlertType.ERROR, "Error", "No job offer selected!");
                 return;
@@ -91,7 +94,7 @@ public class JobOfferApplicationFormController {
             String coverLetterContent = coverLetterField.getText().trim();
 
             // Create an ApplicationJob with selected CV
-            ApplicationJob application = new ApplicationJob(jobOffer.getIdOffer(), jobOffer.getIdUser(), selectedCvId);
+            ApplicationJob application = new ApplicationJob(jobOffer.getIdOffer(),loggedInUserId, selectedCvId);
             applicationService.add(application); // Save application
 
             // Create a CoverLetter

@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.Model.CoverLetter;
 import org.example.pathfinder.Model.JobOffer;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.CoverLetterService;
 
@@ -37,7 +38,7 @@ public class JobOfferApplicationUpdateController {
 
     @FXML
     private ComboBox<String> cvDropdown; // Dropdown to select CV titles
-
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
     public JobOfferApplicationUpdateController() {
         this.applicationService = new ApplicationService();
         this.coverLetterService = new CoverLetterService();
@@ -51,7 +52,7 @@ public class JobOfferApplicationUpdateController {
         loadCvDropdown(cvId);  // Pass the selected CV ID to the method
 
         // Fetch and set cover letter (if exists)
-        ApplicationJob application = applicationService.getApplicationByJobOfferAndUser(jobOffer.getIdOffer(), 1L); // Fetch application by job offer and logged-in user (ID 1 for now)
+        ApplicationJob application = applicationService.getApplicationByJobOfferAndUser(jobOffer.getIdOffer(), loggedInUserId); // Fetch application by job offer and logged-in user (ID 1 for now)
         if (application != null) {
             this.currentApplication = application;
             CoverLetter coverLetter = coverLetterService.getCoverLetterByApplication(application.getApplicationId());
@@ -70,7 +71,7 @@ public class JobOfferApplicationUpdateController {
 
     private void loadCvDropdown(Long cvId) {
         // Assume the logged-in user ID is 1 for now
-        Long loggedInUserId = 1L;
+
 
         // Fetch the list of CV titles for the logged-in user
         List<String> cvTitles = applicationService.getUserCVTitles(loggedInUserId);
