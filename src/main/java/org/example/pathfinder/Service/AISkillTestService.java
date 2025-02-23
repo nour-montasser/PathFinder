@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AISkillTestService {
-    private static final String API_KEY = "AIzaSyC3_R_KFCsPHBcd66bbnDsMLTqZmJHMUTM";  // Replace with a valid API Key
+    private static final String API_KEY = ".";  // Replace with a valid API Key
     private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY;
 
     public static List<Question> generateSkillTest(String topic) {
