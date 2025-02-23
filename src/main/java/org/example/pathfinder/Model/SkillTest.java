@@ -11,7 +11,7 @@ public class SkillTest {
     private Long idJobOffer;
     private Long scoreRequired;
 
-    public SkillTest() {}
+    public SkillTest(Long idTest, String title, String description, int i, long idJobOffer, int i1) {}
 
     public SkillTest(Long idTest, String title, String description, Long duration, Long idJobOffer, Long scoreRequired) {
         this.idTest = idTest;

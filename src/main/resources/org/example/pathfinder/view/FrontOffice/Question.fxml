@@ -14,16 +14,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="org.example.pathfinder.Controller.QuestionController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1"
+            fx:controller="org.example.pathfinder.Controller.QuestionController">
 
     <!-- 🔹 Navigation Bar -->
     <top>
         <HBox spacing="20" style="-fx-background-color: #c19d7b; -fx-padding: 15px;">
-         <ImageView fitHeight="32.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@../../Sources/pathfinder_logo_compass.png.png" />
-            </image>
-         </ImageView>
+            <ImageView fitHeight="32.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../Sources/pathfinder_logo_compass.png.png" />
+                </image>
+            </ImageView>
             <Label style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;" text="PathFinder" />
             <Region HBox.hgrow="ALWAYS" />
             <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="Freelance" />
@@ -50,7 +51,7 @@
 
                 <!-- Responses Input -->
                 <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 5px; -fx-padding: 10px;">
-                    <Label style="-fx-font-weight: bold;" text="Responses (&quot;,&quot;):" />
+                    <Label style="-fx-font-weight: bold;" text="Responses (comma-separated):" />
                     <TextField fx:id="responseField" />
                     <Label style="-fx-font-weight: bold;" text="Correct Response:" />
                     <TextField fx:id="correctResponseField" />
@@ -62,11 +63,19 @@
                     <TextField fx:id="scoreField" prefWidth="150" />
                 </VBox>
 
+
+
+
                 <!-- Buttons -->
                 <HBox spacing="15">
+                    <Button text="AI Generate Test" onAction="#goToAIGeneratedSkillTest"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+
                     <Button onAction="#addQuestion" style="-fx-background-color: #708671; -fx-text-fill: white;" text="Add Question" />
                     <Button onAction="#updateQuestionNotBase" style="-fx-background-color: #c19d7b; -fx-text-fill: black;" text="Update Question" />
                     <Button onAction="#clearFields" style="-fx-background-color: #d9534f; -fx-text-fill: white;" text="Clear Fields" />
+                    <Button text="AI Generate Test" onAction="#goToAIGeneratedSkillTest"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
                 </HBox>
             </VBox>
 
@@ -75,16 +84,17 @@
                 <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Question List:" />
                 <ListView fx:id="questionListView" prefHeight="250" style="-fx-border-color: #c19d7b;" />
 
-                <!-- ✅ "Go to Skill Test" Button - Moved to the Right Side Below the Question List -->
+                <!-- ✅ "Go to Skill Test" Button - Positioned Below the Question List -->
                 <Button onAction="#goToSkillTestScreen" style="-fx-background-color: #6d4c41; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px;" text="Go to Skill Test" />
             </VBox>
-         <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-         </rowConstraints>
+
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+            </rowConstraints>
         </GridPane>
     </center>
 

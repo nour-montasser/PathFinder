@@ -2,6 +2,7 @@ package org.example.pathfinder.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,14 +15,16 @@ import org.example.pathfinder.Service.SkillTestService;
 import org.example.pathfinder.Service.QuestionService;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SkillTestController {
     private final SkillTestService skillTestService = new SkillTestService();
     private final QuestionService questionService = new QuestionService();
     private final ObservableList<SkillTest> skillTestList = FXCollections.observableArrayList();
-    private final ObservableList<Question> questionsList = FXCollections.observableArrayList();
+    private final ObservableList<Question> questionList = FXCollections.observableArrayList();
     private SkillTest selectedSkillTest;
 
     @FXML private TextField titleField, descriptionField, durationField, scoreRequiredField;
@@ -29,14 +32,27 @@ public class SkillTestController {
     @FXML private ListView<SkillTest> skillTestListView;
     private Map<String, Long> jobOfferMap;
     @FXML private ListView<String> questionListView;
-    private final ObservableList<Question> questionList = FXCollections.observableArrayList(); // ✅ New list for questions
-
-
+    @FXML private TextField searchField;
+    private FilteredList<SkillTest> filteredSkillTestList;
+    @FXML private ComboBox<String> sortComboBox;
 
     @FXML
     public void initialize() {
-       skillTestList.addAll(skillTestService.getAll());
-        skillTestListView.setItems(skillTestList);
+        skillTestList.addAll(skillTestService.getAll());
+        filteredSkillTestList = new FilteredList<>(skillTestList, s -> true);
+        skillTestListView.setItems(filteredSkillTestList);
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredSkillTestList.setPredicate(skillTest -> {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    return true;
+                }
+                return skillTest.getTitle().toLowerCase().contains(newValue.toLowerCase());
+            });
+        });
+
+        sortComboBox.getItems().addAll("Alphabetical", "By Score");
+        sortComboBox.setOnAction(event -> sortQuestions());
 
         skillTestListView.setCellFactory(param -> new ListCell<SkillTest>() {
             @Override
@@ -51,26 +67,60 @@ public class SkillTestController {
                 selectedSkillTest = skillTestListView.getSelectionModel().getSelectedItem();
                 if (selectedSkillTest != null) {
                     loadSkillTestForEditing(selectedSkillTest);
-                    loadQuestionsForSkillTest(selectedSkillTest.getIdTest()); // ✅ Load related questions dynamically
+                    loadQuestionsForSkillTest(selectedSkillTest.getIdTest());
                 }
             }
         });
 
-
-        // Load job offers directly into ComboBox
         jobOfferMap = skillTestService.getAllJobOffers();
         jobOfferComboBox.setItems(FXCollections.observableArrayList(jobOfferMap.keySet()));
-        questionListView.setItems(FXCollections.observableArrayList()); // ✅ Initialize question ListView
-        questionListView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                String selectedQuestionText = questionListView.getSelectionModel().getSelectedItem();
-                if (selectedQuestionText != null) {
-                    System.out.println("✅ Selected Question: " + selectedQuestionText);
-                }
-            }
-        });
+        questionListView.setItems(FXCollections.observableArrayList());
+    }
 
+    private void sortQuestions() {
+        if (selectedSkillTest == null || questionList.isEmpty()) {
+            return;
+        }
 
+        String selectedOption = sortComboBox.getValue();
+        if (selectedOption == null) return;
+
+        if (selectedOption.equals("Alphabetical")) {
+            questionList.sort(Comparator.comparing(Question::getQuestion));
+        } else if (selectedOption.equals("By Score")) {
+            questionList.sort(Comparator.comparing(Question::getScore).reversed());
+        }
+
+        questionListView.getItems().setAll(questionList.stream().map(Question::getQuestion).toList());
+    }
+
+    @FXML
+    public void setQuestions(List<Question> questions) {
+        if (questions != null && !questions.isEmpty()) {
+            this.questionList.setAll(questions);
+            questionListView.getItems().setAll(
+                    questionList.stream().map(Question::getQuestion).collect(Collectors.toList())
+            );
+            System.out.println("✅ Loaded " + questions.size() + " questions.");
+        } else {
+            System.out.println("⚠️ No questions received.");
+        }
+    }
+
+    /**
+     * ✅ Converts AI-generated question strings into Question objects
+     */
+    public void setAIQuestions(List<Question> aiQuestions) {
+        if (aiQuestions == null || aiQuestions.isEmpty()) {
+            showAlert("Error", "No AI-generated questions found.");
+            return;
+        }
+
+        this.questionList.setAll(aiQuestions);
+        questionListView.getItems().setAll(
+                questionList.stream().map(Question::getQuestion).collect(Collectors.toList())
+        );
+        System.out.println("✅ AI Questions received and added to the test.");
     }
 
     @FXML
@@ -93,19 +143,16 @@ public class SkillTestController {
 
             long jobOfferId = jobOfferMap.get(selectedJobOffer);
             SkillTest skillTest = new SkillTest(null, title, description, duration, jobOfferId, scoreRequired);
-            long skillTestId = skillTestService.ajouter(skillTest); // ✅ Save Skill Test and get the generated ID
+            long skillTestId = skillTestService.ajouter(skillTest);
 
             if (skillTestId > 0) {
                 skillTest.setIdTest(skillTestId);
+                skillTestList.add(skillTest);
 
-                if (!skillTestList.contains(skillTest)) {
-                    skillTestList.add(skillTest);
-                }
-
-                // ✅ SAVE QUESTIONS TO DATABASE AND LINK TO SKILL TEST
+                // Save AI-generated or manually added questions
                 for (Question q : questionList) {
-                    q.setIdTest(skillTestId); // ✅ Link question to Skill Test ID
-                    questionService.ajouter(q); // ✅ Save question in database
+                    q.setIdTest(skillTestId);
+                    questionService.ajouter(q);
                 }
 
                 System.out.println("✅ Skill Test added and questions linked successfully!");
@@ -125,7 +172,7 @@ public class SkillTestController {
 
         List<Question> questions = questionService.getQuestionsForSkillTest(skillTestId);
         questionList.setAll(questions);
-        questionListView.getItems().setAll(questionList.stream().map(Question::getQuestion).toList()); // ✅ Display only question text
+        questionListView.getItems().setAll(questionList.stream().map(Question::getQuestion).toList());
     }
 
     @FXML
@@ -148,7 +195,6 @@ public class SkillTestController {
 
             skillTestService.update(selectedSkillTest);
 
-            // ✅ Update list in-place (prevents UI from losing items)
             int index = skillTestList.indexOf(selectedSkillTest);
             if (index != -1) {
                 skillTestList.set(index, selectedSkillTest);
@@ -158,53 +204,6 @@ public class SkillTestController {
             clearFields();
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter valid numeric values.");
-        }
-    }
-
-    private void loadSkillTestForEditing(SkillTest skillTest) {
-        selectedSkillTest = skillTest;
-
-        titleField.setText(skillTest.getTitle());
-        descriptionField.setText(skillTest.getDescription());
-        durationField.setText(String.valueOf(skillTest.getDuration()));
-        scoreRequiredField.setText(String.valueOf(skillTest.getScoreRequired()));
-
-        jobOfferComboBox.setValue(getJobOfferName(skillTest.getIdJobOffer()));
-    }
-
-    private String getJobOfferName(Long idJobOffer) {
-        return jobOfferMap.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(idJobOffer))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @FXML
-    public void viewTest() {
-        SkillTest selectedTest = skillTestListView.getSelectionModel().getSelectedItem();
-
-        if (selectedTest == null) {
-            showAlert("Error", "Please select a Skill Test to view its questions.");
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/ViewSkillTest.fxml"));
-            Parent root = loader.load();
-
-            ViewSkillTestController controller = loader.getController();
-            List<Question> questions = questionService.getQuestionsForSkillTest(selectedTest.getIdTest());
-
-            controller.setSkillTestData(selectedTest, questions);
-
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Skill Test Preview");
-            stage.show();
-
-        } catch (IOException e) {
-            showAlert("Error", "Failed to load Skill Test.");
         }
     }
     @FXML
@@ -229,30 +228,6 @@ public class SkillTestController {
         });
     }
 
-
-    @FXML
-    public void clearFields() {
-        titleField.clear();
-        descriptionField.clear();
-        durationField.clear();
-        jobOfferComboBox.getSelectionModel().clearSelection();
-        scoreRequiredField.clear();
-        selectedSkillTest = null;
-        questionList.clear(); // ✅ Clear ObservableList for questions
-        questionListView.getItems().clear(); // ✅ Clear UI ListView
-
-    }
-
-    @FXML
-    public void setQuestions(ObservableList<Question> questions) {
-        if (questions != null && !questions.isEmpty()) {
-            this.questionList.setAll(questions); // ✅ Store received questions
-            questionListView.getItems().setAll(questionList.stream().map(Question::getQuestion).toList()); // ✅ Update UI
-            System.out.println("✅ Received " + questions.size() + " questions for the Skill Test.");
-        } else {
-            System.out.println("⚠️ No questions received.");
-        }
-    }
     @FXML
     public void deleteQuestion() {
         String selectedQuestionText = questionListView.getSelectionModel().getSelectedItem();
@@ -282,7 +257,33 @@ public class SkillTestController {
             }
         });
     }
+    @FXML
+    public void viewTest() {
+        SkillTest selectedTest = skillTestListView.getSelectionModel().getSelectedItem();
 
+        if (selectedTest == null) {
+            showAlert("Error", "Please select a Skill Test to view its questions.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/ViewSkillTest.fxml"));
+            Parent root = loader.load();
+
+            ViewSkillTestController controller = loader.getController();
+            List<Question> questions = questionService.getQuestionsForSkillTest(selectedTest.getIdTest());
+
+            controller.setSkillTestData(selectedTest, questions);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Skill Test Preview");
+            stage.show();
+
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load Skill Test.");
+        }
+    }
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -290,6 +291,47 @@ public class SkillTestController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    private void loadSkillTestForEditing(SkillTest skillTest) {
+        selectedSkillTest = skillTest;
+
+        titleField.setText(skillTest.getTitle());
+        descriptionField.setText(skillTest.getDescription());
+        durationField.setText(String.valueOf(skillTest.getDuration()));
+        scoreRequiredField.setText(String.valueOf(skillTest.getScoreRequired()));
+
+        jobOfferComboBox.setValue(getJobOfferName(skillTest.getIdJobOffer()));
+
+        // Load questions related to the selected skill test
+        loadQuestionsForSkillTest(skillTest.getIdTest());
+    }
+
+    /**
+     * Retrieves the job offer name for a given ID.
+     */
+    private String getJobOfferName(Long idJobOffer) {
+        return jobOfferMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(idJobOffer))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * ✅ Clears all form fields and resets UI elements.
+     */
+    @FXML
+    public void clearFields() {
+        titleField.clear();
+        descriptionField.clear();
+        durationField.clear();
+        jobOfferComboBox.getSelectionModel().clearSelection();
+        scoreRequiredField.clear();
+        selectedSkillTest = null;
+
+        // Clear questions
+        questionList.clear();
+        questionListView.getItems().clear();
     }
 
 }

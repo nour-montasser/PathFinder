@@ -9,4 +9,6 @@ module org.example.pathfinder {
     opens org.example.pathfinder.Controller to javafx.fxml;
     opens org.example.pathfinder.App to javafx.fxml; // Open the package for JavaFX
     exports org.example.pathfinder.App;
+    requires org.json;
+    requires okhttp3;
 }

@@ -9,27 +9,34 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.Question;
+import org.example.pathfinder.Model.SkillTest;
 import org.example.pathfinder.Service.QuestionService;
+import org.example.pathfinder.Service.SkillTestService;
+import org.example.pathfinder.Service.AISkillTestService;
 
 import java.io.IOException;
+import java.util.List;
 
 public class QuestionController {
-    private ObservableList<Question> questionList = FXCollections.observableArrayList();
-    private Question selectedQuestion; //
+    private final ObservableList<Question> questionList = FXCollections.observableArrayList();
+    private Question selectedQuestion;
 
-    @FXML private TextField questionField;
-    @FXML private TextField responseField;
-    @FXML private TextField correctResponseField;
-    @FXML private TextField scoreField;
+    @FXML private TextField questionField, responseField, correctResponseField, scoreField;
     @FXML private ListView<String> questionListView;
+    @FXML private TextField topicField;
+    @FXML private Button generateTestButton;
+
     private final QuestionService questionService = new QuestionService();
+    private final SkillTestService skillTestService = new SkillTestService();
+    private final ObservableList<SkillTest> skillTestList = FXCollections.observableArrayList();
+
 
     @FXML
     public void initialize() {
-        questionListView.setItems(FXCollections.observableArrayList()); // Bind ListView to ObservableList
+        questionListView.setItems(FXCollections.observableArrayList());
 
         questionListView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) { // Double-click
+            if (event.getClickCount() == 2) {
                 String selectedText = questionListView.getSelectionModel().getSelectedItem();
                 loadQuestionForEditing(selectedText);
             }
@@ -50,7 +57,6 @@ public class QuestionController {
             }
 
             Question question = new Question(null, questionText, null, responses, correctResponse, score);
-
             questionList.add(question);
             questionListView.getItems().add(questionText);
             clearFields();
@@ -72,14 +78,10 @@ public class QuestionController {
             selectedQuestion.setCorrectResponse(correctResponseField.getText().trim());
             selectedQuestion.setScore(Integer.parseInt(scoreField.getText().trim()));
 
-
-
-
-
             int index = questionList.indexOf(selectedQuestion);
             if (index != -1) {
-                questionList.set(index, selectedQuestion); // ✅ Update ObservableList
-                questionListView.getItems().set(index, selectedQuestion.getQuestion()); // ✅ Update ListView
+                questionList.set(index, selectedQuestion);
+                questionListView.getItems().set(index, selectedQuestion.getQuestion());
             }
 
             clearFields();
@@ -107,11 +109,9 @@ public class QuestionController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/SkillTest.fxml"));
             Parent root = loader.load();
 
-            // Pass the list of questions to the SkillTestController
             SkillTestController skillTestController = loader.getController();
-            skillTestController.setQuestions(FXCollections.observableArrayList(questionList)); // Pass questions in memory
+            skillTestController.setQuestions(FXCollections.observableArrayList(questionList));
 
-            // Switch scenes
             Stage stage = (Stage) questionListView.getScene().getWindow();
             Scene scene = new Scene(root, 1000, 600);
 
@@ -123,6 +123,10 @@ public class QuestionController {
             e.printStackTrace();
         }
     }
+
+
+
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -140,4 +144,21 @@ public class QuestionController {
         scoreField.clear();
         selectedQuestion = null;
     }
+    @FXML
+    public void goToAIGeneratedSkillTest() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/AIGeneratedSkillTest.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) questionListView.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 600);
+
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load AI-generated Skill Test screen.");
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -12,7 +12,7 @@ public class    App extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/FrontOffice/main-frontoffice.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/FrontOffice/Question.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
             stage.setTitle("Skill Test Manager");
             stage.setScene(scene);
