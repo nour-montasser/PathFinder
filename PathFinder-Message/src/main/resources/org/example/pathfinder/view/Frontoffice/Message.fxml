@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane prefHeight="702.0" prefWidth="1006.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ChannelMessageController">
+    <children>
+        <VBox opacity="0.94" prefHeight="702.0" prefWidth="88.0" styleClass="dark-caramel-background" stylesheets="@../../../../../styles/style.css">
+
+
+            <children>
+                <Button fx:id="deleteChannelButton"  text="Delete Channel" />
+
+                <ImageView fitHeight="59.0" fitWidth="63.0" preserveRatio="true">
+
+                    <image>
+                        <Image url="@../../../../../Sources/pathfinder_logo_compass.png.png" />
+                    </image>
+                    <VBox.margin>
+                        <Insets left="15.0" top="10.0" />
+                    </VBox.margin>
+                </ImageView>
+            </children>
+        </VBox>
+        <VBox layoutX="89.0" prefHeight="702.0" prefWidth="252.0" styleClass="caramel-background" stylesheets="@../../../../../styles/style.css">
+            <children>
+                <HBox prefHeight="42.0" prefWidth="200.0" stylesheets="@../../../../../styles/style.css">
+                    <children>
+                        <ImageView cache="true" fitHeight="26.0" fitWidth="41.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                            <cursor>
+                                <Cursor fx:constant="NONE" />
+                            </cursor>
+                            <viewport>
+                                <Rectangle2D />
+                            </viewport>
+                            <HBox.margin>
+                                <Insets right="10.0" top="6.0" />
+                            </HBox.margin>
+                            <image>
+                                <Image url="@../../../../../Sources/icons8-search-50.png" />
+                            </image>
+                        </ImageView>
+                        <ComboBox fx:id="searchBox" onAction="#handleUserClick" prefHeight="26.0" prefWidth="202.0" promptText="Search" stylesheets="@../../../../../styles/style.css">
+                            <HBox.margin>
+                                <Insets left="10.0" top="5.0"/>
+                            </HBox.margin>
+                        </ComboBox>
+
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="10.0" right="30.0" top="20.0" />
+                    </VBox.margin>
+
+                </HBox>
+                <Line endX="151.2928924560547" endY="-0.41421353816986084" startX="-100.0" />
+                <Pane prefHeight="612.0" prefWidth="253.0" styleClass="caramel-background" stylesheets="@../../../../../styles/style.css">
+                    <ListView fx:id="channelListView" prefHeight="600.0" prefWidth="300.0"/>
+
+                    <!--<children>
+                        <HBox layoutY="25.0" prefHeight="103.0" prefWidth="252.0">
+                            <children>
+                            </children>
+                        </HBox>
+                        <HBox layoutY="334.0" prefHeight="103.0" prefWidth="252.0">
+                            <children>
+                                <ImageView fitHeight="79.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../../../img/ashref%20photo.png" />
+                                    </image>
+                                </ImageView>
+                                <VBox prefHeight="0.0" prefWidth="207.0">
+                                    <children>
+                                        <Label prefHeight="2.0" prefWidth="154.0" text="Username" textFill="#5b3a29">
+                                            <font>
+                                                <Font name="Ebrima Bold" size="20.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets left="10.0" top="20.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label prefHeight="35.0" prefWidth="181.0" text="You: Non" textFill="#9e9e9e">
+                                            <font>
+                                                <Font name="Ebrima Bold" size="20.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets left="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <Pane prefHeight="81.0" prefWidth="97.0">
+                                    <children>
+                                        <Circle fill="#a1a1a1" layoutX="22.0" layoutY="52.0" radius="6.0" rotate="2.3" stroke="BLACK" strokeType="INSIDE" />
+                                    </children>
+                                </Pane>
+                            </children>
+                            <padding>
+                                <Insets top="5.0" />
+                            </padding>
+                        </HBox>
+                    </children>-->
+                </Pane>
+            </children>
+        </VBox>
+        <VBox layoutX="343.0" prefHeight="702.0" prefWidth="665.0">
+            <children>
+                <HBox prefHeight="100.0" prefWidth="200.0" styleClass="light-caramel-background" stylesheets="@../../../../../styles/style.css">
+                    <children>
+                        <Label fx:id="userLabel" text="Username" underline="true" >
+                            <font>
+                                <Font name="Ebrima Bold" size="37.0" />
+                            </font>
+                            <HBox.margin>
+                                <Insets left="20.0" top="20.0" />
+                            </HBox.margin>
+                        </Label>
+                        <Circle fill="#00ff0f" radius="7.0" stroke="BLACK" strokeType="INSIDE">
+                            <HBox.margin>
+                                <Insets left="20.0" top="43.0" />
+                            </HBox.margin>
+                        </Circle>
+                        <Label prefHeight="14.0" prefWidth="76.0" text="Online">
+                            <HBox.margin>
+                                <Insets left="10.0" top="39.0" />
+                            </HBox.margin>
+                            <font>
+                                <Font name="Ebrima Bold" size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <ScrollPane prefHeight="538.0" prefWidth="665.0">
+                    <content>
+                        <Pane fx:id="messageContainer" prefHeight="532.0" prefWidth="662.0" styleClass="light-caramel-background" stylesheets="@../../../../../styles/style.css">
+                            <children>
+                                <ListView fx:id="messageListView" layoutX="50.0" layoutY="100.0" prefHeight="300.0" prefWidth="550.0">
+                                    <!-- Optional: Add custom cell factory if needed -->
+                                </ListView>
+                            </children>
+                            <Button onAction="#deleteMessage" text="Delete Message" />
+                            <Button layoutX="129.0" layoutY="-1.0" onAction="#updateMessage" text="Update Message" />
+
+                        </Pane>
+                    </content>
+                </ScrollPane>
+
+                <HBox prefHeight="61.0" prefWidth="665.0" styleClass="light-caramel-background" stylesheets="@../../../../../styles/style.css">
+                    <children>
+                        <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets left="10.0" top="15.0" />
+                            </HBox.margin>
+                        </ImageView>
+                        <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets left="10.0" top="15.0" />
+                            </HBox.margin>
+                        </ImageView>
+                        <TextField fx:id="messageInput" prefHeight="37.0" prefWidth="477.0" promptText="Type something to send...">
+                            <HBox.margin>
+                                <Insets left="10.0" top="10.0" />
+                            </HBox.margin>
+                        </TextField>
+                        <ImageView fx:id="sendButton" fitHeight="34.0" fitWidth="38.0" onMouseClicked="#sendMessage" pickOnBounds="true" preserveRatio="true">
+                            <HBox.margin>
+                                <Insets left="10.0" top="15.0" />
+                            </HBox.margin>
+                            <image>
+                                <Image url="@../../../../../Sources/send-svgrepo-com.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
+
+
+
+
+
