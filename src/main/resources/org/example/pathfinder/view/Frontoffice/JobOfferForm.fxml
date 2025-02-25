@@ -37,6 +37,21 @@
     <ComboBox fx:id="typeComboBox" prefWidth="250.0"
               style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
+    <!-- Field Dropdown -->
+    <Label text="Select a Job Offer field:" style="-fx-font-weight: bold;" />
+    <ComboBox fx:id="jobOffersComboBox" prefWidth="250.0"
+              style="-fx-border-color: #ccc; -fx-border-radius: 5;"/>
+
+    <!-- Country Dropdown -->
+    <Label text="Select Country:" style="-fx-font-weight: bold;" />
+    <ComboBox fx:id="countryComboBox" prefWidth="250.0"
+              style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+
+    <!-- City Dropdown (initially hidden until a country is selected) -->
+    <Label fx:id="citylabel" text="Select City:" style="-fx-font-weight: bold;" />
+    <ComboBox fx:id="cityComboBox" prefWidth="250.0"
+              style="-fx-border-color: #ccc; -fx-border-radius: 5;" visible="false" />
+
     <!-- Number of Spots -->
     <Label text="Number of Spots:" style="-fx-font-weight: bold;" />
     <TextField fx:id="numberOfSpotsField" prefWidth="100.0"

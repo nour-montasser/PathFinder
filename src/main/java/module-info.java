@@ -3,6 +3,9 @@ module org.example.pathfinder {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
+    requires org.json;
+    requires java.net.http;
+    requires mysql.connector.j;
 
     opens org.example.pathfinder.Controller to javafx.fxml;
     opens org.example.pathfinder.App to javafx.fxml; // Open the App subpackage

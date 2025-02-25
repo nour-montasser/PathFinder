@@ -38,6 +38,9 @@
     <!-- Buttons -->
     <Region prefHeight="10.0"/>  <!-- Spacer -->
     <HBox spacing="15.0" alignment="CENTER">
+        <Button fx:id="generateCoverLetterButton" text="Generate Cover Letter"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px;
+               -fx-background-radius: 8; -fx-padding: 8 16;" onAction="#handleGenerateCoverLetter"/>
         <Button fx:id="applyButton" text="Apply"
                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;
                        -fx-background-radius: 8; -fx-padding: 8 16;" onAction="#handleApplyButtonClick"/>

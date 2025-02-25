@@ -13,6 +13,14 @@ import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.CoverLetterService;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 public class JobOfferApplicationFormController {
@@ -145,4 +153,91 @@ public class JobOfferApplicationFormController {
     private void handleCancelButtonClick() {
         closeForm();
     }
+
+    private static final String API_KEY = "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"; // Replace with your actual API key
+  //distilgpt2
+    private static final String API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"; // Model endpoint
+    @FXML
+    private void handleGenerateCoverLetter() {
+        try {
+            // Collect user data (profile, CV, and experience) for the logged-in user
+            String userData = coverLetterService.getUserDataForCoverLetter(loggedInUserId); // This is where the data is fetched
+
+            // Get job description from the job offer
+            String jobDescription = jobOffer.getDescription();
+
+            // Create the prompt for Hugging Face AI
+            String prompt = buildPrompt(userData, jobDescription);
+
+            // Call Hugging Face API to generate cover letter
+            String generatedCoverLetter = generateCoverLetter(prompt);
+
+            // Display the generated cover letter in the TextArea
+            coverLetterField.setText(generatedCoverLetter);
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while generating the cover letter.");
+            e.printStackTrace();
+        }
+    }
+
+    // Method to create the prompt for the Hugging Face model
+    private String buildPrompt(String userData, String jobDescription) {
+        return "Write a professional and well-structured cover letter based on the following details, use them to fill in the placeholders:\n\n" +
+                "### Job Description ###\n" +
+                jobDescription + "\n\n" +
+                "### User Information ###\n" +
+                userData + "\n\n" +
+                "### Cover Letter Guidelines ###\n" +
+                "- Maintain a professional and formal tone.\n" +
+                "- Begin with an introduction stating the user's interest in the position.\n" +
+                "- Highlight relevant experiences and skills.\n" +
+                "- Conclude with a polite call to action and .\n" +
+                "answer only with the cover letter dont add anything else and dont use place holders ";
+    }
+
+
+    // Method to send the request to Hugging Face API
+    private String generateCoverLetter(String prompt) {
+        try {
+            // Create the request body
+            JSONObject requestData = new JSONObject();
+            requestData.put("inputs", prompt); // Passing the complete prompt to the model
+
+            // Send the request to Hugging Face API
+            URL url = new URL(API_URL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + API_KEY);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // Write the request data
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(requestData.toString().getBytes());
+                os.flush();
+            }
+
+            // Read the response
+            StringBuilder response = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+            }
+
+            JSONArray responseArray = new JSONArray(response.toString());
+            String result= responseArray.getJSONObject(0).getString("generated_text").trim();
+
+            if (result.startsWith(prompt)) {
+                result = result.substring(prompt.length()).trim();
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error generating cover letter."; // In case of error
+        }
+    }
+
 }

@@ -28,6 +28,8 @@ public class JobOfferListCardController {
 
     @FXML
     private Label titleLabel;
+    @FXML
+    private Label addressLabel;
 
     @FXML
     private Label descriptionLabel;
@@ -122,7 +124,7 @@ public class JobOfferListCardController {
         requiredExperienceLabel.setText("Required Experience: " + jobOffer.getRequiredExperience());
         skillsLabel.setText("Skills: " + jobOffer.getSkills());
         numberOfSpotsLabel.setText("Number of Spots: " + jobOffer.getNumberOfSpots());
-
+        addressLabel.setText("Address: "+jobOffer.getAddress());
         additionalDetails.setVisible(false);
         additionalDetails.setManaged(false);
 
@@ -251,6 +253,7 @@ public class JobOfferListCardController {
             // Recréer la scène avec le layout mis à jour
             Scene detailScene = new Scene(frontOfficeView);
             detailScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
+
 
             // Appliquer la nouvelle scène et forcer le redimensionnement
             currentStage.setScene(detailScene);

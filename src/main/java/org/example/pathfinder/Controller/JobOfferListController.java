@@ -1,15 +1,14 @@
 package org.example.pathfinder.Controller;
 
+import com.mysql.cj.xdevapi.JsonArray;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -21,8 +20,27 @@ import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.JobOfferService;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class JobOfferListController {
@@ -44,44 +62,93 @@ public class JobOfferListController {
 
     @FXML
     private TextField searchField;
+   // @FXML
+   // private TextField citySearchField;
+    @FXML
+    private ComboBox<String> searchFilter;
+
     ApplicationService applicationService = new ApplicationService();
 
     private JobOfferService jobOfferService;
     private ObservableList<JobOffer> jobOffers;
     private String loggedUserRole = LoggedUser.getInstance().getRole();
     private long loggedInUserId = LoggedUser.getInstance().getUserId();
+    private static final String GEONAMES_API_URL = "http://api.geonames.org/searchJSON?q=%s&maxRows=10&username=nourmontasser";
 
+
+   /* @FXML
+    private ComboBox<String> cityComboBox;*/
     @FXML
     public void initialize() {
-
         String imagePath = String.valueOf(getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png"));
         searchIcon.setImage(new Image(imagePath));
         jobOfferService = new JobOfferService();
         jobOffers = FXCollections.observableArrayList();
         loadJobOffers();
         refreshJobOfferList();
-
-
+        if ("COMPANY".equals(loggedUserRole)) {
+            // For companies, show only "Show My Job Offers" and "Show All Job Offers"
+            filterComboBox.setItems(FXCollections.observableArrayList(
+                    "Show My Job Offers",
+                    "Show All Job Offers"
+            ));
+        } else if ("SEEKER".equals(loggedUserRole)) {
+            // For seekers, show all options
+            filterComboBox.setItems(FXCollections.observableArrayList(
+                    "Part-time",
+                    "Full-time",
+                    "Fixed-term contract",
+                    "Long-term contract",
+                    "Show All Job Offers"
+            ));
+        }
         if (loggedUserRole.equals("COMPANY")) {
             btnViewApplications.setVisible(false);  // Hide the applications button for companies
             filterComboBox.setOnAction(event -> {
-                String selectedFilter = filterComboBox.getSelectionModel().getSelectedItem ().toString();
+                String selectedFilter = filterComboBox.getSelectionModel().getSelectedItem().toString();
                 // Call method to filter job offers based on the selected option
-                filterJobOffers(selectedFilter);
+                filterJobOffersForCompany(selectedFilter);
             });
-        }else if(loggedUserRole.equals("SEEKER")) {
-            filterComboBox.setVisible(false);
-            addJobOfferButton.setVisible(false);
+        } else if (loggedUserRole.equals("SEEKER")) {
+            filterComboBox.setVisible(true);  // Make it visible for seekers
+            filterComboBox.setOnAction(event -> {
+                String selectedFilter = filterComboBox.getSelectionModel().getSelectedItem().toString();
+                // Call method to filter job offers based on the selected option for seekers
+                filterJobOffersForSeeker(selectedFilter);
+            });
+            addJobOfferButton.setVisible(false);  // Hide add button for seekers
         }
 
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterJobOffersBySearch(newValue);
 
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (searchFilter.getValue().equals("By City")) {
+                if (newValue.isEmpty()) {
+                    jobOffers.setAll(jobOfferService.getall()); // Reset list when field is empty
+                    refreshJobOfferList();
+                    cityContextMenu.hide();
+                } else if (newValue.length() > 2) {
+                    fetchCities(newValue); // Fetch cities only if more than 2 characters
+                }
+            } else {
+                filterJobOffersBySearch(newValue);
+            }
         });
+
+
+        // Handle selection of a city from the ComboBox
+       /* cityComboBox.setOnAction(event -> {
+            String selectedCity = cityComboBox.getValue();
+            if (selectedCity != null) {
+                searchField.setText(selectedCity);  // Set the selected city into the search field
+                cityComboBox.setVisible(false); // Hide the ComboBox after selection
+                // Optionally, fetch the city's coordinates or use the selected city in your logic
+            }
+        });*/
+
+
+
         // Listen to width changes for responsive design
         jobOfferGridPane.widthProperty().addListener((obs, oldWidth, newWidth) -> refreshJobOfferList());
-
-
     }
 
     private void filterJobOffersBySearch(String searchText) {
@@ -99,15 +166,14 @@ public class JobOfferListController {
 
             jobOffers.setAll(filteredList);
         }
-        System.out.println("Search text: " + searchText);
-        System.out.println("Filtered list size: " + jobOffers.size());
+        //System.out.println("Search text: " + searchText);
+       // System.out.println("Filtered list size: " + jobOffers.size());
         refreshJobOfferList();
     }
 
-    @FXML
-    private void filterJobOffers(String filter) {
+    private void filterJobOffersForCompany(String filter) {
         if ("Show My Job Offers".equals(filter)) {
-            // Load only job offers belonging to the logged-in user
+            // Load only job offers belonging to the logged-in user (company)
             jobOffers.setAll(jobOfferService.getByUserId(loggedInUserId));
         } else if ("Show All Job Offers".equals(filter)) {
             // Load all job offers
@@ -115,6 +181,28 @@ public class JobOfferListController {
         }
         refreshJobOfferList(); // Refresh UI with new list
     }
+
+
+    private void filterJobOffersForSeeker(String filter) {
+        if ("Full-time".equals(filter)) {
+            // Filter for full-time positions
+            jobOffers.setAll(jobOfferService.getByJobType("Full-time"));
+        } else if ("Part-time".equals(filter)) {
+            // Filter for part-time positions
+            jobOffers.setAll(jobOfferService.getByJobType("Part-time"));
+        }
+        else if ("Fixed-term contract".equals(filter)) {
+            jobOffers.setAll(jobOfferService.getByJobType("Fixed-term contract"));
+        } else if ("Long-term contract".equals(filter)) {
+            jobOffers.setAll(jobOfferService.getByJobType("Long-term contract"));
+        } else if ("Show All Job Offers".equals(filter)) {
+            // Load all job offers
+            jobOffers.setAll(jobOfferService.getall());
+        }
+
+        refreshJobOfferList(); // Refresh UI with new list
+    }
+
 
     @FXML
     public void handleAddJobOffer() {
@@ -244,4 +332,142 @@ public class JobOfferListController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    //************************************************************
+    private final String GEONAMES_USERNAME = "nourmontasser";
+
+    private void fetchCities(String query) {
+        String apiUrl = String.format(GEONAMES_API_URL, query);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> {
+                    if (response.statusCode() == 200) {
+                        handleCityResponse(response.body());
+                    }
+                });
+
+    }
+
+    private ContextMenu cityContextMenu = new ContextMenu(); // Keep a single context menu
+
+    private void handleCityResponse(String responseBody) {
+        try {
+            JSONObject jsonResponse = new JSONObject(responseBody);
+            JSONArray cities = jsonResponse.getJSONArray("geonames");
+            List<String> cityNames = new ArrayList<>();
+
+            for (int i = 0; i < cities.length(); i++) {
+                JSONObject city = cities.getJSONObject(i);
+                String cityName = city.getString("name");
+                cityNames.add(cityName);
+            }
+
+            Platform.runLater(() -> {
+                cityContextMenu.getItems().clear(); // Clear previous suggestions
+
+                if (!cityNames.isEmpty()) {
+                    for (String city : cityNames) {
+                        MenuItem menuItem = new MenuItem(city);
+                        menuItem.setOnAction(event -> {
+                            searchField.setText(city); // Set selected city
+                            cityContextMenu.hide();
+
+                            // Fetch coordinates and filter job offers
+                            fetchCityCoordinates(city, (selectedLat, selectedLng) -> {
+                                System.out.println("Selected city coordinates: " + selectedLat + ", " + selectedLng);
+                                filterJobOffersByDistance(selectedLat, selectedLng);
+                            });
+                        });
+                        cityContextMenu.getItems().add(menuItem);
+                    }
+
+                    if (!cityContextMenu.isShowing()) {
+                        cityContextMenu.show(searchField, javafx.geometry.Side.BOTTOM, 0, 0);
+                    }
+                } else {
+                    cityContextMenu.hide();
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fetchCityCoordinates(String cityName, BiConsumer<Double, Double> callback) {
+        String apiUrl = String.format(GEONAMES_API_URL, cityName);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> {
+                    if (response.statusCode() == 200) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response.body());
+                            JSONArray cities = jsonResponse.getJSONArray("geonames");
+
+                            if (cities.length() > 0) {
+                                JSONObject city = cities.getJSONObject(0);
+                                double lat = city.getDouble("lat");
+                                double lng = city.getDouble("lng");
+
+                                // Pass the coordinates to the callback
+                                callback.accept(lat, lng);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private void filterJobOffersByDistance(double selectedLat, double selectedLng) {
+        List<JobOffer> filteredJobs = new ArrayList<>();
+        Map<String, double[]> cityCoordinatesCache = new HashMap<>(); // Cache to avoid multiple API calls
+
+        // Iterate over job offers
+        for (JobOffer job : jobOffers) {
+            String address = job.getAddress();
+           // System.out.println(job);
+            if (address == null || !address.contains(",")) {
+                continue; // Skip if no address or invalid format
+            }
+
+            String jobCity = address.split(",")[1].trim(); // Extract city name
+                // Fetch city coordinates asynchronously if not cached
+                fetchCityCoordinates(jobCity, (lat, lng) -> {
+                    cityCoordinatesCache.put(jobCity, new double[]{lat, lng});
+                    double distance = calculateDistance(selectedLat, selectedLng, lat, lng);
+                    System.out.println("Distance1: " + distance);
+                    if (distance <= 200) {
+                        filteredJobs.add(job);
+                    }
+                    updateJobOffers(filteredJobs); // Update after all cities processed
+                });
+
+        }
+    }
+
+    private void updateJobOffers(List<JobOffer> filteredJobs) {
+        Platform.runLater(() -> {
+            jobOffers.setAll(filteredJobs);
+            refreshJobOfferList();
+        });
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Earth's radius in km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in km
+    }
+
+
 }

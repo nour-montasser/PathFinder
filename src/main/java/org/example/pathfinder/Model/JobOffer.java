@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 public class JobOffer {
-    private Long id_Offer; /////////////////////why big int
+    private Long id_Offer;
     private Long id_User;
     private String title;
     private String description;
@@ -14,9 +14,12 @@ public class JobOffer {
     private String requiredEducation;
     private String requiredExperience;
     private String skills;
+    private String field;
+    private String address;
+
 
     // Constructor
-    public JobOffer(Long idUser, String title, String description, String type, Integer numberOfSpots, String requiredEducation, String requiredExperience, String skills) {
+    public JobOffer(Long idUser, String title, String description, String type, Integer numberOfSpots, String requiredEducation, String requiredExperience, String skills,String field, String address) {
         this.id_User = idUser;
         this.title = title;
         this.description = description;
@@ -26,6 +29,9 @@ public class JobOffer {
         this.requiredEducation = requiredEducation;
         this.requiredExperience = requiredExperience;
         this.skills = skills;
+        this.field = field;
+        this.address = address;
+
     }
 
     public JobOffer() {
@@ -112,6 +118,20 @@ public class JobOffer {
     public void setSkills( String skills) {
         this.skills = skills;
     }
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+    public String getAddress() {
+        return address; // Getter for address
+    }
+
+    public void setAddress(String address) {
+        this.address = address; // Setter for address
+    }
 
     @Override
     public String toString() {
@@ -125,7 +145,9 @@ public class JobOffer {
                 ", numberOfSpots=" + numberOfSpots +
                 ", requiredEducation='" + requiredEducation + '\'' +
                 ", requiredExperience='" + requiredExperience + '\'' +
-                ", skills=" + skills +
+                ", skills='" + skills + '\'' +
+                ", field='" + field + '\'' +
+                ", address='" + address + '\'' + // Include address in toString
                 '}';
     }
 
@@ -143,11 +165,13 @@ public class JobOffer {
                 Objects.equals(numberOfSpots, jobOffer.numberOfSpots) &&
                 Objects.equals(requiredEducation, jobOffer.requiredEducation) &&
                 Objects.equals(requiredExperience, jobOffer.requiredExperience) &&
-                Objects.equals(skills, jobOffer.skills);
+                Objects.equals(skills, jobOffer.skills)&&
+                Objects.equals(field, jobOffer.field)&&
+                Objects.equals(address, jobOffer.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id_Offer, id_User, title, description, datePosted, type, numberOfSpots, requiredEducation, requiredExperience, skills);
+        return Objects.hash(id_Offer, id_User, title, description, datePosted, type, numberOfSpots, requiredEducation, requiredExperience, skills, field, address);
     }
 }

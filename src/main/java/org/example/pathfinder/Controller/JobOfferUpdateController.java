@@ -1,14 +1,18 @@
 package org.example.pathfinder.Controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.JobOfferService;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 
 public class JobOfferUpdateController {
 
@@ -37,7 +41,16 @@ public class JobOfferUpdateController {
     private TextField skillsField;
 
     @FXML
+    private ComboBox<String> jobOffersComboBox,countryComboBox, cityComboBox;
+
+    @FXML
+    private Label citylabel;
+    @FXML
     private Button submitButton;
+
+    private static final String API_URL = "https://api.adzuna.com/v1/api/jobs/us/categories?app_id=0d0c3bdf&app_key=c3508cb0e5131989785afef1cfcbafc6";
+    private static final String GEONAMES_USERNAME = "nourmontasser";  // Replace with your GeoNames username
+    private final Map<String, String> countryMap = new HashMap<>(); // Stores CountryName -> ISO Code
 
     public JobOfferUpdateController() {
         jobOfferService = new JobOfferService(); // Initialize the service
@@ -46,12 +59,73 @@ public class JobOfferUpdateController {
     @FXML
     private void initialize() {
         typeComboBox.getItems().addAll("Full-time", "Part-time", "Contract");
+        loadJobFields(); // Populate job fields on initialization
+        loadCountries();
+
+
+        // Show city options when a country is selected
+        countryComboBox.setOnAction(event -> loadCities());
+    }
+
+    private void loadJobFields() {
+        try {
+            List<String> jobFields = fetchJobFieldsFromAPI();
+            if (!jobFields.isEmpty()) {
+                jobOffersComboBox.getItems().addAll(jobFields);
+            } else {
+                showAlert(Alert.AlertType.WARNING, "No Data", "No job fields available.");
+            }
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to fetch job fields: " + e.getMessage());
+        }
+    }
+
+    private List<String> fetchJobFieldsFromAPI() throws IOException {
+        List<String> jobFields = new ArrayList<>();
+        try {
+            URL url = new URL(API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setInstanceFollowRedirects(true);
+            conn.setRequestProperty("Accept", "application/json");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                throw new IOException("Failed to fetch job fields, response code: " + responseCode);
+            }
+
+            InputStream inputStream = conn.getInputStream();
+            Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+            String response = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+
+            jobFields = parseJobFields(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Failed to fetch or parse job fields: " + e.getMessage());
+        }
+        return jobFields;
+    }
+
+    private List<String> parseJobFields(String jsonResponse) {
+        List<String> jobFields = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONArray categories = jsonObject.getJSONArray("results");
+            for (int i = 0; i < categories.length(); i++) {
+                JSONObject category = categories.getJSONObject(i);
+                String field = category.getString("label");
+                jobFields.add(field);  // Add the job field (label) to the list
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jobFields;
     }
 
     @FXML
     private void handleSubmitButtonClick() {
         try {
-            // Validate the inputs
             if (!isValidForm()) {
                 return; // Stop processing if validation fails
             }
@@ -63,13 +137,18 @@ public class JobOfferUpdateController {
             String requiredExperience = requiredExperienceField.getText();
             String type = typeComboBox.getValue();
             String skills = skillsField.getText(); // Assuming skills are comma-separated
+            String field = jobOffersComboBox.getValue();
+
+            // Concatenating country and city into address
+            String country = countryComboBox.getValue().trim();
+            String city = cityComboBox.getValue().trim();
+            String address = country + ", " + city;
 
             if (!currentJobOffer.getTitle().equals(title) && !jobOfferService.isJobOfferTitleUnique(title)) {
                 showAlert(Alert.AlertType.ERROR, "Duplicate Job Offer", "A job offer with the same title already exists.");
                 return;
             }
 
-            // Update the JobOffer object with new values
             currentJobOffer.setTitle(title);
             currentJobOffer.setDescription(description);
             currentJobOffer.setNumberOfSpots(numberOfSpots);
@@ -77,25 +156,21 @@ public class JobOfferUpdateController {
             currentJobOffer.setRequiredExperience(requiredExperience);
             currentJobOffer.setType(type);
             currentJobOffer.setSkills(skills);
+            currentJobOffer.setField(field);
+            currentJobOffer.setAddress(address);
 
-            // Call the service to update the job offer in the database
             jobOfferService.update(currentJobOffer);
 
-            // Show success message
             showAlert(Alert.AlertType.INFORMATION, "Job Offer Updated", "The job offer was successfully updated.");
-
             Stage stage = (Stage) titleField.getScene().getWindow();
             stage.close();
 
         } catch (Exception e) {
-            // Handle exception and show error message
-            showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while updating the job offer.");
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while updating the job offer: " + e.getMessage());
         }
     }
 
     private boolean isValidForm() {
-        // Check if any required field is empty
         if (titleField.getText().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Input Error", "Title is required.");
             return false;
@@ -124,7 +199,22 @@ public class JobOfferUpdateController {
             showAlert(Alert.AlertType.WARNING, "Input Error", "Skills are required.");
             return false;
         }
+        String jobField = jobOffersComboBox.getValue();
+        if (jobField == null || jobField.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please select a job field.");
+            return false;
+        }
+        String countryComboBoxValue = countryComboBox.getValue();
+        if (countryComboBoxValue == null || countryComboBoxValue.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please select a country.");
+            return false;
+        }
 
+        String cityComboBoxValue = cityComboBox.getValue();
+        if (cityComboBoxValue == null || cityComboBoxValue.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please select a city.");
+            return false;
+        }
         return true;
     }
 
@@ -163,7 +253,6 @@ public class JobOfferUpdateController {
         }
     }
 
-    // This method will be used to populate the form with the existing job offer data
     public void setJobOffer(JobOffer jobOffer) {
         this.currentJobOffer = jobOffer;
 
@@ -174,5 +263,137 @@ public class JobOfferUpdateController {
         requiredExperienceField.setText(jobOffer.getRequiredExperience());
         skillsField.setText(jobOffer.getSkills());
         typeComboBox.setValue(jobOffer.getType());
+        jobOffersComboBox.setValue(jobOffer.getField());
+
+        String address = jobOffer.getAddress();
+        String[] addressParts = address.split(",", 2);
+        if (addressParts.length == 2) {
+            String country = addressParts[0].trim(); // Trim any spaces
+            String city = addressParts[1].trim();
+
+            // Set the country and city in the combo boxes
+            countryComboBox.setValue(country);
+            cityComboBox.setValue(city);
+        }
+
+    }
+    private void loadCountries() {
+        try {
+            List<String> countries = fetchCountriesFromGeoNames();
+            if (!countries.isEmpty()) {
+                countryComboBox.getItems().addAll(countries);
+            } else {
+                showAlert(Alert.AlertType.WARNING, "No Data", "No countries available.");
+            }
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to fetch countries.");
+            e.printStackTrace();
+        }
+    }
+
+    private List<String> fetchCountriesFromGeoNames() throws IOException {
+        List<String> countries = new ArrayList<>();
+        String urlString = "http://api.geonames.org/countryInfoJSON?username=" + GEONAMES_USERNAME;
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setInstanceFollowRedirects(true);
+        conn.setRequestProperty("Accept", "application/json");
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode != 200) {
+            throw new IOException("Failed to fetch countries, response code: " + responseCode);
+        }
+
+        InputStream inputStream = conn.getInputStream();
+        Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+        String response = scanner.hasNext() ? scanner.next() : "";
+        scanner.close();
+
+        countries = parseCountries(response);
+        return countries;
+    }
+
+    private List<String> parseCountries(String jsonResponse) {
+        List<String> countryList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONArray countryArray = jsonObject.getJSONArray("geonames");
+            for (int i = 0; i < countryArray.length(); i++) {
+                JSONObject country = countryArray.getJSONObject(i);
+                String countryName = country.getString("countryName"); // Full country name
+                String countryCode = country.getString("countryCode"); // 2-letter ISO code
+
+                countryMap.put(countryName, countryCode); // Store in map
+                countryList.add(countryName); // Add to dropdown
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return countryList;
+    }
+
+    @FXML
+    private void loadCities() {
+        String selectedCountry = countryComboBox.getValue();
+        if (selectedCountry != null) {
+            try {
+                String countryCode = countryMap.get(selectedCountry);
+                List<String> cities = fetchCitiesFromGeoNames(countryCode);
+                if (!cities.isEmpty()) {
+                    cityComboBox.getItems().clear();
+                    cityComboBox.getItems().addAll(cities);
+
+                    citylabel.setVisible(true);
+                    cityComboBox.setVisible(true);
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "No Data", "No cities available for the selected country.");
+
+                }
+            } catch (IOException e) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to fetch cities.");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private List<String> fetchCitiesFromGeoNames(String country) throws IOException {
+        List<String> cities = new ArrayList<>();
+        String urlString = "http://api.geonames.org/searchJSON?country=" + country + "&username=" + GEONAMES_USERNAME;
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setInstanceFollowRedirects(true);
+        conn.setRequestProperty("Accept", "application/json");
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode != 200) {
+            throw new IOException("Failed to fetch cities, response code: " + responseCode);
+        }
+
+        InputStream inputStream = conn.getInputStream();
+        Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+        String response = scanner.hasNext() ? scanner.next() : "";
+        scanner.close();
+
+        cities = parseCities(response);
+        return cities;
+    }
+
+    private List<String> parseCities(String jsonResponse) {
+        List<String> cities = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONArray cityArray = jsonObject.getJSONArray("geonames");
+            for (int i = 0; i < cityArray.length(); i++) {
+                JSONObject city = cityArray.getJSONObject(i);
+                String cityName = city.getString("name");
+                cities.add(cityName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cities;
     }
 }

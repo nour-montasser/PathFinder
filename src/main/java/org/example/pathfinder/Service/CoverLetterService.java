@@ -4,6 +4,7 @@ import org.example.pathfinder.Model.CoverLetter;
 import org.example.pathfinder.App.DatabaseConnection;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,6 +145,97 @@ public class CoverLetterService implements Services<CoverLetter> {
 
         return coverLetter;
     }
+
+
+    public String getUserDataForCoverLetter(Long userId) {
+        StringBuilder userData = new StringBuilder();
+
+        // Query to get user profile and CV information
+        String query = "SELECT " +
+                "    u.id_user, " +
+                "    u.name, " +
+                "    u.email, " +
+                "    u.password, " +
+                "    u.role, " +
+                "    p.address, " +
+                "    p.birthday, " +
+                "    p.phone, " +
+                "    p.current_occupation, " +
+                "    p.photo, " +
+                "    p.bio, " +
+                "    c.id_cv, " +
+                "    c.title AS cv_title, " +
+                "    c.introduction AS cv_introduction, " +
+                "    c.languages AS cv_languages, " +
+                "    c.date_creation AS cv_creation_date, " +
+                "    e.id_experience, " +
+                "    e.type AS experience_type, " +
+                "    e.position AS experience_position, " +
+                "    e.location_name AS experience_location, " +
+                "    e.start_date AS experience_start_date, " +
+                "    e.end_date AS experience_end_date " +
+                "FROM " +
+                "    app_user u " +
+                "JOIN " +
+                "    profile p ON u.id_user = p.id_user " +
+                "JOIN " +
+                "    CV c ON u.id_user = c.id_user " +
+                "LEFT JOIN " +
+                "    experience e ON c.id_cv = e.id_cv " +
+                "WHERE " +
+                "    u.id_user = ?";
+
+        try (PreparedStatement stm = cnx.prepareStatement(query)) {
+            stm.setLong(1, userId);
+            ResultSet rs = stm.executeQuery();
+
+            boolean hasData = false; // Flag to check if we have data
+
+            // Loop through the result set and build the string
+            while (rs.next()) {
+                if (!hasData) {
+                    hasData = true;
+                    userData.append("Profile Information: \n")
+                            .append("Address: ").append(rs.getString("address")).append("\n")
+                            .append("Phone: ").append(rs.getString("phone")).append("\n")
+                            .append("Current Occupation: ").append(rs.getString("current_occupation")).append("\n")
+                            .append("Bio: ").append(rs.getString("bio")).append("\n\n");
+
+                    // Adding CV Details
+                    userData.append("CV Information: \n")
+                            .append("CV Title: ").append(rs.getString("cv_title")).append("\n")
+                            .append("Languages: ").append(rs.getString("cv_languages")).append("\n\n");
+                }
+
+                // Adding Experience Details (handling multiple experiences)
+                String position = rs.getString("experience_position");
+                if (position != null) { // Check if experience exists
+                    userData.append("Experience: \n")
+                            .append("Position: ").append(position).append("\n")
+                            .append("Location: ").append(rs.getString("experience_location")).append("\n");
+
+                    // Format date as yyyy-MM-dd
+                    Date startDate = rs.getDate("experience_start_date");
+                    Date endDate = rs.getDate("experience_end_date");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                    userData.append("Start Date: ").append(startDate != null ? sdf.format(startDate) : "N/A").append("\n")
+                            .append("End Date: ").append(endDate != null ? sdf.format(endDate) : "N/A").append("\n\n");
+                }
+            }
+
+            // If no data was found, return a default message
+            if (!hasData) {
+                userData.append("No profile or CV data found for the user.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userData.toString();
+    }
+
 
 
 

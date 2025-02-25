@@ -11,7 +11,10 @@
 
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <VBox spacing="10" style="-fx-padding: 20;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="org.example.pathfinder.Controller.JobOfferListController">
+
     <Button fx:id="btnViewApplications" onAction="#handleViewApplications" style="-fx-background-color: #3b261d; /* Green background */     -fx-text-fill: white;           /* White text */     -fx-font-size: 16px;            /* Font size */     -fx-font-weight: bold;          /* Bold text */     -fx-padding: 10px 20px;         /* Padding around the text */     -fx-border-radius: 25px;       /* Rounded corners */     -fx-cursor: hand;              /* Cursor to indicate a clickable button */     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 2, 2); /* Shadow effect */" text="View My Applications" VBox.vgrow="ALWAYS" />
 
     <!-- Title -->
@@ -22,23 +25,40 @@
 
         <!-- Search Bar -->
         <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-border-color: #ddd; -fx-border-radius: 20; -fx-padding: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);">
-
             <!-- Search Icon -->
             <ImageView fx:id="searchIcon" fitHeight="25" fitWidth="25" pickOnBounds="true" preserveRatio="true" />
 
             <!-- Search Field -->
-            <TextField fx:id="searchField" promptText="Search..." style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;" />
+            <TextField fx:id="searchField" promptText="Search by job title or cities near me..." style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px; -fx-pref-width: 250;" />
+
+            <!-- City Search (Using TextField Instead of ComboBox) -->
+           <!-- <TextField fx:id="citySearchField" promptText="Enter city name..."
+                       style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-pref-width: 250;" />-->
+
+            <!-- Filter Dropdown -->
+            <ComboBox fx:id="searchFilter" style="-fx-font-size: 14px; -fx-background-color: transparent; -fx-border-width: 0; -fx-border-radius: 20; -fx-padding: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);" promptText="Filter">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="By Job Title" />
+                        <String fx:value="By City" />
+                    </FXCollections>
+                </items>
+                <value>
+                    <String fx:value="By Job Title" />
+                </value>
+            </ComboBox>
         </HBox>
+
 
         <!-- Filter Dropdown (ComboBox) -->
         <ComboBox fx:id="filterComboBox" style="-fx-font-size: 14px; -fx-background-color: transparent; -fx-border-width: 0; -fx-border-radius: 20; -fx-padding: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);" promptText="Filter">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Show My Job Offers" />
-                    <String fx:value="Show All Job Offers" />
+
                 </FXCollections>
             </items>
         </ComboBox>
+
 
         <Button fx:id="addJobOfferButton" onAction="#handleAddJobOffer" style="-fx-background-color: #3b261d; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;                            -fx-padding: 8 15; -fx-border-radius: 20; -fx-alignment: center; -fx-spacing: 5;" text="ADD NEW JOB OFFER">
             <graphic>
@@ -46,11 +66,13 @@
             </graphic>
         </Button>
 
-    </HBox>
 
-    <!-- Job Offer Grid -->
-    <GridPane fx:id="jobOfferGridPane" hgap="10" prefWidth="1496" vgap="10" VBox.vgrow="ALWAYS">
-        <!-- This GridPane will dynamically load JobOffer cards -->
-    </GridPane>
+    </HBox>
+    <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-padding: 10; -fx-background: transparent; -fx-background-color: transparent;">
+        <!-- Job Offer Grid -->
+        <GridPane fx:id="jobOfferGridPane" hgap="10" prefWidth="1496" vgap="10" VBox.vgrow="ALWAYS" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <!-- This GridPane will dynamically load JobOffer cards -->
+        </GridPane>
+    </ScrollPane>
 
 </VBox>

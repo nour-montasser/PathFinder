@@ -16,7 +16,7 @@ public class JobOfferService implements Services<JobOffer> {
 
     @Override
     public void add(JobOffer jobOffer) {
-        String req = "INSERT INTO Job_offer (id_user, title, description, datePosted, type, number_of_spots, required_education, required_experience, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO Job_offer (id_user, title, description, datePosted, type, number_of_spots, required_education, required_experience, skills, field, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
             stm.setLong(1, jobOffer.getIdUser());
@@ -28,6 +28,8 @@ public class JobOfferService implements Services<JobOffer> {
             stm.setString(7, jobOffer.getRequiredEducation());
             stm.setString(8, jobOffer.getRequiredExperience());
             stm.setString(9, jobOffer.getSkills());
+            stm.setString(10, jobOffer.getField());  // for field
+            stm.setString(11, jobOffer.getAddress());  // Added field
             stm.executeUpdate();
             System.out.println("Job offer added successfully.");
         } catch (SQLException e) {
@@ -37,7 +39,7 @@ public class JobOfferService implements Services<JobOffer> {
 
     @Override
     public void update(JobOffer jobOffer) {
-        String req = "UPDATE Job_offer SET title = ?, description = ?, type = ?, number_of_spots = ?, required_education = ?, required_experience = ?, skills = ? WHERE id_offer = ?";
+        String req = "UPDATE Job_offer SET title = ?, description = ?, type = ?, number_of_spots = ?, required_education = ?, required_experience = ?, skills = ?, field = ?, address = ? WHERE id_offer = ?";
         try {
             PreparedStatement stm = cnx.prepareStatement(req);
             stm.setString(1, jobOffer.getTitle());
@@ -47,7 +49,10 @@ public class JobOfferService implements Services<JobOffer> {
             stm.setString(5, jobOffer.getRequiredEducation());
             stm.setString(6, jobOffer.getRequiredExperience());
             stm.setString(7, jobOffer.getSkills());
-            stm.setLong(8, jobOffer.getIdOffer());
+            stm.setString(8, jobOffer.getField()); // Added field
+            stm.setString(9, jobOffer.getAddress());
+            stm.setLong(10, jobOffer.getIdOffer());
+
             stm.executeUpdate();
             System.out.println("Job offer modified successfully.");
         } catch (SQLException e) {
@@ -84,8 +89,10 @@ public class JobOfferService implements Services<JobOffer> {
                         rs.getInt("number_of_spots"),
                         rs.getString("required_education"),
                         rs.getString("required_experience"),
-                        rs.getString("skills")
-                );
+                        rs.getString("skills"),
+                        rs.getString("field") ,// Added field
+                        rs.getString("address"));
+
                 jobOffer.setIdOffer(rs.getLong("id_offer"));
                 jobOffer.setDatePosted(rs.getTimestamp("datePosted"));
                 jobOffers.add(jobOffer);
@@ -111,8 +118,10 @@ public class JobOfferService implements Services<JobOffer> {
                         rs.getInt("number_of_spots"),
                         rs.getString("required_education"),
                         rs.getString("required_experience"),
-                        rs.getString("skills")
-                );
+                        rs.getString("skills"),
+                        rs.getString("field") ,// Added field
+                        rs.getString("address"));
+
                 jobOffer.setIdOffer(rs.getLong("id_offer"));
                 jobOffer.setDatePosted(rs.getTimestamp("datePosted"));
                 return jobOffer;
@@ -122,23 +131,6 @@ public class JobOfferService implements Services<JobOffer> {
         }
         return null;
     }
-
-    public boolean isJobOfferTitleUnique(String title) {
-        String query = "SELECT COUNT(*) FROM Job_Offer WHERE title = ?";
-
-        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
-            stmt.setString(1, title);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) == 0; // If count is 0, it means the title is unique
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error checking job offer title uniqueness: " + e.getMessage(), e);
-        }
-        return false;
-    }
-
 
     public List<JobOffer> getByUserId(Long userId) {
         List<JobOffer> jobOffers = new ArrayList<>();
@@ -158,8 +150,9 @@ public class JobOfferService implements Services<JobOffer> {
                         rs.getInt("number_of_spots"),
                         rs.getString("required_education"),
                         rs.getString("required_experience"),
-                        rs.getString("skills")
-                );
+                        rs.getString("skills"),
+                        rs.getString("field"),
+                        rs.getString("address"));
                 jobOffer.setIdOffer(rs.getLong("id_offer"));
                 jobOffer.setDatePosted(rs.getTimestamp("datePosted"));
                 jobOffers.add(jobOffer);
@@ -174,8 +167,7 @@ public class JobOfferService implements Services<JobOffer> {
         JobOffer jobOffer = null;
         String query = "SELECT * FROM job_offer WHERE id_offer = ?";
 
-        try (PreparedStatement statement = cnx.prepareStatement(query)){
-
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
             statement.setLong(1, jobOfferId);
             ResultSet rs = statement.executeQuery();
 
@@ -188,15 +180,61 @@ public class JobOfferService implements Services<JobOffer> {
                         rs.getInt("number_of_spots"),
                         rs.getString("required_education"),
                         rs.getString("required_experience"),
-                        rs.getString("skills")
-                );
+                        rs.getString("skills"),
+                        rs.getString("field") ,// Added field
+                        rs.getString("address"));
             }
-
         } catch (SQLException e) {
             System.err.println("Error retrieving job offer by ID: " + e.getMessage());
         }
 
         return jobOffer;
+    }
+
+    public boolean isJobOfferTitleUnique(String title) {
+        String query = "SELECT COUNT(*) FROM Job_Offer WHERE title = ?";
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setString(1, title);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) == 0; // If count is 0, it means the title is unique
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking job offer title uniqueness: " + e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public List<JobOffer> getByJobType(String type) {
+        List<JobOffer> jobOffers = new ArrayList<>();
+        String req = "SELECT * FROM Job_offer WHERE type = ?";
+
+        try {
+            PreparedStatement pstmt = cnx.prepareStatement(req);
+            pstmt.setString(1, type);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                JobOffer jobOffer = new JobOffer(
+                        rs.getLong("id_user"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("type"),
+                        rs.getInt("number_of_spots"),
+                        rs.getString("required_education"),
+                        rs.getString("required_experience"),
+                        rs.getString("skills"),
+                        rs.getString("field"),
+                        rs.getString("address"));
+                jobOffer.setIdOffer(rs.getLong("id_offer"));
+                jobOffer.setDatePosted(rs.getTimestamp("datePosted"));
+                jobOffers.add(jobOffer);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving job offers for user: " + e.getMessage(), e);
+        }
+        return jobOffers;
     }
 
 
