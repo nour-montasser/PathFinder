@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pathfinder.Controller.CoverLetterTemplatesController" spacing="20" style="-fx-padding: 20; -fx-alignment: center;">
+    <Text text="Choose a Template" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="20" style="-fx-alignment: center;">
+        <!-- Template 1: Modern -->
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-radius: 10; -fx-padding: 10;">
+            <ImageView fitWidth="200" fitHeight="150">
+                <!-- Add Image URL here -->
+            </ImageView>
+            <Text text="Modern" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: center;"/>
+            <Button text="Select" onAction="#selectModernTemplate" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+        </VBox>
+
+        <!-- Template 2: Classic -->
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-radius: 10; -fx-padding: 10;">
+            <ImageView fitWidth="200" fitHeight="150">
+                <!-- Add Image URL here -->
+            </ImageView>
+            <Text text="Classic" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: center;"/>
+            <Button text="Select" onAction="#selectClassicTemplate" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+        </VBox>
+
+        <!-- Template 3: Creative -->
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-radius: 10; -fx-padding: 10;">
+            <ImageView fitWidth="200" fitHeight="150">
+                <!-- Add Image URL here -->
+            </ImageView>
+            <Text text="Creative" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: center;"/>
+            <Button text="Select" onAction="#selectCreativeTemplate" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+        </VBox>
+    </HBox>
+
+    <!-- Close Button -->
+    <Button text="Close" onAction="#handleCloseButtonClick" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 8 16;"/>
+</VBox>

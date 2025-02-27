@@ -4,6 +4,7 @@ import com.mysql.cj.xdevapi.JsonArray;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -259,6 +260,9 @@ public class JobOfferListController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferListCard.fxml"));
                 VBox card = loader.load();
 
+               /*String css = getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm();
+                card.getStylesheets().add(css);*/
+
                 JobOfferListCardController controller = loader.getController();
                 controller.setJobOffer(jobOffer);
                 controller.setParentController(this);
@@ -469,5 +473,78 @@ public class JobOfferListController {
         return R * c; // Distance in km
     }
 
+
+    // Method to handle hover effects for Buttons
+// Method to handle hover effects for Buttons
+    public void handleButtonHoverEnter(Event event) {
+        Button button = (Button) event.getSource();
+        button.setStyle("-fx-background-color: #5b3f29; " // change background color to green
+                + "-fx-text-fill: white; "          // set text color to white
+                + "-fx-font-size: 16px; "          // set font size
+                + "-fx-font-weight: bold; "        // set font weight to bold
+                + "-fx-padding: 10px 20px; "       // padding around the text
+                + "-fx-border-radius: 25px; "     // rounded corners
+                + "-fx-cursor: hand; "            // hand cursor to indicate clickable
+                + "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 2, 2);"); // shadow effect
+    }
+
+    // Method to handle hover exit effects for Buttons
+    public void handleButtonHoverExit(Event event) {
+        Button button = (Button) event.getSource();
+        button.setStyle("-fx-background-color: #3b261d; "   // reset background color
+                + "-fx-text-fill: white; "          // keep text color white
+                + "-fx-font-size: 16px; "          // keep font size
+                + "-fx-font-weight: bold; "        // keep font weight bold
+                + "-fx-padding: 10px 20px; "       // keep padding around text
+                + "-fx-border-radius: 25px; "     // keep rounded corners
+                + "-fx-cursor: hand; "            // keep hand cursor
+                + "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 2, 2);"); // keep shadow effect
+    }
+
+    public void handleTextFieldHoverEnter(Event event) {
+        TextField textField = (TextField) event.getSource();
+        textField.setStyle("-fx-background-color: #f0f0f0; "  // light gray background on hover
+                + "-fx-border-color: #3b261d; "   // border color to match button
+                + "-fx-border-width: 2px; "       // make border a bit thicker
+                + "-fx-cursor: text;");           // change cursor to text input
+    }
+
+    public void handleTextFieldHoverExit(Event event) {
+        TextField textField = (TextField) event.getSource();
+        textField.setStyle("-fx-background-color: transparent; "  // reset to transparent background
+                + "-fx-border-color: #ccc; "   // default border color
+                + "-fx-border-width: 0px; "    // remove border width
+                + "-fx-cursor: text;");        // cursor remains as text input
+    }
+
+    // Method to handle hover effects for ComboBox
+    public void handleComboBoxHoverEnter(Event event) {
+        ComboBox comboBox = (ComboBox) event.getSource();
+        comboBox.setStyle("-fx-background-color: #f0f0f0; "  // light gray background on hover
+                + "-fx-border-color: #3b261d; "   // border color to match button
+                + "-fx-border-width: 2px; "       // make border a bit thicker
+                + "-fx-cursor: hand;");           // change cursor to indicate clickable
+    }
+
+    // Method to handle hover exit effects for ComboBox
+    public void handleComboBoxHoverExit(Event event) {
+        ComboBox comboBox = (ComboBox) event.getSource();
+        comboBox.setStyle("-fx-background-color: transparent; "  // reset to transparent background
+                + "-fx-border-color: #ccc; "   // default border color
+                + "-fx-border-width: 0px; "    // remove border width
+                + "-fx-cursor: hand;");        // cursor remains as hand cursor
+    }
+
+    // Method to handle hover effects for ImageView (e.g., icons)
+    public void handleImageViewHoverEnter(Event event) {
+        ImageView imageView = (ImageView) event.getSource();
+        imageView.setStyle("-fx-opacity: 0.8; ");  // reduce opacity to indicate hover effect
+    }
+
+    // Method to handle hover exit effects for ImageView (e.g., icons)
+    public void handleImageViewHoverExit(Event event) {
+        ImageView imageView = (ImageView) event.getSource();
+        imageView.setStyle("-fx-opacity: 1; ");  // reset opacity back to normal
+    }
 
 }

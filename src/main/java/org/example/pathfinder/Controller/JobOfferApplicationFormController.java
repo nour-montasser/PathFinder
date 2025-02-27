@@ -1,24 +1,43 @@
 package org.example.pathfinder.Controller;
 
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.text.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.Model.CoverLetter;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.CoverLetterService;
+
+
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.awt.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -44,6 +63,15 @@ public class JobOfferApplicationFormController {
     private Button cancelButton;
 
     @FXML
+    private Label cvErrorLabel;
+
+    @FXML
+    private Label coverLetterTitleErrorLabel;
+
+    @FXML
+    private Label coverLetterErrorLabel;
+
+    @FXML
     private ComboBox<String> cvDropdown; // Dropdown to select CV titles
 
     public JobOfferApplicationFormController() {
@@ -57,6 +85,7 @@ public class JobOfferApplicationFormController {
     public void setJobOffer(JobOffer jobOffer) {
         this.jobOffer = jobOffer;
         loadCvDropdown(); // Load CVs when the form is set
+        //  applyAnimation();
     }
 
     private void loadCvDropdown() {
@@ -81,7 +110,6 @@ public class JobOfferApplicationFormController {
     @FXML
     private void handleApplyButtonClick() {
         try {
-           // System.out.println("logged"+loggedInUserId);
             if (jobOffer == null) {
                 showAlert(Alert.AlertType.ERROR, "Error", "No job offer selected!");
                 return;
@@ -99,10 +127,11 @@ public class JobOfferApplicationFormController {
             }
 
             String coverLetterTitle = CoverLetterField.getText().trim();
-            String coverLetterContent = coverLetterField.getText().trim();
+            String coverLetterContent = coverLetterField.getText().trim().replace("\n", " ");
+
 
             // Create an ApplicationJob with selected CV
-            ApplicationJob application = new ApplicationJob(jobOffer.getIdOffer(),loggedInUserId, selectedCvId);
+            ApplicationJob application = new ApplicationJob(jobOffer.getIdOffer(), loggedInUserId, selectedCvId);
             applicationService.add(application); // Save application
 
             // Create a CoverLetter
@@ -114,6 +143,43 @@ public class JobOfferApplicationFormController {
 
             showAlert(Alert.AlertType.INFORMATION, "Success", "Application submitted successfully!");
 
+            // Ask the user if they want to download the cover letter as a PDF
+           /* Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Download Cover Letter");
+            alert.setHeaderText("Do you want to download the cover letter as a PDF?");
+            alert.setContentText("Click OK to save the cover letter as a PDF.");
+
+            if (alert.showAndWait().orElse(null) == ButtonType.OK) {
+                // Use FileChooser to let the user choose the save location
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Cover Letter as PDF");
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+                File file = fileChooser.showSaveDialog(applyButton.getScene().getWindow());
+
+                if (file != null) {
+                    // Generate and save the PDF
+                    generatePdf(coverLetterTitle,coverLetterContent, file.getAbsolutePath());
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Cover letter saved as PDF successfully!");
+                }
+            }*/
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/CoverLetterTemplates.fxml"));
+                Parent root = loader.load();
+                CoverLetterTemplatesController controller = loader.getController();
+                controller.setSubjectAndContent(CoverLetterField.getText(), coverLetterField.getText());
+
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Choose a Template");
+                stage.initModality(Modality.APPLICATION_MODAL);  // Make it modal
+                stage.setResizable(false);
+                stage.initStyle(javafx.stage.StageStyle.UNDECORATED);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to load template selection.");
+            }
+
             closeForm();
 
         } catch (Exception e) {
@@ -121,17 +187,34 @@ public class JobOfferApplicationFormController {
             e.printStackTrace();
         }
     }
-
     private boolean isValidForm() {
+        boolean isValid = true;
+
+        // Validate CV selection
+        if (selectedCvId == null) {
+            cvErrorLabel.setText("Please select a CV.");
+            isValid = false;
+        } else {
+            cvErrorLabel.setText("");
+        }
+
+        // Validate cover letter title
         if (CoverLetterField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Cover letter title is required.");
-            return false;
+            coverLetterTitleErrorLabel.setText("Cover letter title is required.");
+            isValid = false;
+        } else {
+            coverLetterTitleErrorLabel.setText("");
         }
+
+        // Validate cover letter content
         if (coverLetterField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Cover letter content is required.");
-            return false;
+            coverLetterErrorLabel.setText("Cover letter content is required.");
+            isValid = false;
+        } else {
+            coverLetterErrorLabel.setText("");
         }
-        return true;
+
+        return isValid;
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -162,15 +245,21 @@ public class JobOfferApplicationFormController {
         try {
             // Collect user data (profile, CV, and experience) for the logged-in user
             String userData = coverLetterService.getUserDataForCoverLetter(loggedInUserId); // This is where the data is fetched
-
+            String companyName = applicationService.getUserNameById(jobOffer.getIdUser());
             // Get job description from the job offer
             String jobDescription = jobOffer.getDescription();
 
             // Create the prompt for Hugging Face AI
-            String prompt = buildPrompt(userData, jobDescription);
+            String prompt = buildPrompt(userData, jobDescription, companyName);
 
             // Call Hugging Face API to generate cover letter
             String generatedCoverLetter = generateCoverLetter(prompt);
+            int thinkTagIndex = generatedCoverLetter.indexOf("</think>");
+            if (thinkTagIndex != -1) {
+                // Extract the part of the string after "</think>"
+                generatedCoverLetter = generatedCoverLetter.substring(thinkTagIndex + 8).trim();
+            }
+
 
             // Display the generated cover letter in the TextArea
             coverLetterField.setText(generatedCoverLetter);
@@ -182,18 +271,15 @@ public class JobOfferApplicationFormController {
     }
 
     // Method to create the prompt for the Hugging Face model
-    private String buildPrompt(String userData, String jobDescription) {
-        return "Write a professional and well-structured cover letter based on the following details, use them to fill in the placeholders:\n\n" +
+    private String buildPrompt(String userData, String jobDescription, String companyName) {
+        return "Write a professional cover letter using the following details. Focus solely on the content of the cover letter and avoid any filler text or placeholders. Do not include any reasoning or instructions.\n\n" +
                 "### Job Description ###\n" +
                 jobDescription + "\n\n" +
+                "### Company Name ###\n" +
+                companyName + "\n\n" +
                 "### User Information ###\n" +
                 userData + "\n\n" +
-                "### Cover Letter Guidelines ###\n" +
-                "- Maintain a professional and formal tone.\n" +
-                "- Begin with an introduction stating the user's interest in the position.\n" +
-                "- Highlight relevant experiences and skills.\n" +
-                "- Conclude with a polite call to action and .\n" +
-                "answer only with the cover letter dont add anything else and dont use place holders ";
+                "Write the cover letter directly, starting with a brief introduction stating why the user is interested in the position. Highlight the most relevant experiences and skills based on the job description and user information. End with a polite conclusion, expressing the user's enthusiasm for the position. Answer only with the cover letter and do not include any additional text.";
     }
 
 
@@ -239,5 +325,82 @@ public class JobOfferApplicationFormController {
             return "Error generating cover letter."; // In case of error
         }
     }
+    @FXML
+    private Button generateCoverLetterButton;
+   /* private void applyAnimation() {
+        // Translate the button to the right with an animation
+        TranslateTransition translateTransition = new TranslateTransition();
+        translateTransition.setNode(generateCoverLetterButton);
+        translateTransition.setFromX(0);
+        translateTransition.setToX(300);
+        translateTransition.setDuration(Duration.seconds(3));
+        translateTransition.setCycleCount(TranslateTransition.INDEFINITE);
+        translateTransition.setAutoReverse(true);
+        translateTransition.play();
+    }*/
+   @FXML
+   private void buttonHover(javafx.event.Event event) {
+       Button source = (Button) event.getSource();
 
+       if (source.getId().equals("generateCoverLetterButton")) {
+           source.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+       } else if (source.getId().equals("applyButton")) {
+           source.setStyle("-fx-background-color: #64B5F6; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+       } else if (source.getId().equals("cancelButton")) {
+           source.setStyle("-fx-background-color: #FF7043; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+       }
+   }
+
+    @FXML
+    private void buttonExit(javafx.event.Event event) {
+        Button source = (Button) event.getSource();
+
+        if (source.getId().equals("generateCoverLetterButton")) {
+            source.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+        } else if (source.getId().equals("applyButton")) {
+            source.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+        } else if (source.getId().equals("cancelButton")) {
+            source.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+        }
+    }
+
+/*
+    public void generatePdf(String subject, String content, String filePath) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
+                contentStream.beginText();
+                contentStream.setLeading(14.5f); // Line spacing
+                contentStream.newLineAtOffset(50, 700); // Starting position
+
+                // Add the subject
+                contentStream.setFont(PDType1Font.TIMES_BOLD, 14);
+                wrapText(contentStream, "Subject: " + subject, 500);
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Add formatted content
+                contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
+                String formattedContent = "Dear Hiring Manager,\n\n" + content + "\n\nSincerely,\n[Your Name]";
+
+                // Display the text with automatic line wrapping
+                wrapText(contentStream, formattedContent, 500);
+
+                contentStream.endText(); // End the text block
+            }
+
+            // Save the PDF to the specified path
+            document.save(filePath);
+
+            // Open the PDF file after saving
+            openPdfFile(filePath);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to generate PDF.");
+        }
+    }*/
 }

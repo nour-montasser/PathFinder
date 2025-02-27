@@ -9,7 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ScrollPane?>
 
+<?import javafx.collections.FXCollections?>
+
+<?import java.lang.String?>
 <VBox alignment="TOP_LEFT" spacing="12.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.pathfinder.Controller.JobOfferFormController"
       style="-fx-background-color: #f4f4f4;
@@ -20,60 +24,102 @@
              -fx-background-radius: 10;
              -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);">
 
-    <!-- Title -->
-    <Label text="Job Offer Form" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+    <!-- ScrollPane to make the form scrollable -->
+    <ScrollPane fitToWidth="true" prefWidth="500" prefHeight="650" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+        <VBox alignment="TOP_LEFT" spacing="12.0">
 
-    <!-- Title Field -->
-    <Label text="Title:" style="-fx-font-weight: bold;" />
-    <TextField fx:id="titleField" prefWidth="500.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Title -->
+            <Label text="Job Offer Form" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #333;" />
 
-    <!-- Description Field -->
-    <Label text="Description:" style="-fx-font-weight: bold;" />
-    <TextArea fx:id="descriptionField" prefWidth="500.0" prefHeight="100.0"
-              style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Title Field -->
+            <HBox spacing="10">
+                <Label text="Title:" style="-fx-font-weight: bold;" />
+                <Label fx:id="titleErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <TextField fx:id="titleField" prefWidth="500.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
-    <!-- Type Field -->
-    <Label text="Type:" style="-fx-font-weight: bold;" />
-    <ComboBox fx:id="typeComboBox" prefWidth="250.0"
-              style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Description Field -->
+            <HBox spacing="10">
+                <Label text="Description:" style="-fx-font-weight: bold;" />
+                <Label fx:id="descriptionErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <TextArea fx:id="descriptionField" prefWidth="500.0" prefHeight="100.0"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
-    <!-- Field Dropdown -->
-    <Label text="Select a Job Offer field:" style="-fx-font-weight: bold;" />
-    <ComboBox fx:id="jobOffersComboBox" prefWidth="250.0"
-              style="-fx-border-color: #ccc; -fx-border-radius: 5;"/>
+            <!-- Type Field -->
+            <HBox spacing="10">
+                <Label text="Type:" style="-fx-font-weight: bold;" />
+                <Label fx:id="typeErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <ComboBox fx:id="typeComboBox" prefWidth="250.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
-    <!-- Country Dropdown -->
-    <Label text="Select Country:" style="-fx-font-weight: bold;" />
-    <ComboBox fx:id="countryComboBox" prefWidth="250.0"
-              style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Job Field Dropdown -->
+            <HBox spacing="10">
+                <Label text="Select a Job Offer field:" style="-fx-font-weight: bold;" />
+                <Label fx:id="jobFieldErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <ComboBox fx:id="jobOffersComboBox" prefWidth="250.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
-    <!-- City Dropdown (initially hidden until a country is selected) -->
-    <Label fx:id="citylabel" text="Select City:" style="-fx-font-weight: bold;" />
-    <ComboBox fx:id="cityComboBox" prefWidth="250.0"
-              style="-fx-border-color: #ccc; -fx-border-radius: 5;" visible="false" />
+            <!-- Country Dropdown -->
+            <HBox spacing="10">
+                <Label text="Select Country:" style="-fx-font-weight: bold;" />
+                <Label fx:id="countryErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <ComboBox fx:id="countryComboBox" prefWidth="250.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
-    <!-- Number of Spots -->
-    <Label text="Number of Spots:" style="-fx-font-weight: bold;" />
-    <TextField fx:id="numberOfSpotsField" prefWidth="100.0"
-               style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- City Dropdown -->
+            <HBox spacing="10">
+                <Label fx:id="citylabel" text="Select City:" style="-fx-font-weight: bold;" />
+                <Label fx:id="cityErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <ComboBox fx:id="cityComboBox" prefWidth="250.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" visible="false" />
 
-    <!-- Required Education -->
-    <Label text="Required Education:" style="-fx-font-weight: bold;" />
-    <TextField fx:id="requiredEducationField" prefWidth="500.0"
-               style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Number of Spots -->
+            <HBox spacing="10">
+                <Label text="Number of Spots:" style="-fx-font-weight: bold;" />
+                <Label fx:id="numberOfSpotsErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <TextField fx:id="numberOfSpotsField" prefWidth="100.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
 
-    <!-- Required Experience -->
-    <Label text="Required Experience:" style="-fx-font-weight: bold;" />
-    <TextField fx:id="requiredExperienceField" prefWidth="500.0"
-               style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Required Education -->
+            <HBox spacing="10">
+                <Label text="Required Education:" style="-fx-font-weight: bold;" />
+                <Label fx:id="requiredEducationErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <ComboBox fx:id="requiredEducationField" prefWidth="500.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="High School"/>
+                        <String fx:value="Bachelor's Degree"/>
+                        <String fx:value="Licence"/>
+                        <String fx:value="Master's Degree"/>
+                        <String fx:value="Doctorate"/>
+                        <String fx:value="Postdoc"/>
+                        <String fx:value="PhD"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
 
-    <!-- Skills Field -->
-    <Label text="Skills:" style="-fx-font-weight: bold;" />
-    <TextField fx:id="skillsField" prefWidth="500.0"
-               style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+            <!-- Required Experience -->
+            <HBox spacing="10">
+                <Label text="Required Experience:" style="-fx-font-weight: bold;" />
+                <Label fx:id="requiredExperienceErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <TextField fx:id="requiredExperienceField" prefWidth="500.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+
+            <!-- Skills Field -->
+            <HBox spacing="10">
+                <Label text="Skills:" style="-fx-font-weight: bold;" />
+                <Label fx:id="skillsErrorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" />
+            </HBox>
+            <TextField fx:id="skillsField" prefWidth="500.0" style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+
+        </VBox>
+    </ScrollPane>
+
+    <Region prefHeight="10.0"/>  <!-- Spacer -->
 
     <!-- Buttons -->
-    <Region prefHeight="10.0"/>  <!-- Spacer -->
     <HBox spacing="15.0" alignment="CENTER">
         <Button fx:id="saveButton" text="Save" onAction="#handleSubmitButtonClick"
                 style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;

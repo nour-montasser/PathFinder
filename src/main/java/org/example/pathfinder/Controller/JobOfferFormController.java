@@ -21,15 +21,18 @@ public class JobOfferFormController {
     private final long loggedInUserId = LoggedUser.getInstance().getUserId();
 
     @FXML
-    private TextField titleField, numberOfSpotsField, requiredEducationField, requiredExperienceField, skillsField;
+    private TextField titleField, numberOfSpotsField, requiredExperienceField, skillsField;
     @FXML
     private TextArea descriptionField;
     @FXML
-    private ComboBox<String> typeComboBox, jobOffersComboBox, countryComboBox, cityComboBox;
+    private ComboBox<String> typeComboBox, jobOffersComboBox, countryComboBox, cityComboBox, requiredEducationField;
     @FXML
     private Button saveButton, cancelButton;
     @FXML
     private Label citylabel;
+
+    @FXML
+    private Label titleErrorLabel,descriptionErrorLabel, numberOfSpotsErrorLabel, requiredExperienceErrorLabel, skillsErrorLabel, jobFieldErrorLabel, countryErrorLabel, cityErrorLabel, requiredEducationErrorLabel, typeErrorLabel;
 
     private static final String API_URL = "https://api.adzuna.com/v1/api/jobs/gb/categories?app_id=0d0c3bdf&app_key=c3508cb0e5131989785afef1cfcbafc6";
     private static final String GEONAMES_USERNAME = "nourmontasser";  // Replace with your GeoNames username
@@ -52,8 +55,29 @@ public class JobOfferFormController {
         citylabel.setVisible(false);
         cityComboBox.setVisible(false);
 
+        // Hide error labels by default
+        hideErrorLabels();
+
         // Show city options when a country is selected
         countryComboBox.setOnAction(event -> loadCities());
+    }
+
+    private void hideErrorLabels() {
+        titleErrorLabel.setVisible(false);
+        numberOfSpotsErrorLabel.setVisible(false);
+        requiredExperienceErrorLabel.setVisible(false);
+        skillsErrorLabel.setVisible(false);
+        jobFieldErrorLabel.setVisible(false);
+        countryErrorLabel.setVisible(false);
+        cityErrorLabel.setVisible(false);
+        requiredEducationErrorLabel.setVisible(false);
+        typeErrorLabel.setVisible(false);
+        descriptionErrorLabel.setVisible(false);
+    }
+
+    private void showError(Label errorLabel, String errorMessage) {
+        errorLabel.setText(errorMessage);
+        errorLabel.setVisible(true);
     }
 
     // This method fetches job fields from the API
@@ -123,6 +147,8 @@ public class JobOfferFormController {
         return jobFields;
     }
 
+
+
     @FXML
     private void handleSubmitButtonClick() {
         if (!isValidForm()) return;
@@ -131,7 +157,7 @@ public class JobOfferFormController {
             String title = titleField.getText().trim();
             String description = descriptionField.getText().trim();
             int numberOfSpots = Integer.parseInt(numberOfSpotsField.getText().trim());
-            String requiredEducation = requiredEducationField.getText().trim();
+            String requiredEducation = requiredEducationField.getValue(); // Use getValue() for ComboBox
             String requiredExperience = requiredExperienceField.getText().trim();
             String type = typeComboBox.getValue();
             String skills = skillsField.getText().trim();
@@ -147,32 +173,75 @@ public class JobOfferFormController {
                         requiredEducation, requiredExperience, skills, jobField, address);
 
                 jobOfferService.add(jobOffer);
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Job offer added successfully!");
                 closeForm();
             } else {
-                showAlert(Alert.AlertType.ERROR, "Duplicate", "A job offer with this title already exists.");
+                showError(titleErrorLabel, "A job offer with this title already exists.");
             }
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for 'Number of Spots'.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "An unexpected error occurred.");
             e.printStackTrace();
         }
-    }
+    }    private boolean isValidForm() {
+        hideErrorLabels();  // Hide all error labels initially
 
-    private boolean isValidForm() {
-        if (titleField.getText().trim().isEmpty() || descriptionField.getText().trim().isEmpty() ||
-                numberOfSpotsField.getText().trim().isEmpty() || requiredEducationField.getText().trim().isEmpty() ||
-                requiredExperienceField.getText().trim().isEmpty() || skillsField.getText().trim().isEmpty() ||
-                typeComboBox.getValue() == null || jobOffersComboBox.getValue() == null||
-                countryComboBox.getValue().trim().isEmpty() || cityComboBox.getValue().isEmpty()) {
+        boolean isValid = true;
 
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in all fields.");
-            return false;
+        if (titleField.getText().trim().isEmpty()) {
+            showError(titleErrorLabel, "Title is required.");
+            isValid = false;
         }
-        return true;
-    }
 
+        if (numberOfSpotsField.getText().trim().isEmpty()) {
+            showError(numberOfSpotsErrorLabel, "Number of spots is required.");
+            isValid = false;
+        }  if (descriptionField.getText().trim().isEmpty()) {
+            showError(descriptionErrorLabel, "Description is required.");
+            isValid = false;
+        }
+
+        try {
+            Integer.parseInt(numberOfSpotsField.getText().trim());
+        } catch (NumberFormatException e) {
+            showError(numberOfSpotsErrorLabel, "Please enter a valid number for 'Number of Spots'.");
+            isValid = false;
+        }
+
+        if (requiredExperienceField.getText().trim().isEmpty()) {
+            showError(requiredExperienceErrorLabel, "Required experience is required.");
+            isValid = false;
+        }
+
+        if (skillsField.getText().trim().isEmpty()) {
+            showError(skillsErrorLabel, "Skills are required.");
+            isValid = false;
+        }
+
+        if (jobOffersComboBox.getValue() == null) {
+            showError(jobFieldErrorLabel, "Job field is required.");
+            isValid = false;
+        }
+
+        if (countryComboBox.getValue() == null || countryComboBox.getValue().trim().isEmpty()) {
+            showError(countryErrorLabel, "Country is required.");
+            isValid = false;
+        }
+
+        if (cityComboBox.getValue() == null || cityComboBox.getValue().isEmpty()) {
+            showError(cityErrorLabel, "City is required.");
+            isValid = false;
+        }
+
+        if (requiredEducationField.getValue() == null) {
+            showError(requiredEducationErrorLabel, "Required education is required.");
+            isValid = false;
+        }
+
+        if (typeComboBox.getValue() == null) {
+            showError(typeErrorLabel, "Job type is required.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

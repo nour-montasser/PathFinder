@@ -1,5 +1,6 @@
 package org.example.pathfinder.Controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
@@ -339,10 +341,55 @@ public class JobOfferListCardController {
             applicationFormStage.setScene(applicationFormScene);
             applicationFormStage.showAndWait();
         } catch (IOException e) {
-            showError("Error opening application form: " + e.getMessage());
+            System.out.println( "error opening form"+ e.getMessage());
         }
     }
 
+    public void onMouseEnterTitle(Event event) {
+        Label source = (Label) event.getSource();
+        source.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0078D4;");
+    }
+
+    // Handle mouse exit event for title label
+    public void onMouseExitTitle(Event event) {
+        Label source = (Label) event.getSource();
+        source.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333333;");
+    }
+
+    // Handle mouse enter event for buttons
+    public void onMouseEnterButton(Event event) {
+        Button source = (Button) event.getSource();
+        source.setStyle("-fx-background-color: #5B3F29; -fx-text-fill: white; -fx-font-size: 14px; ");
+    }
+
+    // Handle mouse exit event for buttons
+    public void onMouseExitButton(Event event) {
+        Button source = (Button) event.getSource();
+        source.setStyle("-fx-background-color: #3B261DFF; -fx-text-fill: white; -fx-font-size: 14px;");
+    }
+
+
+
+
+
+        // Handle mouse enter event for the card (VBox)
+        public void onCardHover(Event event) {
+            VBox cardContainer = (VBox) event.getSource(); // Get the VBox container (card)
+
+            // Get the width and height of the container to calculate the center
+            double centerX = cardContainer.getBoundsInLocal().getWidth() / 2;
+            double centerY = cardContainer.getBoundsInLocal().getHeight() / 2;
+
+            // Create a scaling transformation and set the pivot point to the center
+            Scale scale = new Scale(1.05, 1.05, centerX, centerY);  // Scale by 5% larger
+            cardContainer.getTransforms().add(scale);  // Apply the scale transformation
+        }
+
+        // Handle mouse exit event for the card (VBox)
+        public void onCardExit(Event event) {
+            VBox cardContainer = (VBox) event.getSource(); // Get the VBox container (card)
+            cardContainer.getTransforms().clear();  // Remove any applied transformations, returning to normal size
+        }
 
 
 

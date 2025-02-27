@@ -29,7 +29,7 @@ public class JobOfferUpdateController {
     private TextField numberOfSpotsField;
 
     @FXML
-    private TextField requiredEducationField;
+    private ComboBox<String> requiredEducationField;
 
     @FXML
     private TextField requiredExperienceField;
@@ -39,6 +39,8 @@ public class JobOfferUpdateController {
 
     @FXML
     private TextField skillsField;
+    @FXML
+    private Label titleErrorLabel, numberOfSpotsErrorLabel,descriptionErrorLabel, requiredExperienceErrorLabel, skillsErrorLabel, jobFieldErrorLabel, countryErrorLabel, cityErrorLabel, requiredEducationErrorLabel, typeErrorLabel;
 
     @FXML
     private ComboBox<String> jobOffersComboBox,countryComboBox, cityComboBox;
@@ -61,12 +63,23 @@ public class JobOfferUpdateController {
         typeComboBox.getItems().addAll("Full-time", "Part-time", "Contract");
         loadJobFields(); // Populate job fields on initialization
         loadCountries();
-
+        hideErrorLabels();
 
         // Show city options when a country is selected
         countryComboBox.setOnAction(event -> loadCities());
     }
-
+    private void hideErrorLabels() {
+        titleErrorLabel.setVisible(false);
+        numberOfSpotsErrorLabel.setVisible(false);
+        requiredExperienceErrorLabel.setVisible(false);
+        skillsErrorLabel.setVisible(false);
+        jobFieldErrorLabel.setVisible(false);
+        countryErrorLabel.setVisible(false);
+        cityErrorLabel.setVisible(false);
+        requiredEducationErrorLabel.setVisible(false);
+        typeErrorLabel.setVisible(false);
+        descriptionErrorLabel.setVisible(false);
+    }
     private void loadJobFields() {
         try {
             List<String> jobFields = fetchJobFieldsFromAPI();
@@ -133,7 +146,7 @@ public class JobOfferUpdateController {
             String title = titleField.getText();
             String description = descriptionField.getText();
             int numberOfSpots = Integer.parseInt(numberOfSpotsField.getText());
-            String requiredEducation = requiredEducationField.getText();
+            String requiredEducation = requiredEducationField.getValue();
             String requiredExperience = requiredExperienceField.getText();
             String type = typeComboBox.getValue();
             String skills = skillsField.getText(); // Assuming skills are comma-separated
@@ -145,7 +158,7 @@ public class JobOfferUpdateController {
             String address = country + ", " + city;
 
             if (!currentJobOffer.getTitle().equals(title) && !jobOfferService.isJobOfferTitleUnique(title)) {
-                showAlert(Alert.AlertType.ERROR, "Duplicate Job Offer", "A job offer with the same title already exists.");
+                showError(titleErrorLabel, "A job offer with this title already exists.");
                 return;
             }
 
@@ -171,54 +184,75 @@ public class JobOfferUpdateController {
     }
 
     private boolean isValidForm() {
-        if (titleField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Title is required.");
-            return false;
+        hideErrorLabels();  // Hide all error labels initially
+
+        boolean isValid = true;
+
+        if (titleField.getText().trim().isEmpty()) {
+            showError(titleErrorLabel, "Title is required.");
+            isValid = false;
         }
-        if (descriptionField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Description is required.");
-            return false;
-        }
-        if (numberOfSpotsField.getText().isEmpty() || !isNumeric(numberOfSpotsField.getText())) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Number of spots must be a valid number.");
-            return false;
-        }
-        if (requiredEducationField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Required education is required.");
-            return false;
-        }
-        if (requiredExperienceField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Required experience is required.");
-            return false;
-        }
-        if (typeComboBox.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Job type is required.");
-            return false;
-        }
-        if (skillsField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Skills are required.");
-            return false;
-        }
-        String jobField = jobOffersComboBox.getValue();
-        if (jobField == null || jobField.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please select a job field.");
-            return false;
-        }
-        String countryComboBoxValue = countryComboBox.getValue();
-        if (countryComboBoxValue == null || countryComboBoxValue.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please select a country.");
-            return false;
+        if (descriptionField.getText().trim().isEmpty()) {
+            showError(descriptionErrorLabel, "Description is required.");
+            isValid = false;
         }
 
-        String cityComboBoxValue = cityComboBox.getValue();
-        if (cityComboBoxValue == null || cityComboBoxValue.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please select a city.");
-            return false;
+        if (numberOfSpotsField.getText().trim().isEmpty()) {
+            showError(numberOfSpotsErrorLabel, "Number of spots is required.");
+            isValid = false;
         }
-        return true;
+
+        try {
+            Integer.parseInt(numberOfSpotsField.getText().trim());
+        } catch (NumberFormatException e) {
+            showError(numberOfSpotsErrorLabel, "Please enter a valid number for 'Number of Spots'.");
+            isValid = false;
+        }
+
+        if (requiredExperienceField.getText().trim().isEmpty()) {
+            showError(requiredExperienceErrorLabel, "Required experience is required.");
+            isValid = false;
+        }
+
+        if (skillsField.getText().trim().isEmpty()) {
+            showError(skillsErrorLabel, "Skills are required.");
+            isValid = false;
+        }
+
+        if (jobOffersComboBox.getValue() == null) {
+            showError(jobFieldErrorLabel, "Job field is required.");
+            isValid = false;
+        }
+
+        if (countryComboBox.getValue() == null || countryComboBox.getValue().trim().isEmpty()) {
+            showError(countryErrorLabel, "Country is required.");
+            isValid = false;
+        }
+
+        if (cityComboBox.getValue() == null || cityComboBox.getValue().isEmpty()) {
+            showError(cityErrorLabel, "City is required.");
+            isValid = false;
+        }
+
+        if (requiredEducationField.getValue() == null) {
+            showError(requiredEducationErrorLabel, "Required education is required.");
+            isValid = false;
+        }
+
+        if (typeComboBox.getValue() == null) {
+            showError(typeErrorLabel, "Job type is required.");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
-    private boolean isNumeric(String str) {
+    private void showError(Label errorLabel, String errorMessage) {
+        errorLabel.setText(errorMessage);
+        errorLabel.setVisible(true);
+    }
+
+        private boolean isNumeric(String str) {
         try {
             Integer.parseInt(str);
             return true;
@@ -239,7 +273,7 @@ public class JobOfferUpdateController {
         titleField.clear();
         descriptionField.clear();
         numberOfSpotsField.clear();
-        requiredEducationField.clear();
+        requiredEducationField.setValue(null);
         requiredExperienceField.clear();
         skillsField.clear();
         typeComboBox.setValue(null);
@@ -259,7 +293,7 @@ public class JobOfferUpdateController {
         titleField.setText(jobOffer.getTitle());
         descriptionField.setText(jobOffer.getDescription());
         numberOfSpotsField.setText(String.valueOf(jobOffer.getNumberOfSpots()));
-        requiredEducationField.setText(jobOffer.getRequiredEducation());
+        requiredEducationField.setValue(jobOffer.getRequiredEducation());
         requiredExperienceField.setText(jobOffer.getRequiredExperience());
         skillsField.setText(jobOffer.getSkills());
         typeComboBox.setValue(jobOffer.getType());

@@ -235,7 +235,7 @@ public class JobOfferApplicationListController {
 
             // Recréer la scène avec le nouveau contenu
             Scene newScene = new Scene(frontOfficeView);
-            newScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
+           // newScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
 
             // Appliquer la nouvelle scène et forcer le redimensionnement
             stage.setScene(newScene);

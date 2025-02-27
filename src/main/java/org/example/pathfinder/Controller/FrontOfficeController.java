@@ -49,14 +49,20 @@ public class FrontOfficeController {
     // 📌 Function to Load New Pages in contentArea
     private void loadPage(String fxmlFile) {
         try {
+            // Load the new view
             Parent newView = FXMLLoader.load(getClass().getResource("/org/example/pathfinder/view/Frontoffice/" + fxmlFile));
+
+            // Clear the content area and add the new view
             contentArea.getChildren().clear();
             contentArea.getChildren().add(newView);
+
+            // Add the CSS to the new view
+            /*String css = getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm();
+            newView.getStylesheets().add(css);*/
         } catch (IOException e) {
             System.err.println("❌ Error loading " + fxmlFile + ": " + e.getMessage());
         }
     }
-
     // ✅ Function to Set Active Button (Turns White & Adds Underline)
     private void setActiveButton(Button button) {
         if (activeButton != null) {
@@ -109,6 +115,7 @@ public class FrontOfficeController {
     public void loadView(Parent newView) {
         contentArea.getChildren().clear();
         contentArea.getChildren().add(newView);
+
     }
 
     @FXML
