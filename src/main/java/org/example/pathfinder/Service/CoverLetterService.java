@@ -236,6 +236,43 @@ public class CoverLetterService implements Services<CoverLetter> {
         return userData.toString();
     }
 
+    public long getJobOfferIdByCoverLetterId(long coverLetterId) {
+        long jobOfferId = -1;  // Default value indicating not found
+        String query = "SELECT aj.job_offer_id FROM CoverLetter cl " +
+                "JOIN Application_job aj ON cl.id_app = aj.application_id " +
+                "WHERE cl.id_CoverLetter = ?";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
+            statement.setLong(1, coverLetterId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                jobOfferId = rs.getLong("job_offer_id");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving job offer ID by cover letter ID: " + e.getMessage());
+        }
+
+        return jobOfferId;
+    }
+    public long getLatestCoverLetterId() {
+        long coverLetterId = -1;  // Default value indicating not found
+        String query = "SELECT id_CoverLetter FROM CoverLetter ORDER BY id_CoverLetter DESC LIMIT 1";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                coverLetterId = rs.getLong("id_CoverLetter");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving the latest cover letter ID: " + e.getMessage());
+        }
+
+        return coverLetterId;
+    }
+
+
 
 
 

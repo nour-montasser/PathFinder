@@ -121,4 +121,30 @@ public class SkillTestService {
             throw new RuntimeException(e);
         }
     }
+
+    public SkillTest getSkillTestByJobOfferId(long jobOfferId) {
+        SkillTest skillTest = null;
+        String query = "SELECT * FROM skilltest WHERE id_job_offer = ?";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
+            statement.setLong(1, jobOfferId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                skillTest = new SkillTest(
+                        rs.getLong("id_test"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("duration"),
+                        rs.getLong("id_job_offer"),
+                        rs.getLong("score_required")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving skill test by job offer ID: " + e.getMessage());
+        }
+
+        return skillTest;
+    }
+
 }

@@ -3,6 +3,9 @@ package org.example.pathfinder.Controller;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -10,20 +13,31 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.example.pathfinder.Model.Question;
+import org.example.pathfinder.Model.SkillTest;
+import org.example.pathfinder.Service.CoverLetterService;
+import org.example.pathfinder.Service.QuestionService;
+import org.example.pathfinder.Service.SkillTestService;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class CoverLetterTemplatesController {
 
     private String selectedTemplate;
     private String subject;
     private String content;
+    QuestionService questionService = new QuestionService();
+    SkillTestService skillTestService = new SkillTestService();
+    CoverLetterService coverLetterService = new CoverLetterService();
 
-    public void setSubjectAndContent(String subject, String content) {
+private long id;
+    public void setSubjectAndContent(String subject, String content,long id) {
         this.subject = subject;
         this.content = content;
+        this.id = id;
     }
 
     @FXML
@@ -193,7 +207,28 @@ public class CoverLetterTemplatesController {
 
     @FXML
     private void handleCloseButtonClick(ActionEvent event) {
-        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        try {
+            // Close the current stage (window)
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.close();
+
+            // Load the new FXML for ViewSkillTest
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ViewSkillTest.fxml"));
+            Parent root = loader.load();
+
+            SkillTest sk = skillTestService.getSkillTestByJobOfferId(coverLetterService.getJobOfferIdByCoverLetterId(id));
+            List<Question> qst = questionService.getQuestionsForSkillTest(sk.getIdTest());
+            ViewSkillTestController ctrl = loader.getController();
+            ctrl.setSkillTestData(sk,qst);
+            // Get the stage to display the new FXML
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(root));
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors here (e.g., show an alert if the FXML is not found)
+        }
     }
+
 }

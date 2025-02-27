@@ -20,10 +20,13 @@ public class CoverLetterViewController {
     @FXML
     private Label coverLetterSubject;
 
+    private long id;
+
     // Set the cover letter content to be displayed
     public void setCoverLetter(CoverLetter coverLetter) {
         coverLetterSubject.setText(coverLetter.getSubject());
-        coverLetterContent.setText(coverLetter.getContent()); // Assuming `getContent()` is the method to fetch the cover letter content
+        coverLetterContent.setText(coverLetter.getContent());
+        id=coverLetter.getIdCoverLetter();// Assuming `getContent()` is the method to fetch the cover letter content
     }
 
     // Close the window when the "Close" button is clicked
@@ -43,7 +46,7 @@ public class CoverLetterViewController {
 
             // Get the controller from the FXMLLoader
             CoverLetterTemplatesController controller = loader.getController();
-            controller.setSubjectAndContent(coverLetterSubject.getText(), coverLetterContent.getText());
+            controller.setSubjectAndContent(coverLetterSubject.getText(), coverLetterContent.getText(),id);
 
             // Create a new stage (window) to display the template selection
             Stage stage = new Stage();

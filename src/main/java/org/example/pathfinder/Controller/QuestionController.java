@@ -40,7 +40,12 @@ public class QuestionController {
             }
         });
     }
+    private long jobOfferId;
 
+    public void setJobOfferId(long jobOfferId) {
+        this.jobOfferId = jobOfferId;
+        // You can now use jobOfferId in this controller
+    }
     @FXML
     public void addQuestion() {
         try {
@@ -109,6 +114,7 @@ public class QuestionController {
 
             SkillTestController skillTestController = loader.getController();
             skillTestController.setQuestions(FXCollections.observableArrayList(questionList));
+            skillTestController.setJobOfferId(jobOfferId);
 
             Stage stage = (Stage) questionListView.getScene().getWindow();
             Scene scene = new Scene(root, 1000, 600);

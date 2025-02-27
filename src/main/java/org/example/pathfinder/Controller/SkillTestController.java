@@ -26,11 +26,11 @@ public class SkillTestController {
     private final ObservableList<SkillTest> skillTestList = FXCollections.observableArrayList();
     private final ObservableList<Question> questionList = FXCollections.observableArrayList();
     private SkillTest selectedSkillTest;
-
+    private long jobOfferId;
     @FXML private TextField titleField, descriptionField, durationField, scoreRequiredField;
-    @FXML private ComboBox<String> jobOfferComboBox;
+
     @FXML private ListView<SkillTest> skillTestListView;
-    private Map<String, Long> jobOfferMap;
+
     @FXML private ListView<String> questionListView;
     @FXML private TextField searchField;
     private FilteredList<SkillTest> filteredSkillTestList;
@@ -72,8 +72,7 @@ public class SkillTestController {
             }
         });
 
-        jobOfferMap = skillTestService.getAllJobOffers();
-        jobOfferComboBox.setItems(FXCollections.observableArrayList(jobOfferMap.keySet()));
+
         questionListView.setItems(FXCollections.observableArrayList());
     }
 
@@ -122,17 +121,20 @@ public class SkillTestController {
         );
         System.out.println("✅ AI Questions received and added to the test.");
     }
-
+    public void setJobOfferId(long jobOfferId) {
+        this.jobOfferId = jobOfferId;
+        // You can now use jobOfferId in this controller
+    }
     @FXML
     public void addSkillTest() {
         try {
             String title = titleField.getText().trim();
             String description = descriptionField.getText().trim();
             long duration = Long.parseLong(durationField.getText().trim());
-            String selectedJobOffer = jobOfferComboBox.getSelectionModel().getSelectedItem();
+            long selectedJobOffer = jobOfferId;
             long scoreRequired = Long.parseLong(scoreRequiredField.getText().trim());
 
-            if (title.isEmpty() || description.isEmpty() || selectedJobOffer == null) {
+            if (title.isEmpty() || description.isEmpty() ) {
                 showAlert("Error", "Please fill all fields correctly.");
                 return;
             }
@@ -141,7 +143,7 @@ public class SkillTestController {
                 return;
             }
 
-            long jobOfferId = jobOfferMap.get(selectedJobOffer);
+
             SkillTest skillTest = new SkillTest(null, title, description, duration, jobOfferId, scoreRequired);
             long skillTestId = skillTestService.ajouter(skillTest);
 
@@ -187,11 +189,8 @@ public class SkillTestController {
             selectedSkillTest.setDescription(descriptionField.getText().trim());
             selectedSkillTest.setDuration(Long.parseLong(durationField.getText().trim()));
             selectedSkillTest.setScoreRequired(Long.parseLong(scoreRequiredField.getText().trim()));
+            selectedSkillTest.setIdJobOffer(jobOfferId);
 
-            String selectedJobOffer = jobOfferComboBox.getSelectionModel().getSelectedItem();
-            if (selectedJobOffer != null) {
-                selectedSkillTest.setIdJobOffer(jobOfferMap.get(selectedJobOffer));
-            }
 
             skillTestService.update(selectedSkillTest);
 
@@ -300,7 +299,6 @@ public class SkillTestController {
         durationField.setText(String.valueOf(skillTest.getDuration()));
         scoreRequiredField.setText(String.valueOf(skillTest.getScoreRequired()));
 
-        jobOfferComboBox.setValue(getJobOfferName(skillTest.getIdJobOffer()));
 
         // Load questions related to the selected skill test
         loadQuestionsForSkillTest(skillTest.getIdTest());
@@ -309,13 +307,13 @@ public class SkillTestController {
     /**
      * Retrieves the job offer name for a given ID.
      */
-    private String getJobOfferName(Long idJobOffer) {
+  /*  private String getJobOfferName(Long idJobOffer) {
         return jobOfferMap.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(idJobOffer))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
-    }
+    }*/
 
     /**
      * ✅ Clears all form fields and resets UI elements.
@@ -325,7 +323,6 @@ public class SkillTestController {
         titleField.clear();
         descriptionField.clear();
         durationField.clear();
-        jobOfferComboBox.getSelectionModel().clearSelection();
         scoreRequiredField.clear();
         selectedSkillTest = null;
 

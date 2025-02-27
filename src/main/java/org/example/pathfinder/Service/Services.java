@@ -3,18 +3,12 @@ package org.example.pathfinder.Service;
 import java.util.List;
 
 public interface Services<T> {
-    // Create or add an entity
-    void add(T entity);
+    public void add(T t);
+    public void update(T t);
 
-    // Update an existing entity
-    void update(T entity);
+    public void delete(long a);
 
-    // Delete an entity by its ID
-    void delete(int id);
+    public List<T> getall();
 
-    // Retrieve an entity by its ID
-    T getById(int id);
-
-    // Retrieve all entities
-    List<T> getAll();
+    public T getone();
 }

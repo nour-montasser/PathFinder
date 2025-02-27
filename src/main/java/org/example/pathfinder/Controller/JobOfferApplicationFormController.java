@@ -23,15 +23,13 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.example.pathfinder.Model.ApplicationJob;
-import org.example.pathfinder.Model.CoverLetter;
-import org.example.pathfinder.Model.JobOffer;
-import org.example.pathfinder.Model.LoggedUser;
+import org.example.pathfinder.Model.*;
 import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.CoverLetterService;
 
 
-
+import org.example.pathfinder.Service.QuestionService;
+import org.example.pathfinder.Service.SkillTestService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -49,6 +47,8 @@ public class JobOfferApplicationFormController {
     private JobOffer jobOffer; // Store the job offer
     private Long selectedCvId; // Store selected CV ID
     private long loggedInUserId = LoggedUser.getInstance().getUserId();
+    private SkillTestService skillTestService = new SkillTestService();
+    private QuestionService questionService = new QuestionService();
 
     @FXML
     private TextField CoverLetterField;
@@ -166,7 +166,8 @@ public class JobOfferApplicationFormController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/CoverLetterTemplates.fxml"));
                 Parent root = loader.load();
                 CoverLetterTemplatesController controller = loader.getController();
-                controller.setSubjectAndContent(CoverLetterField.getText(), coverLetterField.getText());
+
+                controller.setSubjectAndContent(CoverLetterField.getText(), coverLetterField.getText() , coverLetterService.getLatestCoverLetterId());
 
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));

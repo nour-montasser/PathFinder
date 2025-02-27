@@ -237,5 +237,24 @@ public class JobOfferService implements Services<JobOffer> {
         return jobOffers;
     }
 
+    public long getIdByTitle(String title) {
+        long jobOfferId = -1;  // Default value indicating not found
+        String query = "SELECT id_offer FROM job_offer WHERE title = ?";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
+            statement.setString(1, title);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                jobOfferId = rs.getLong("id_offer");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving job offer ID by title: " + e.getMessage());
+        }
+
+        return jobOfferId;
+    }
+
+
 
 }

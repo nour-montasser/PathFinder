@@ -53,7 +53,7 @@
 
                 <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px; -fx-padding: 12px;">
                     <Label style="-fx-font-weight: bold;" text="Job Offer" />
-                    <ComboBox fx:id="jobOfferComboBox" />
+
                 </VBox>
 
                 <!-- Buttons -->

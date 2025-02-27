@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Model.Question;
 import org.example.pathfinder.Model.SkillTest;
 import org.example.pathfinder.Model.TestResult;
@@ -29,6 +31,7 @@ public class ViewSkillTestController {
     private List<Question> questions;
     private TestResultService testResultService = new TestResultService(); // ✅ Ensure service is initialized
     @FXML private VBox chartContainer; // Make sure to add this in the FXML file
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
 
     public void setSkillTestData(SkillTest skillTest, List<Question> questions) {
         this.currentSkillTest = skillTest;
@@ -100,7 +103,7 @@ public class ViewSkillTestController {
 
         // ✅ Save result in database
         TestResult testResult = new TestResult(
-                1L, // TODO: Replace with actual user ID
+                loggedInUserId, // TODO: Replace with actual user ID
                 currentSkillTest.getId(),
                 score,
                 Date.valueOf(LocalDate.now()),
@@ -114,6 +117,10 @@ public class ViewSkillTestController {
         } else {
             showAlert("Error", "Failed to save test result.");
         }
+
+        //if result =1 => pending applincation
+        //if result == 0 => application rejected by application
+        ((Stage) skillTestDescription.getScene().getWindow()).close();
     }
 
     @FXML

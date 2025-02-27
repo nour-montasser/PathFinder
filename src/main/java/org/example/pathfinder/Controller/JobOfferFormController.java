@@ -1,6 +1,9 @@
 package org.example.pathfinder.Controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.JobOffer;
@@ -173,14 +176,40 @@ public class JobOfferFormController {
                         requiredEducation, requiredExperience, skills, jobField, address);
 
                 jobOfferService.add(jobOffer);
-                closeForm();
+
+                // Show alert asking if the user wants to create a test
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Create Test?");
+                alert.setHeaderText(null);
+                alert.setContentText("Do you want to create a test for this job offer?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                    long id = jobOfferService.getIdByTitle(titleField.getText().trim());
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    // Close the current form
+                    closeForm();
+
+                    // Open the question.fxml and pass the jobOfferId to the controller
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/Question.fxml"));
+                    Parent root = loader.load();
+                    QuestionController controller = loader.getController();
+                    controller.setJobOfferId(id); // Pass the jobOffer ID to the controller
+
+                    Stage stage = (Stage) cityErrorLabel.getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.show();
+                } else {
+                    // If user cancels, just close the form
+                    closeForm();
+                }
             } else {
                 showError(titleErrorLabel, "A job offer with this title already exists.");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }    private boolean isValidForm() {
+    }
+private boolean isValidForm() {
         hideErrorLabels();  // Hide all error labels initially
 
         boolean isValid = true;
