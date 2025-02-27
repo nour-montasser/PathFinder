@@ -267,7 +267,7 @@ public class SkillTestController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/ViewSkillTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ViewSkillTest.fxml"));
             Parent root = loader.load();
 
             ViewSkillTestController controller = loader.getController();

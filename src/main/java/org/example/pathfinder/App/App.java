@@ -12,10 +12,11 @@ public class    App extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/FrontOffice/Question.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/Frontoffice/Question.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
-            stage.setTitle("Skill Test Manager");
+            stage.setTitle("PathFinder");
             stage.setScene(scene);
+           // stage.setMaximized(true);
             stage.show();        }
         catch (Exception e) {
             e.printStackTrace();

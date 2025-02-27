@@ -21,7 +21,9 @@ public class SkillTest {
         this.idJobOffer = idJobOffer;
         this.scoreRequired = scoreRequired;
     }
-
+    public Long getId() { // ✅ Fix: Add this method to match expected method in the controller
+        return idTest;
+    }
     public Long getIdTest() {
         return idTest;
     }

@@ -20,6 +20,7 @@ public class Question {
         this.correctResponse = correctResponse;
         this.score = score;
     }
+    
     public String getQuestionText() {  // Rename this method
         return question;
     }
@@ -60,12 +61,12 @@ public class Question {
         this.responses = responses;
     }
 
-    public String getCorrectResponse() {
+    public String getCorrectResponse() {  // ✅ This should be used in the controller
         return correctResponse;
     }
 
-    public void setCorrectResponse(String correctResponse) {
-        this.correctResponse = correctResponse;
+    public String getCorrectAnswer() { // ✅ Alias method to match expected method in controller
+        return correctResponse;
     }
 
     public Integer getScore() {
@@ -75,6 +76,8 @@ public class Question {
     public void setScore(Integer score) {
         this.score = score;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -110,24 +113,11 @@ public class Question {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public long getId() {
         return idTest;
     }
-}
+
+    public void setCorrectResponse(String correctResponse) {
+        this.correctResponse = correctResponse;
+    }}
 

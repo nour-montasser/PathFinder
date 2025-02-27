@@ -1,75 +1,52 @@
 package org.example.pathfinder.Model;
 
-
-import java.util.Objects;
+import java.sql.Date;
 
 public class TestResult {
     private Long idResult;
     private Long idUser;
     private Long idTest;
-    private Float result;
-    private Boolean status;
+    private int result; // Score obtained
+    private Date date;
+    private int status; // 1 = Passed, 0 = Failed (Stored as TINYINT in DB)
 
+    // ✅ Constructors
     public TestResult() {}
 
-    public TestResult(Long idResult, Long idUser, Long idTest, Float result, Boolean status) {
-        this.idResult = idResult;
+    public TestResult(Long idUser, Long idTest, int result, Date date, int status) {
         this.idUser = idUser;
         this.idTest = idTest;
         this.result = result;
+        this.date = date;
         this.status = status;
     }
 
-    public Long getIdResult() {
-        return idResult;
+    // ✅ Getters & Setters
+    public Long getIdResult() { return idResult; }
+    public void setIdResult(Long idResult) { this.idResult = idResult; }
+
+    public Long getIdUser() { return idUser; }
+    public void setIdUser(Long idUser) { this.idUser = idUser; }
+
+    public Long getIdTest() { return idTest; }
+    public void setIdTest(Long idTest) { this.idTest = idTest; }
+
+    public int getResult() { return result; }
+    public void setResult(int result) { this.result = result; }
+
+    public Date getDate() { return date; }
+    public void setDate(Date date) { this.date = date; }
+
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
+
+    // ✅ Helper methods for converting between int (DB) and String (Java)
+    public String getStatusString() {
+        return (status == 1) ? "Passed" : "Failed";
     }
 
-    public void setIdResult(Long idResult) {
-        this.idResult = idResult;
-    }
-
-    public Long getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(Long idUser) {
-        this.idUser = idUser;
-    }
-
-    public Long getIdTest() {
-        return idTest;
-    }
-
-    public void setIdTest(Long idTest) {
-        this.idTest = idTest;
-    }
-
-    public Float getResult() {
-        return result;
-    }
-
-    public void setResult(Float result) {
-        this.result = result;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TestResult that)) return false;
-        return Objects.equals(idResult, that.idResult) && Objects.equals(idUser, that.idUser) && Objects.equals(idTest, that.idTest) && Objects.equals(result, that.result) && Objects.equals(status, that.status);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idResult, idUser, idTest, result, status);
+    public void setStatusFromString(String status) {
+        this.status = status.equalsIgnoreCase("Passed") ? 1 : 0;
     }
 
     @Override
@@ -79,8 +56,8 @@ public class TestResult {
                 ", idUser=" + idUser +
                 ", idTest=" + idTest +
                 ", result=" + result +
-                ", status=" + status +
+                ", date=" + date +
+                ", status='" + getStatusString() + '\'' +
                 '}';
     }
 }
-

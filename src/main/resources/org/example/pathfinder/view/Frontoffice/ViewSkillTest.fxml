@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ViewSkillTestController">
+
+    <!-- 🔹 Top Section: Title & Description Centered -->
+    <top>
+        <VBox spacing="10" alignment="CENTER"
+              style="-fx-padding: 20px; -fx-background-color: #c19d7b;
+                     -fx-border-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 2, 2);">
+            <Label fx:id="skillTestTitle" text="Skill Test Title"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label fx:id="skillTestDescription" text="Skill Test Description"
+                   style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+        </VBox>
+    </top>
+
+    <!-- 🔹 Center Section: Main Content (Quiz Questions) -->
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true"
+                    style="-fx-padding: 15px; -fx-background-color: transparent; -fx-border-color: transparent;">
+            <VBox fx:id="questionsContainer" spacing="15"
+                  style="-fx-padding: 20px; -fx-background-color: #ffffff; -fx-border-color: #ddd;
+                         -fx-border-radius: 10px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 2, 2);"/>
+        </ScrollPane>
+    </center>
+
+    <!-- 🔹 Right Sidebar: PieChart Statistics -->
+    <right>
+        <VBox spacing="15" alignment="CENTER"
+              style="-fx-padding: 20px; -fx-background-color: #f4f4f4; -fx-border-radius: 8px;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 2, 2);">
+            <Label text="Quiz Performance" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+            <VBox fx:id="chartContainer" spacing="10" alignment="CENTER"/>
+        </VBox>
+    </right>
+
+    <!-- 🔹 Bottom Section: Action Buttons -->
+    <bottom>
+        <HBox spacing="20" alignment="CENTER"
+              style="-fx-padding: 15px; -fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 2, 2);">
+            <Button text="Submit Test" onAction="#submitTest"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"/>
+
+            <Button text="Clear Selection" onAction="#clearSelection"
+                    style="-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

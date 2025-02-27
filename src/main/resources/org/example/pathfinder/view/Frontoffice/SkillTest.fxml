@@ -5,46 +5,32 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="org.example.pathfinder.Controller.SkillTestController">
+<BorderPane style="-fx-background-color: #f1efee;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.SkillTestController">
 
-    <!-- 🔹 Navigation Bar -->
+
+    <!-- Title Section -->
     <top>
-        <HBox spacing="20" style="-fx-background-color: #c19d7b; -fx-padding: 15px;">
-            <ImageView fitHeight="32.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
-                <image>
-                    <Image url="@../../Sources/pathfinder_logo_compass.png.png" />
-                </image>
-            </ImageView>
-            <Label style="-fx-text-fill: black; -fx-font-size: 20px; -fx-font-weight: bold;" text="PathFinder" />
-            <Region HBox.hgrow="ALWAYS" />
-            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="Freelance" />
-            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="FindAjob" />
-            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="Messages" />
-            <Button style="-fx-background-color: transparent; -fx-text-fill: black;" text="My Profile" />
-            <Button style="-fx-background-color: #6d4c41; -fx-text-fill: white; -fx-padding: 5px 15px; -fx-font-weight: bold;" text="Home" />
-        </HBox>
+        <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #6d4c41; -fx-padding: 15px; -fx-border-radius: 10px;">
+            <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;" text="Information Phase" />
+        </VBox>
     </top>
-
     <!-- Main Content -->
     <center>
         <GridPane hgap="20" style="-fx-padding: 30px;" vgap="20" GridPane.hgrow="ALWAYS">
 
             <!-- Left Section: Skill Test Form -->
             <VBox spacing="20" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
-                <Label style="-fx-font-size: 28px; -fx-font-weight: bold;" text="Skill Test Phase" />
+                <Label style="-fx-font-size: 28px; -fx-font-weight: bold;" />
 
                 <!-- Input Fields -->
-                <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px; -fx-padding: 12px;">
+                <VBox prefHeight="82.0" prefWidth="266.0" spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px; -fx-padding: 12px;">
                     <Label style="-fx-font-weight: bold;" text="Title" />
                     <TextField fx:id="titleField" />
                 </VBox>
@@ -72,34 +58,31 @@
 
                 <!-- Buttons -->
                 <HBox spacing="15">
-                    <Button onAction="#addSkillTest" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="Add Skill Test" />
+                    <Button onAction="#addSkillTest" style="-fx-background-color: #c19d7b; -fx-text-fill: white;" text="Add Skill Test" />
                     <Button onAction="#updateSkillTest" style="-fx-background-color: #c19d7b; -fx-text-fill: black;" text="Update" />
                     <Button onAction="#deleteSkillTest" style="-fx-background-color: #d9534f; -fx-text-fill: white;" text="Delete" />
                 </HBox>
             </VBox>
 
             <!-- Skill Test List with Search Bar -->
-            <VBox spacing="10" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"
-                  style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px; -fx-padding: 15px;">
+            <VBox spacing="10" style="-fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px; -fx-padding: 15px;" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
 
                 <!-- 🔹 HBox for Title and Search Bar -->
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Skill Test List" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
-                    <TextField fx:id="searchField" promptText="Search..."
-                               style="-fx-font-size: 14px; -fx-padding: 5px; -fx-border-color: #c19d7b; -fx-border-radius: 5px;"
-                               prefWidth="200"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Skill Test List" />
+                    <TextField fx:id="searchField" prefWidth="200" promptText="Search..." style="-fx-font-size: 14px; -fx-padding: 5px; -fx-border-color: #c19d7b; -fx-border-radius: 5px;" />
                 </HBox>
 
                 <ListView fx:id="skillTestListView" prefHeight="150" style="-fx-border-color: #c19d7b;" />
                 <ComboBox fx:id="sortComboBox" />
 
-                <Label text="Questions for Selected Skill Test/AI" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Questions for Selected Skill Test/AI" />
                 <ListView fx:id="questionListView" prefHeight="150" style="-fx-border-color: #c19d7b;" />
 
                 <!-- Buttons -->
                 <HBox spacing="10">
-                    <Button text="Delete Question" onAction="#deleteQuestion" style="-fx-background-color: #d9534f; -fx-text-fill: white;" />
-                    <Button text="View Test" onAction="#viewTest" style="-fx-background-color: #28a745; -fx-text-fill: white;" />
+                    <Button onAction="#deleteQuestion" style="-fx-background-color: #d9534f; -fx-text-fill: white;" text="Delete Question" />
+                    <Button onAction="#viewTest" style="-fx-background-color: #c19d7b; -fx-text-fill: white;" text="View Test" />
                 </HBox>
             </VBox>
          <columnConstraints>
