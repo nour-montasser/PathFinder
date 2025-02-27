@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c872257a-143d-48ea-8bc6-dbb405cdc4df" name="Changes" comment="latest version , API added, key blurred,chart">
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferListController.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="FxmlFile" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="SkillTest" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Drinkooo&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/nour-montasser/PathFinder.git&quot;,
+    &quot;accountId&quot;: &quot;1ccf6c7e-e1c1-4b0d-808e-6d0b5ae6601c&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\xampp\php\php.exe" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2stWBi5k4nrx1dBxoHTVdGSpZ0B" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.App.executor": "Run",
+    "Application.app.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "merged-branch",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/houss/Desktop/Pathfinder/java/Fversion/src/main/resources/org/example/pathfinder/view/Frontoffice",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\houss\Desktop\Pathfinder\java\Fversion\src\main\resources\org\example\pathfinder\view\Frontoffice" />
+      <recent name="C:\Users\houss\Desktop\Pathfinder\java\Fversion\src\main\resources\org\example\pathfinder\view\Backoffice" />
+      <recent name="C:\Users\houss\Desktop\Pathfinder\java\Fversion\src\main\resources\org\example\pathfinder\view\Sources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\houss\Desktop\Pathfinder\java\Fversion\src\main\resources\org\example\pathfinder\view\" />
+      <recent name="C:\Users\houss\Desktop\Pathfinder\java\Fversion\src\main\resources\org\example\pathfinder\view\FrontOffice" />
+      <recent name="C:\Users\houss\Desktop\Fversion\src\main\resources\org\example\pathfinder" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="app" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.example.pathfinder.App.App" />
+      <module name="PathFinder" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Fversion" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Fversion" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.22855.74" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.22855.74" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c872257a-143d-48ea-8bc6-dbb405cdc4df" name="Changes" comment="" />
+      <created>1739275218045</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1739275218045</updated>
+      <workItem from="1739275219062" duration="73000" />
+      <workItem from="1739275304697" duration="7000" />
+      <workItem from="1739275319294" duration="14000" />
+      <workItem from="1739275348079" duration="150000" />
+      <workItem from="1739275504018" duration="12000" />
+      <workItem from="1739275522898" duration="7000" />
+      <workItem from="1739275534918" duration="11000" />
+      <workItem from="1739275554952" duration="8000" />
+      <workItem from="1739275570226" duration="31000" />
+      <workItem from="1739275609169" duration="12000" />
+      <workItem from="1739275626865" duration="9000" />
+      <workItem from="1739275643288" duration="22000" />
+      <workItem from="1739275673021" duration="10000" />
+      <workItem from="1739275688647" duration="23000" />
+      <workItem from="1739275718618" duration="2164000" />
+      <workItem from="1739291035001" duration="1772000" />
+      <workItem from="1739301295268" duration="2977000" />
+      <workItem from="1739349305758" duration="2570000" />
+      <workItem from="1739378017344" duration="2363000" />
+      <workItem from="1739441874688" duration="939000" />
+      <workItem from="1739458407154" duration="2209000" />
+      <workItem from="1739478232110" duration="1879000" />
+      <workItem from="1739535177459" duration="2780000" />
+      <workItem from="1739538763086" duration="1891000" />
+      <workItem from="1739640402667" duration="394000" />
+      <workItem from="1739643301069" duration="3338000" />
+      <workItem from="1739659501148" duration="2682000" />
+      <workItem from="1739707401117" duration="16794000" />
+      <workItem from="1739740621825" duration="4456000" />
+      <workItem from="1739792067289" duration="8126000" />
+      <workItem from="1739805634339" duration="2791000" />
+      <workItem from="1739828631702" duration="2009000" />
+      <workItem from="1739875382964" duration="21000" />
+      <workItem from="1739875412365" duration="5973000" />
+      <workItem from="1739996416295" duration="1122000" />
+      <workItem from="1740002107789" duration="1146000" />
+      <workItem from="1740167247199" duration="6057000" />
+      <workItem from="1740259129751" duration="4196000" />
+      <workItem from="1740308615536" duration="5407000" />
+      <workItem from="1740327145607" duration="13014000" />
+      <workItem from="1740387433957" duration="2708000" />
+      <workItem from="1740473044792" duration="10274000" />
+      <workItem from="1740649591926" duration="9192000" />
+      <workItem from="1740686774986" duration="1045000" />
+      <workItem from="1740687846161" duration="1476000" />
+      <workItem from="1740689347471" duration="5024000" />
+      <workItem from="1740698117824" duration="46000" />
+      <workItem from="1740698193479" duration="17000" />
+      <workItem from="1740698214994" duration="18000" />
+      <workItem from="1740698238861" duration="233000" />
+      <workItem from="1740698816438" duration="306000" />
+    </task>
+    <task id="LOCAL-00001" summary="..">
+      <option name="closed" value="true" />
+      <created>1739876272583</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739876272583</updated>
+    </task>
+    <task id="LOCAL-00002" summary="latest version , API added">
+      <option name="closed" value="true" />
+      <created>1740346525718</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1740346525718</updated>
+    </task>
+    <task id="LOCAL-00003" summary="latest version , API added, key blurred">
+      <option name="closed" value="true" />
+      <created>1740347321129</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1740347321129</updated>
+    </task>
+    <task id="LOCAL-00004" summary="latest version , API added, key blurred,chart">
+      <option name="closed" value="true" />
+      <created>1740688219160</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1740688219160</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$USER_HOME$" />
+    </ignored-roots>
+    <MESSAGE value=".." />
+    <MESSAGE value="latest version , API added" />
+    <MESSAGE value="latest version , API added, key blurred" />
+    <MESSAGE value="latest version , API added, key blurred,chart" />
+    <option name="LAST_COMMIT_MESSAGE" value="latest version , API added, key blurred,chart" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.IllegalStateException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

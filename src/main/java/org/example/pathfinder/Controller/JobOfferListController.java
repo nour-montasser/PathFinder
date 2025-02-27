@@ -1,6 +1,5 @@
 package org.example.pathfinder.Controller;
 
-import com.mysql.cj.xdevapi.JsonArray;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
