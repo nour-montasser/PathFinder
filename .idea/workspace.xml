@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c872257a-143d-48ea-8bc6-dbb405cdc4df" name="Changes" comment="latest version , API added, key blurred,chart">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferListController.java" afterDir="false" />
+    <list default="true" id="c872257a-143d-48ea-8bc6-dbb405cdc4df" name="Changes" comment="ya rabbi ostorna">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/CoverLetterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/CoverLetterService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,7 +183,7 @@
       <workItem from="1740698193479" duration="17000" />
       <workItem from="1740698214994" duration="18000" />
       <workItem from="1740698238861" duration="233000" />
-      <workItem from="1740698816438" duration="306000" />
+      <workItem from="1740698816438" duration="1194000" />
     </task>
     <task id="LOCAL-00001" summary="..">
       <option name="closed" value="true" />
@@ -216,7 +217,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740688219160</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="ya rabbi ostorna">
+      <option name="closed" value="true" />
+      <created>1740699161846</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740699161846</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,7 +239,8 @@
     <MESSAGE value="latest version , API added" />
     <MESSAGE value="latest version , API added, key blurred" />
     <MESSAGE value="latest version , API added, key blurred,chart" />
-    <option name="LAST_COMMIT_MESSAGE" value="latest version , API added, key blurred,chart" />
+    <MESSAGE value="ya rabbi ostorna" />
+    <option name="LAST_COMMIT_MESSAGE" value="ya rabbi ostorna" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
