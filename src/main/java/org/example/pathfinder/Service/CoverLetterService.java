@@ -11,7 +11,7 @@ import java.util.List;
 public class CoverLetterService implements Services<CoverLetter> {
 
     private Connection cnx;
-    //gregegegeg
+
     public CoverLetterService() {
         cnx = DatabaseConnection.getInstance().getCnx();
     }

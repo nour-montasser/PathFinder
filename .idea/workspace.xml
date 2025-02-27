@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="merged joboffer+skill test  + touskie algorithmique" />
+    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="ya rabi ostorna 2">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,6 +65,7 @@
     "Application.RunnConfigApp.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "merged-branch",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nourm/Documents/esprit/3eme/Project/PathFinder/src/main/resources/org/example/pathfinder/view/Sources/Templates",
     "list.type.of.created.stylesheet": "CSS",
@@ -150,6 +153,7 @@
       <workItem from="1740433979058" duration="24265000" />
       <workItem from="1740565716034" duration="3316000" />
       <workItem from="1740597923365" duration="57371000" />
+      <workItem from="1740699348841" duration="834000" />
     </task>
     <task id="LOCAL-00001" summary="crud joboffer+application">
       <option name="closed" value="true" />
@@ -239,7 +243,31 @@
       <option name="project" value="LOCAL" />
       <updated>1740698254704</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="ya rabi ostorna 2">
+      <option name="closed" value="true" />
+      <created>1740699603987</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1740699603987</updated>
+    </task>
+    <task id="LOCAL-00013" summary="ya rabi ostorna 2">
+      <option name="closed" value="true" />
+      <created>1740699834328</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1740699834328</updated>
+    </task>
+    <task id="LOCAL-00014" summary="ya rabi ostorna 2">
+      <option name="closed" value="true" />
+      <created>1740699857265</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1740699857265</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -264,7 +292,8 @@
     <MESSAGE value="api location+ai generate coverletter" />
     <MESSAGE value="fix ai+ added pdf generation and templates" />
     <MESSAGE value="merged joboffer+skill test  + touskie algorithmique" />
-    <option name="LAST_COMMIT_MESSAGE" value="merged joboffer+skill test  + touskie algorithmique" />
+    <MESSAGE value="ya rabi ostorna 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="ya rabi ostorna 2" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
