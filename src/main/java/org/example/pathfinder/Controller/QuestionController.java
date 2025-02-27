@@ -12,10 +12,8 @@ import org.example.pathfinder.Model.Question;
 import org.example.pathfinder.Model.SkillTest;
 import org.example.pathfinder.Service.QuestionService;
 import org.example.pathfinder.Service.SkillTestService;
-import org.example.pathfinder.Service.AISkillTestService;
 
 import java.io.IOException;
-import java.util.List;
 
 public class QuestionController {
     private final ObservableList<Question> questionList = FXCollections.observableArrayList();
@@ -106,7 +104,7 @@ public class QuestionController {
     @FXML
     public void goToSkillTestScreen() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/SkillTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/SkillTest.fxml"));
             Parent root = loader.load();
 
             SkillTestController skillTestController = loader.getController();
@@ -147,7 +145,7 @@ public class QuestionController {
     @FXML
     public void goToAIGeneratedSkillTest() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/AIGeneratedSkillTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/AIGeneratedSkillTest.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) questionListView.getScene().getWindow();

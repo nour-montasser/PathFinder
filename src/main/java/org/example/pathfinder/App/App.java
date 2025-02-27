@@ -3,47 +3,38 @@ package org.example.pathfinder.App;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.example.pathfinder.Model.LoggedUser;
-import org.example.pathfinder.Model.User;
-import org.example.pathfinder.Service.UserService;
 
-import java.io.IOException;
+import java.sql.Connection;
 
-public class App extends Application {
 
+public class    App extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
-        // Set up the FXML scene
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-
-        // Set up the window title, icon, and scene
-        stage.setTitle("PathFinder");
-        stage.setScene(scene);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png")));
-        stage.setMaximized(true);
-
-        // Show the stage (window)
-        stage.show();
-
-        // Set the logged user ID here (after the stage is shown)
-
-
+    public void start(Stage stage) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/Frontoffice/Question.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
+            stage.setTitle("PathFinder");
+            stage.setScene(scene);
+           // stage.setMaximized(true);
+            stage.show();        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
-        long logged = 7L;
-        UserService userService = new UserService();
-        User u= userService.getUserById(logged);
+        System.out.println("Test terminé !");
+        DatabaseConnection db = DatabaseConnection.getInstance();
+        Connection conn         = db.getCnx();
 
-        LoggedUser.getInstance().setRole(u.getRole());
-        LoggedUser.getInstance().setUserId(logged);
+        if (conn != null) {
+            System.out.println("🎯 La connexion est active !");
+        } else {
+            System.out.println("⚠️ La connexion a échoué !");
+        }
 
-        System.out.println("logged"+LoggedUser.getInstance().getUserId());
-        System.out.println("logged"+LoggedUser.getInstance().getRole());
-        launch();
 
+        launch(); // Launch JavaFX application
     }
 }

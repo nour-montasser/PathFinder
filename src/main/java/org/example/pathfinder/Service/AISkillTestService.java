@@ -12,15 +12,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AISkillTestService {
-    private static final String API_KEY = ".";  // Replace with a valid API Key
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY;
+    private static final String API_KEY = "AIzaSyD4jkis68ob9Tr4h9GHmGgtPmQ7FP5T3nw";  // Replace with a valid API Key
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
 
     public static List<Question> generateSkillTest(String topic) {
         OkHttpClient client = new OkHttpClient();
 
         // ✅ Construct AI Prompt
         String prompt = "Generate a multiple-choice skill test on " + topic + " with 5 questions. " +
-                "Each question should have 4 answer choices labeled (a, b, c, d), " +
+                "Each question should have 5 answer choices labeled (a, b, c, d), " +
                 "with the correct answer indicated at the end. " +
                 "Format it as follows:\n\n" +
                 "**Question X:** <question text>\n" +

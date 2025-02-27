@@ -44,7 +44,6 @@ public class AIGeneratedSkillTestController {
             return;
         }
 
-        // Generate test from AI
         List<Question> questions = AISkillTestService.generateSkillTest(topic);
 
         if (questions != null && !questions.isEmpty()) {
@@ -78,7 +77,7 @@ public class AIGeneratedSkillTestController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/FrontOffice/SkillTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/SkillTest.fxml"));
             Parent root = loader.load();
 
             // Get SkillTestController instance
