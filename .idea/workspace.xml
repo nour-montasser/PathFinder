@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="merged joboffer+skill test  + touskie algorithmique" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="CSS File" />
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="GestionJobOffers" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;nour-montasser&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/nour-montasser/PathFinder.git&quot;,
+    &quot;accountId&quot;: &quot;037e81ae-5d10-4464-aced-e1ff0ff52766&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2sfDwZNMoq5OeKIcsJeuadXnotq" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.App.executor": "Run",
+    "Application.HelloApplication.executor": "Run",
+    "Application.RunnConfigApp.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/nourm/Documents/esprit/3eme/Project/PathFinder/src/main/resources/org/example/pathfinder/view/Sources/Templates",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.40229884",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources\Templates" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Frontoffice\Templates" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\Sources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Frontoffice" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.example.pathfinder" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="RunnConfigApp" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.example.pathfinder.App.App" />
+      <module name="PathFinder" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="" />
+      <created>1738837976392</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1738837976392</updated>
+      <workItem from="1738837977166" duration="2255000" />
+      <workItem from="1738956084778" duration="9788000" />
+      <workItem from="1739042849176" duration="36195000" />
+      <workItem from="1739186405788" duration="8311000" />
+      <workItem from="1739199662973" duration="3144000" />
+      <workItem from="1739211362420" duration="1171000" />
+      <workItem from="1739222070590" duration="2327000" />
+      <workItem from="1739224429862" duration="8120000" />
+      <workItem from="1739280205214" duration="3060000" />
+      <workItem from="1739351565472" duration="3177000" />
+      <workItem from="1739358539029" duration="654000" />
+      <workItem from="1739390569580" duration="14214000" />
+      <workItem from="1739458319507" duration="11943000" />
+      <workItem from="1739549640945" duration="7653000" />
+      <workItem from="1739570311433" duration="21978000" />
+      <workItem from="1739713296507" duration="63084000" />
+      <workItem from="1739818981802" duration="6051000" />
+      <workItem from="1739828858269" duration="25434000" />
+      <workItem from="1739884647041" duration="1611000" />
+      <workItem from="1739888902765" duration="60000" />
+      <workItem from="1739888973718" duration="3944000" />
+      <workItem from="1740177712397" duration="5368000" />
+      <workItem from="1740256494386" duration="19650000" />
+      <workItem from="1740328554408" duration="2478000" />
+      <workItem from="1740349077666" duration="13384000" />
+      <workItem from="1740409658760" duration="10933000" />
+      <workItem from="1740433979058" duration="24265000" />
+      <workItem from="1740565716034" duration="3316000" />
+      <workItem from="1740597923365" duration="57371000" />
+    </task>
+    <task id="LOCAL-00001" summary="crud joboffer+application">
+      <option name="closed" value="true" />
+      <created>1739551902299</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739551902299</updated>
+    </task>
+    <task id="LOCAL-00002" summary="crud joboffer+application+cover letter + controle de saisie">
+      <option name="closed" value="true" />
+      <created>1739791010601</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1739791010601</updated>
+    </task>
+    <task id="LOCAL-00003" summary="crud +navbar+ qq details">
+      <option name="closed" value="true" />
+      <created>1739846310970</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1739846310970</updated>
+    </task>
+    <task id="LOCAL-00004" summary="back+front">
+      <option name="closed" value="true" />
+      <created>1739879834963</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1739879834963</updated>
+    </task>
+    <task id="LOCAL-00005" summary="api location+ai generate coverletter">
+      <option name="closed" value="true" />
+      <created>1740489126754</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740489126754</updated>
+    </task>
+    <task id="LOCAL-00006" summary="api location+ai generate coverletter">
+      <option name="closed" value="true" />
+      <created>1740489254347</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1740489254347</updated>
+    </task>
+    <task id="LOCAL-00007" summary="api location+ai generate coverletter">
+      <option name="closed" value="true" />
+      <created>1740489615692</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1740489615692</updated>
+    </task>
+    <task id="LOCAL-00008" summary="api location+ai generate coverletter">
+      <option name="closed" value="true" />
+      <created>1740489626601</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1740489626601</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix ai+ added pdf generation and templates">
+      <option name="closed" value="true" />
+      <created>1740684933296</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1740684933296</updated>
+    </task>
+    <task id="LOCAL-00010" summary="merged joboffer+skill test  + touskie algorithmique">
+      <option name="closed" value="true" />
+      <created>1740697918996</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1740697918996</updated>
+    </task>
+    <task id="LOCAL-00011" summary="merged joboffer+skill test  + touskie algorithmique">
+      <option name="closed" value="true" />
+      <created>1740698254704</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1740698254704</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="crud joboffer+application" />
+    <MESSAGE value="crud joboffer+application+cover letter + controle de saisie" />
+    <MESSAGE value="crud +navbar+ qq details" />
+    <MESSAGE value="back+front" />
+    <MESSAGE value="api location+ai generate coverletter" />
+    <MESSAGE value="fix ai+ added pdf generation and templates" />
+    <MESSAGE value="merged joboffer+skill test  + touskie algorithmique" />
+    <option name="LAST_COMMIT_MESSAGE" value="merged joboffer+skill test  + touskie algorithmique" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
