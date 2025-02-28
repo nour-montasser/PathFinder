@@ -84,13 +84,17 @@ public class MessageService implements Services<Message> {
 
 
 
-    public List<Message> getall() {
+    @Override
+    public List<Message> getall(Long userId) {
         List<Message> messages = new ArrayList<>();
-        String req = "SELECT * FROM Message";
-        try {
-            Statement stm = cnx.createStatement();
-            ResultSet rs = stm.executeQuery(req);
-            // public Message( String content,Long id_message, Long id_user_sender, String media, Long id_channel)
+        String req = "SELECT m.* FROM Message m " +
+                "INNER JOIN Channel c ON m.id_channel = c.id_channel " +
+                "WHERE c.id_user1 = ? OR c.id_user2 = ?";
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
+            stm.setLong(1, userId);
+            stm.setLong(2, userId);
+            ResultSet rs = stm.executeQuery();
+
             while (rs.next()) {
                 Message message = new Message(
                         rs.getString("content"),
@@ -107,7 +111,6 @@ public class MessageService implements Services<Message> {
         }
         return messages;
     }
-
     public Message getone() {
         String req = "SELECT * FROM Message LIMIT 1";
         try {
@@ -129,50 +132,19 @@ public class MessageService implements Services<Message> {
         }
         return null;
     }
-    public List<Message> getMessagesByChannelID(Long channelId) {
+
+    public List<Message> getMessagesByChannelId(Long channelId) {
         List<Message> messages = new ArrayList<>();
-        String query = "SELECT * FROM messages WHERE id_channel = ?";
+        String query = "SELECT * FROM message WHERE id_channel = ?";
 
-        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
-            stmt.setLong(1, channelId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    String content = rs.getString("content");
-                    Long senderId = rs.getLong("sender_id");
-                    Long receiverId = rs.getLong("receiver_id");
-                    String messageType = rs.getString("message_type");
-
-                    messages.add(new Message(content, senderId, receiverId, messageType, channelId));
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return messages;
-    }
-
-    public List<Message> getMessagesForChannel(long channelId) {
-        List<Message> messagesForChannel = new ArrayList<>();
-        for (Message message : allMessages) {
-            if (message.getIdChannel().equals(channelId)) {
-                messagesForChannel.add(message);
-            }
-        }
-        return messagesForChannel;
-    }
-    public List<Message> getMessagesByChannelId(long channelId) {
-        List<Message> messages = new ArrayList<>();
-        String req = "SELECT * FROM Message WHERE id_channel = ?";  // Use placeholder for parameter
-        try (PreparedStatement stm = cnx.prepareStatement(req)) {  // Use PreparedStatement to avoid SQL injection
-            stm.setLong(1, channelId);  // Set the channelId parameter
-
-            ResultSet rs = stm.executeQuery();  // Execute query
+        try (PreparedStatement stm = cnx.prepareStatement(query)) {
+            stm.setLong(1, channelId);
+            ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
                 Message message = new Message(
+                        rs.getLong("id_message"),     // first parameter is now idMessage
                         rs.getString("content"),
-                        rs.getLong("id_message"),
                         rs.getLong("id_user_sender"),
                         rs.getString("media"),
                         rs.getLong("id_channel")
@@ -180,7 +152,7 @@ public class MessageService implements Services<Message> {
                 messages.add(message);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error retrieving messages: " + e.getMessage(), e);
+            e.printStackTrace();
         }
         return messages;
     }

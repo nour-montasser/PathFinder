@@ -25,8 +25,8 @@ public class BackOfficeController {
         System.out.println("✅ BackOfficeController initialized!");
         // Set Users as default active page
         setActiveButton(usersButton);
-        // String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_white.png").toExternalForm();
-        // logoImage.setImage(new Image(logoPath));
+         String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_white.png").toExternalForm();
+         logoImage.setImage(new Image(logoPath));
 
     }
 

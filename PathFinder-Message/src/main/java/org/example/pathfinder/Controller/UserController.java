@@ -20,7 +20,7 @@ public class UserController {
 
     @FXML
     private void initialize() {
-        List<User> users = userService.getall();  // Retrieve all users
+        List<User> users = userService.getall(null);  // Retrieve all users
         userListView.getItems().setAll(users);  // Populate the ListView with users
     }
 

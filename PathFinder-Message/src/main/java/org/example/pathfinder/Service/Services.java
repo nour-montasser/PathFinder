@@ -11,7 +11,7 @@ public interface Services<T> {
 
     void delete(long id); // Delete & update UI
 
-    public List<T> getall();
+    public List<T> getall(Long userId);
 
     public T getone();
 }

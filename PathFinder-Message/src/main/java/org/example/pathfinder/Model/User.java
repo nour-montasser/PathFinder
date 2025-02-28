@@ -9,10 +9,10 @@ package org.example.pathfinder.Model;
 //    // Constructor, getters, and setters
 //}
 public class User {
-    private long id_user;
+    private Long id_user;
     private String name;
     private String email;
-    private long role; // Utilisation de l'énumération Role
+    private Long role; // Utilisation de l'énumération Role
     private String password;
 
     // Constructeur par défaut

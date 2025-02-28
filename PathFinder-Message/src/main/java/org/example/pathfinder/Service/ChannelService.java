@@ -58,16 +58,20 @@ public class ChannelService implements Services<Channel> {
     }
 
     @Override
-    public List<Channel> getall() {
+    public List<Channel> getall(Long userId) {
         List<Channel> channels = new ArrayList<>();
-        String query = "SELECT * FROM channel";
-        try (Statement stmt = cnx.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-            while (rs.next()) {
-                Channel channel = new Channel(rs.getLong("id_channel"),
-                        rs.getLong("id_user1"),
-                        rs.getLong("id_user2"));
-                channels.add(channel);
+        String query = "SELECT * FROM channel WHERE id_user1 = ? OR id_user2 = ?";
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setLong(1, userId);
+            stmt.setLong(2, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Channel channel = new Channel(rs.getLong("id_channel"),
+                            rs.getLong("id_user1"),
+                            rs.getLong("id_user2"));
+                    channels.add(channel);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error while retrieving channels: " + e.getMessage(), e);

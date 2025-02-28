@@ -37,7 +37,7 @@ public class Channel {
     }
 
     public Long getUser1Id() {
-        return 1L;
+        return user1Id;
     }
 
     public void setUser1Id(Long user1Id) {
@@ -52,9 +52,7 @@ public class Channel {
         this.user2Id = user2Id;
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
+
 
     public void setMessages(List<Message> messages) {
         this.messages = messages;

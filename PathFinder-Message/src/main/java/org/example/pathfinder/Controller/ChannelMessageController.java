@@ -1,31 +1,56 @@
 package org.example.pathfinder.Controller;
-
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Node;
+import javafx.scene.layout.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 import org.example.pathfinder.Model.Channel;
 import org.example.pathfinder.Model.Message;
 import org.example.pathfinder.Model.User;
 import org.example.pathfinder.Service.ChannelService;
 import org.example.pathfinder.Service.MessageService;
 import org.example.pathfinder.Service.UserService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javafx.scene.control.Alert;
 public class ChannelMessageController {
+    private static final String API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B";
+    private static final String API_KEY = "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";
     @FXML
-    public ComboBox searchBox;
+    private ListView<String> suggestionList;
+    private VBox searchContainer;
+    private boolean isProcessingKey = false;
+
+
+    @FXML
+    public TextField searchBox;
 
     private UserController userController;
     private ChannelService channelService;
@@ -33,6 +58,7 @@ public class ChannelMessageController {
     private Label userLabel;
     @FXML
     private ListView<Channel> channelListView;
+
     @FXML
     private ListView<User> userListView;  // Assuming your ListView holds User objects
     @FXML
@@ -44,12 +70,13 @@ public class ChannelMessageController {
     private ImageView sendButton;
 
     @FXML
-    private ListView<String> messageListView; // Message display (ListView)
 
+    private ListView<Message> messageListView;  // Change from ListView<String> to ListView<Message>
     private MessageService messageService;
     private User selectedUser;  // Currently selected user
     private Long currentChannelId;
     private UserService userService;
+    private Long currentUserId =4L; // Change this to test different users (1, 2, etc.)
 
     public ChannelMessageController() {
         messageService = new MessageService();
@@ -60,154 +87,163 @@ public class ChannelMessageController {
 
     @FXML
     private void initialize() {
+        setupSearchBox();
+
+        messageListView.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-control-inner-background: transparent;" +
+                        "-fx-background-insets: 0;" +
+                        "-fx-padding: 0;"
+        );
+
+        messageListView.getStyleClass().add("no-hover-list-view");        VBox.setVgrow(messageListView, Priority.ALWAYS);
+        channelListView.setStyle("-fx-background-insets: 0; -fx-padding: 0;");
+        channelListView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
+        // Scroll to bottom when items change
+        messageListView.getItems().addListener((ListChangeListener<Message>) change -> {
+            if (messageListView.getItems().size() > 0) {
+                messageListView.scrollTo(messageListView.getItems().size() - 1);
+            }
+        });
+
+        // Fetch channels for current user only
+        List<Channel> channelsList = channelService.getall(currentUserId);
+        ObservableList<Channel> channelsObservableList = FXCollections.observableArrayList(channelsList);
+        channelListView.setItems(channelsObservableList);
 
         // Channel ListView mouse click event
         channelListView.setOnMouseClicked(event -> {
-            // Get the selected channel from the ListView
             Channel selectedChannel = channelListView.getSelectionModel().getSelectedItem();
             if (selectedChannel != null) {
-                // Fetch the user related to this channel (assuming user2Id links user to channel)
-                User selectedUser = userService.getall().stream()
-                        .filter(user -> user.getId() == selectedChannel.getUser2Id())  // Assuming user2Id links user to channel
-                        .findFirst()
-                        .orElse(null);
+                // Get the other user's ID (not the current user)
+                Long otherUserId = selectedChannel.getUser1Id().equals(currentUserId) ?
+                        selectedChannel.getUser2Id() : selectedChannel.getUser1Id();
 
+                User selectedUser = userService.getUserById(otherUserId);
                 if (selectedUser != null) {
-                    this.selectedUser = selectedUser;  // Set the selected user
-                    System.out.println("Selected User: " + selectedUser.getName());
-                    userLabel.setText(selectedUser.getName()); // Assuming selectedUser is a User object
-                    userLabel.setUnderline(true);// Debug output
+                    this.selectedUser = selectedUser;
+                    userLabel.setText(selectedUser.getName());
+                    userLabel.setFont(new Font("Ebrima Bold", 30));
+                    userLabel.setUnderline(true);
 
-
-                    // Fetch the messages related to the selected channel
                     List<Message> messages = messageService.getMessagesByChannelId(selectedChannel.getId());
-
-                    // Call the method to display the messages in the messageListView
                     displayMessages(messages, selectedChannel.getId());
                 } else {
                     showAlert(Alert.AlertType.ERROR, "User Error", "User not found for the selected channel.");
                 }
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Channel Error", "No channel selected.");
             }
         });
 
-        // Fetch all users and populate the user list for the ComboBox
-        List<User> usersList = userService.getall();
-        if (usersList != null && !usersList.isEmpty()) {
-            ObservableList<String> allUserNames = FXCollections.observableArrayList(
-                    usersList.stream().map(User::getName).collect(Collectors.toList())
-            );
+        // Populate ComboBox with users except current user
 
-            // Populate ComboBox with the full list of user names
-            searchBox.setItems(allUserNames); // Set ComboBox to always show users
 
-            // Handle ComboBox user selection to create channel if needed
-            searchBox.setOnAction(event -> {
-                String selectedUserName = (String) searchBox.getValue();
-                // Get selected user name
-                if (selectedUserName != null) {
-                    User selectedUser = userService.getall().stream()
-                            .filter(user -> user.getName().equals(selectedUserName)) // Find the selected user by name
-                            .findFirst()
-                            .orElse(null);
-
-                    if (selectedUser != null) {
-                        // Check if a channel already exists with the selected user
-                        List<Channel> existingChannels = channelService.getall().stream()
-                                .filter(channel -> channel.getUser2Id() == selectedUser.getId())  // Assuming user2Id links user to channel
-                                .collect(Collectors.toList());
-
-                        if (existingChannels.isEmpty()) {
-                            // If no existing channel, create a new one
-                            Channel newChannel = new Channel();  // Create a new channel object
-
-// Check if the selected user is the same as user1Id
-                            if (newChannel.getUser1Id() == selectedUser.getId()) {
-                                System.out.println("Cannot select the same user for both user1 and user2.");
-                            } else {
-                                // Set user2Id only if it's not the same as user1Id
-                                newChannel.setUser2Id(selectedUser.getId());
-                                channelService.add(newChannel);  // Add the new channel
-                                System.out.println("New channel created with " + selectedUser.getName());
-                            }
+            // Handle ComboBox user selection
 
 
 
-                            // Update the channel list in the ListView
-                            ObservableList<Channel> updatedChannels = FXCollections.observableArrayList(channelService.getall());
-
-                            channelListView.setItems(updatedChannels);
-
-                        } else {
-                            System.out.println("A channel already exists with " + selectedUser.getName());
-                        }
-                    } else {
-                        showAlert(Alert.AlertType.ERROR, "User Error", "Selected user not found.");
-                    }
+        // Set up channel list cell factory
+        searchBox.setPromptText("Search users...");
+        searchBox.setOnAction(this::handleUserSearch);
+        channelListView.setCellFactory(listView -> new ListCell<Channel>() {
+            private String truncateMessage(String message, int maxLength) {
+                if (message == null || message.length() <= maxLength) {
+                    return message;
                 }
-            });
-        } else {
-            System.out.println("No users found.");
-        }
+                return message.substring(0, maxLength - 3) + "...";
+            }
 
-        // Fetch all channels and populate the channel list
-        List<Channel> channelsList = channelService.getall();
-        if (channelsList != null && !channelsList.isEmpty()) {
-            ObservableList<Channel> channelsObservableList = FXCollections.observableArrayList(channelsList);
-            channelListView.setItems(channelsObservableList);
+            @Override
+            protected void updateItem(Channel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    // Get the other user's ID (not the current user)
+                    Long otherUserId = item.getUser1Id().equals(currentUserId) ?
+                            item.getUser2Id() : item.getUser1Id();
 
-            // Set the custom cell factory to display channel elements in HBox
-            channelListView.setCellFactory(listView -> new ListCell<Channel>() {
-                @Override
-                protected void updateItem(Channel item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setGraphic(null);
-                    } else {
-                        // Retrieve user and profile information
-                        User user = userService.getUserById(item.getUser2Id());
-                        String url = userService.getProfilePictureById(item.getUser2Id()); // Fetch profile picture URL
+                    User user = userService.getUserById(otherUserId);
+                    String url = userService.getProfilePictureById(otherUserId);
 
-                        // Load profile picture
-                        ImageView profileImage = new ImageView();
-                        profileImage.setImage(new Image(url, 40, 40, true, true));
+                    // Create profile image
+
+                    // Create profile image
+                    ImageView profileImage = new ImageView();
+
+                    if (url == null || url.isEmpty()) {
+                        url = "/Sources/pathfinder_logo_compass.png";
+                    }
+
+                    try {
+                        String finalUrl = url.startsWith("/") ? url : "/" + url;
+                        InputStream stream = getClass().getResourceAsStream(finalUrl);
+
+                        if (stream != null) {
+                            Image image = new Image(stream);
+                            profileImage.setImage(image);
+                        } else {
+                            // Fallback to default image
+                            InputStream defaultStream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png");
+                            Image defaultImage = new Image(defaultStream);
+                            profileImage.setImage(defaultImage);
+                        }
+
                         profileImage.setFitHeight(79);
                         profileImage.setFitWidth(56);
                         profileImage.setPreserveRatio(true);
 
-                        // Create labels for username and status
-                        Label usernameLabel = new Label(user.getName());
-                        usernameLabel.setFont(new Font("Ebrima Bold", 20));
-                        usernameLabel.setTextFill(Color.web("#5b3a29"));
-                        VBox.setMargin(usernameLabel, new Insets(20, 0, 0, 10));
-
-                        Label statusLabel = new Label("You: Non"); // Placeholder for chat status
-                        statusLabel.setFont(new Font("Ebrima Bold", 20));
-                        statusLabel.setTextFill(Color.web("#9e9e9e"));
-                        VBox.setMargin(statusLabel, new Insets(0, 0, 0, 10));
-
-                        VBox userInfoBox = new VBox(usernameLabel, statusLabel);
-                        userInfoBox.setPrefWidth(207);
-
-                        // Arrange elements in HBox
-                        HBox channelLayout = new HBox(profileImage, userInfoBox);
-                        channelLayout.setSpacing(10);
-                        channelLayout.setPrefSize(252, 103);
-                        channelLayout.setPadding(new Insets(5, 0, 0, 0));
-
-                        // Set the custom layout
-                        setGraphic(channelLayout);
+                    } catch (Exception e) {
+                        System.err.println("Error loading image from path: " + url + " - " + e.getMessage());
                     }
-                }
-            });
-        } else {
-            System.out.println("No channels found.");
-        }
 
+                    // Create labels
+                    Label usernameLabel = new Label(user.getName());
+                    usernameLabel.setFont(new Font("Ebrima Bold", 20));
+                    usernameLabel.setTextFill(Color.web("#5b3a29"));
+                    VBox.setMargin(usernameLabel, new Insets(20, 0, 0, 10));
+
+// Inside the channelListView.setCellFactory method
+                    // In your controller's initialize method or constructor
+                    Label statusLabel = new Label();
+                    List<Message> channelMessages = messageService.getMessagesByChannelId(item.getId());
+                    if (!channelMessages.isEmpty()) {
+                        Message lastMessage = channelMessages.get(channelMessages.size() - 1);
+                        String messageContent = truncateMessage(lastMessage.getContent(), 20);
+
+                        // Correct logic: if the sender is the current user, show "You:"
+                        if (Objects.equals(lastMessage.getIdUserSender(), currentUserId)) {
+                            statusLabel.setText("You: " + messageContent);
+                        } else {
+                            User sender = userService.getUserById(lastMessage.getIdUserSender());
+                            String senderName = sender != null ? sender.getName() : "Unknown";
+                            statusLabel.setText(senderName + ": " + messageContent);
+                        }
+                    } else {
+                        statusLabel.setText("No messages yet");
+                    }
+                    statusLabel.setFont(new Font("Ebrima Bold", 20));
+                    statusLabel.setTextFill(Color.web("#9e9e9e"));
+                    VBox.setMargin(statusLabel, new Insets(0, 0, 0, 10));
+
+// Layout
+                    VBox userInfoBox = new VBox(usernameLabel, statusLabel);
+                    userInfoBox.setPrefWidth(207);
+
+                    HBox channelLayout = new HBox(profileImage, userInfoBox);
+                    channelLayout.setSpacing(10);
+                    channelLayout.setPrefSize(252, 103);
+                    channelLayout.setPadding(new Insets(5, 0, 0, 0));
+
+                    setGraphic(channelLayout);
+                }
+            }
+        });
+
+        // Set up button handlers
         sendButton.setOnMouseClicked(event -> sendMessage());
         deleteChannelButton.setOnAction(event -> deleteSelectedChannel());
     }
+
     @FXML
     private void deleteSelectedChannel() {
         Channel selectedChannel = channelListView.getSelectionModel().getSelectedItem();
@@ -228,112 +264,340 @@ public class ChannelMessageController {
             channelListView.getItems().remove(selectedChannel); // Remove from ListView
         }
     }
-
-
-
     @FXML
-    private void sendMessage() {
-        String content = messageInput.getText().trim();
 
-        if (content.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Message cannot be empty.");
-            return;
-        }
-
-        Long userId = 1L;  // Assuming userId is 1L (replace with dynamic logged-in user ID)
-        Long selectedUserId = selectedUser != null ? selectedUser.getId() : null;
-
-        if (selectedUserId == null) {
-            showAlert(Alert.AlertType.ERROR, "Selection Error", "Please select a user to message.");
-            return;
-        }
-
-        Long channelId = messageService.getChannelIdBetweenUsers(userId, selectedUserId);
-        if (channelId == null) {
-            showAlert(Alert.AlertType.ERROR, "Channel Error", "No channel found between the selected users.");
-            return;
-        }
-
-        Message message = new Message(content, userId, selectedUserId, "text", channelId);
-        messageService.add(message);  // Add to database
-
-        // Update the message ListView after adding the message
-        messageListView.getItems().add(content);
-
-        showAlert(Alert.AlertType.INFORMATION, "Message Sent", "Message added successfully.");
-        messageInput.clear();
-    }
-
-    @FXML
-    private void deleteMessage() {
-        String selectedMessage = messageListView.getSelectionModel().getSelectedItem();
-
+    public void deleteMessage(ActionEvent event) {
+        Message selectedMessage = messageListView.getSelectionModel().getSelectedItem();
         if (selectedMessage == null) {
             showAlert(Alert.AlertType.WARNING, "Selection Error", "Please select a message to delete.");
             return;
         }
 
-        for (Message message : messageService.getall()) {
-            if (message.getContent().equals(selectedMessage)) {
-                messageService.delete(message.getIdMessage());  // Call delete method
-                messageListView.getItems().remove(selectedMessage);  // Remove from ListView
+        try {
+            messageService.delete(selectedMessage.getIdMessage());
+            messageListView.getItems().remove(selectedMessage);
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Message deleted successfully.");
+            System.out.println("Message deleted: " + selectedMessage.getIdMessage());
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete message: " + e.getMessage());
+            System.err.println("Error deleting message: " + e.getMessage());
+        }
+    }    private boolean isUpdateMode = false;
+    private Message messageToUpdate;
 
-                showAlert(Alert.AlertType.INFORMATION, "Message Deleted", "Message deleted successfully.");
-                return;
+
+    private String generateAIResponse(String question) {
+        try {
+            JSONObject requestData = new JSONObject();
+            requestData.put("inputs", question);
+
+            // Create URL object and connection
+            URL url = new URL(API_URL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Configure connection
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + API_KEY);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // Send request
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(requestData.toString().getBytes());
+                os.flush();
             }
+
+            // Read response
+            StringBuilder response = new StringBuilder(); // Fixed: Declare StringBuilder
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                String line;
+                while ((line = in.readLine()) != null) {
+                    response.append(line);
+                }
+            }
+
+            JSONArray responseArray = new JSONArray(response.toString());
+            String generatedText = responseArray.getJSONObject(0).getString("generated_text").trim();
+
+            // Extract only the content after </think>
+            int thinkTagIndex = generatedText.indexOf("</think>");
+            if (thinkTagIndex != -1) {
+                return generatedText.substring(thinkTagIndex + 8).trim();
+            }
+            return generatedText;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error generating AI response: " + e.getMessage();
+        }
+    }    private void handleUpdateMessage(String content) {
+        if (messageToUpdate == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No message selected for update.");
+            return;
         }
 
-        showAlert(Alert.AlertType.ERROR, "Error", "Message not found in database.");
-    }
+        try {
+            messageToUpdate.setContent(content);
+            messageService.update(messageToUpdate);
 
+            // Refresh the messages
+            Long channelId = messageService.getChannelIdBetweenUsers(currentUserId, selectedUser.getId());
+            List<Message> messages = messageService.getMessagesByChannelId(channelId);
+            messageListView.getItems().setAll(messages);
+
+            // Clear update mode
+            messageInput.clear();
+            isUpdateMode = false;
+            messageToUpdate = null;
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to update message: " + e.getMessage());
+        }
+    }
     @FXML
-    private void updateMessage() {
-        String selectedMessage = messageListView.getSelectionModel().getSelectedItem();
-
-        if (selectedMessage == null) {
-            showAlert(Alert.AlertType.WARNING, "Selection Error", "Please select a message to update.");
+    private void sendMessage() {
+        String content = messageInput.getText().trim();
+        if (content.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Message cannot be empty.");
             return;
         }
 
-        String newContent = messageInput.getText().trim();
-
-        if (newContent.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "New content cannot be empty.");
+        if (isUpdateMode) {
+            handleUpdateMessage(content);
             return;
         }
 
-        for (Message message : messageService.getall()) {
-            if (message.getContent().equals(selectedMessage)) {
-                message.setContent(newContent);
-                messageService.update(message);  // Update in database
-                messageListView.getItems().set(messageListView.getItems().indexOf(selectedMessage), newContent);
+        Long channelId = messageService.getChannelIdBetweenUsers(currentUserId, selectedUser.getId());
+        if (channelId == null) {
+            showAlert(Alert.AlertType.ERROR, "Channel Error", "No channel found between selected users.");
+            return;
+        }
 
-                showAlert(Alert.AlertType.INFORMATION, "Message Updated", "Message updated successfully.");
-                messageInput.clear();
+        // Send user message
+        Message message = new Message(content, currentUserId, selectedUser.getId(), "text", channelId);
+        try {
+            messageService.add(message);
+
+            // Check if message starts with /pathfinderAI
+            if (content.startsWith("/pathfinderAI")) {
+                String question = content.substring("/pathfinderAI".length()).trim();
+                if (!question.isEmpty()) {
+                    // Generate AI response
+                    String aiResponse = generateAIResponse(question+"Answer this question keep it short!");
+
+                    // Send AI response as a new message
+                    Message aiMessage = new Message(
+                            aiResponse,
+                            currentUserId,
+                            selectedUser.getId(),
+                            "text",
+                            channelId
+                    );
+                    messageService.add(aiMessage);
+                }
+            }
+
+            // Refresh messages
+            List<Message> messages = messageService.getMessagesByChannelId(channelId);
+            messageListView.getItems().setAll(messages);
+            messageListView.scrollTo(messageListView.getItems().size() - 1);
+            messageInput.clear();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to send message: " + e.getMessage());
+        }
+
+
+    }    @FXML
+    public void updateMessage(ActionEvent event) {
+        if (!isUpdateMode) {
+            Message selectedMessage = messageListView.getSelectionModel().getSelectedItem();
+            if (selectedMessage == null) {
+                showAlert(Alert.AlertType.WARNING, "Selection Error", "Please select a message to update.");
                 return;
             }
+
+            // Check if the message belongs to the current user
+            if (!selectedMessage.getIdUserSender().equals(currentUserId)) {
+                showAlert(Alert.AlertType.ERROR, "Permission Error", "You can only update your own messages.");
+                return;
+            }
+
+            // Enter update mode
+            isUpdateMode = true;
+            messageToUpdate = selectedMessage;
+            messageInput.setText(selectedMessage.getContent());
+            messageInput.requestFocus();
+            System.out.println("Entering update mode for message ID: " + selectedMessage.getIdMessage());
+        } else {
+            try {
+                messageToUpdate.setContent(messageInput.getText().trim());
+                messageService.update(messageToUpdate);
+                messageListView.refresh();
+                messageInput.clear();
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Message updated successfully.");
+                System.out.println("Message updated: " + messageToUpdate.getIdMessage());
+                isUpdateMode = false;
+                messageToUpdate = null;
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while updating the message.");
+                System.err.println("Error updating message: " + e.getMessage());
+            }
         }
-
-        showAlert(Alert.AlertType.ERROR, "Error", "Message not found in database.");
     }
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(content);
         alert.showAndWait();
+    }
+    private final Map<Long, Image> avatarCache = new ConcurrentHashMap<>();
+    private final Image defaultAvatar = loadDefaultAvatar();
+
+    private Image loadDefaultAvatar() {
+        try (InputStream stream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png")) {
+            return new Image(stream);
+        } catch (Exception e) {
+            System.err.println("Error loading default avatar: " + e.getMessage());
+            return null;
+        }
     }
 
     private void displayMessages(List<Message> messages, Long channelId) {
-        messageListView.getItems().clear();  // Clear previous messages
+        messageListView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
+        messageListView.setCellFactory(param -> new ListCell<Message>() {
+            private final HBox messageContainer = new HBox(10);
+            private final VBox messageBox = new VBox();
+            private final Label contentLabel = new Label();
+            private final MenuButton menuButton = new MenuButton("⋮");
 
-        // Filter and display messages for the selected channel
-        for (Message message : messages) {
-            if (message.getIdChannel().equals(channelId)) {
-                messageListView.getItems().add(message.getContent());
+            {
+                contentLabel.setWrapText(true);
+                contentLabel.setMaxWidth(300);
+                contentLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
+                contentLabel.setMinWidth(50);
+                contentLabel.setPadding(new Insets(8));
+
+                messageBox.setPadding(new Insets(4, 8, 4, 8));
+                messageContainer.setSpacing(8);
+                messageContainer.setMaxWidth(Region.USE_PREF_SIZE);
+
+                menuButton.getStyleClass().add("message-menu");
+                menuButton.setVisible(false);
+
+                messageContainer.setOnMouseEntered(e -> menuButton.setVisible(true));
+                messageContainer.setOnMouseExited(e -> {
+                    if (!menuButton.isShowing()) {
+                        menuButton.setVisible(false);
+                    }
+                });
+
+                contentLabel.setTextOverrun(OverrunStyle.CLIP);
             }
-        }
+
+            @Override
+            protected void updateItem(Message message, boolean empty) {
+                super.updateItem(message, empty);
+                setText(null);
+
+                if (empty || message == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                contentLabel.setText(message.getContent());
+                messageContainer.getChildren().clear();
+                messageBox.getChildren().clear();
+                menuButton.getItems().clear();
+
+                if (message.getIdUserSender().equals(currentUserId)) {
+                    setupSenderMessage(message);
+                } else {
+                    setupReceiverMessage(message.getIdUserSender());
+                }
+
+                messageBox.getChildren().add(messageContainer);
+                setGraphic(messageBox);
+            }
+
+            private void setupSenderMessage(Message message) {
+                messageBox.setAlignment(Pos.CENTER_RIGHT);
+                messageContainer.setAlignment(Pos.CENTER_RIGHT);
+                contentLabel.setStyle("-fx-background-color: #0084ff; -fx-text-fill: white; -fx-background-radius: 15px;");
+
+                MenuItem updateItem = new MenuItem("Update");
+                MenuItem deleteItem = new MenuItem("Delete");
+
+                updateItem.setOnAction(e -> {
+                    getListView().getSelectionModel().select(getIndex());
+                    updateMessage(new ActionEvent());
+                });
+
+                deleteItem.setOnAction(e -> {
+                    getListView().getSelectionModel().select(getIndex());
+                    deleteMessage(new ActionEvent());
+                });
+
+                menuButton.getItems().addAll(updateItem, deleteItem);
+                messageContainer.getChildren().addAll(contentLabel, menuButton);
+            }
+
+            private void setupReceiverMessage(Long senderId) {
+                messageBox.setAlignment(Pos.CENTER_LEFT);
+                messageContainer.setAlignment(Pos.CENTER_LEFT);
+                contentLabel.setStyle("-fx-background-color: #e9ecef; -fx-text-fill: black; -fx-background-radius: 15px;");
+                messageContainer.getChildren().add(contentLabel);
+            }
+        });
+
+        messageListView.getItems().setAll(messages.stream()
+                .filter(m -> m != null && m.getIdChannel().equals(channelId))
+                .collect(Collectors.toList()));
+
+        Platform.runLater(() -> {
+            if (!messages.isEmpty()) {
+                messageListView.scrollTo(messages.size() - 1);
+            }
+        });
+    }    private void configureMenuButton(MenuButton menuButton, Message message) {
+        menuButton.getItems().clear();
+
+        MenuItem updateItem = new MenuItem("Update");
+        MenuItem deleteItem = new MenuItem("Delete");
+
+        // Set up update action
+        updateItem.setOnAction(e -> {
+            messageListView.getSelectionModel().select(message);
+            updateMessage(new ActionEvent());
+            menuButton.setVisible(false); // Hide after action
+        });
+
+        // Set up delete action
+        deleteItem.setOnAction(e -> {
+            messageListView.getSelectionModel().select(message);
+            deleteMessage(new ActionEvent());
+            menuButton.setVisible(false); // Hide after action
+        });
+
+        menuButton.getItems().addAll(updateItem, deleteItem);
+
+        // Menu visibility handling
+        VBox container = (VBox) menuButton.getParent().getParent();
+        container.setOnMouseEntered(e -> menuButton.setVisible(true));
+
+        // Remove the mouse exit handler
+        container.setOnMouseExited(null);
+
+        // Toggle visibility on menu button click
+        menuButton.setOnMouseClicked(e -> {
+            if (!menuButton.isShowing()) {
+                menuButton.setVisible(!menuButton.isVisible());
+            }
+        });
+
+        // Initial state
+        menuButton.setVisible(false);
+        menuButton.getStyleClass().add("message-menu");
     }
     private Channel findChannelByUserId(Long userId) {
         // Iterate over the list of channels and find the channel that has the userId
@@ -347,68 +611,185 @@ public class ChannelMessageController {
 
 
     @FXML
-    private void handleUserClick(ActionEvent event) {
-        // Get the selected username from the ComboBox
-        String selectedName = (String) searchBox.getValue();
+    private void handleUserSearch(ActionEvent event) {
+        String searchText = searchBox.getText().trim();
 
-        if (selectedName != null) {
-            // Find the corresponding user object from the list
-            User selectedUser = userService.getall().stream()
-                    .filter(user -> user.getName().equals(selectedName))
-                    .findFirst()
-                    .orElse(null);
+        if (searchText.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Search Error", "Please enter a username to search.");
+            return;
+        }
 
-            if (selectedUser != null) {
-                this.selectedUser = selectedUser;  // Set the selected user
+        User selectedUser = userService.getall(null).stream()
+                .filter(user -> user.getName().equalsIgnoreCase(searchText))
+                .findFirst()
+                .orElse(null);
 
-                // Perform logic to find the corresponding channel for this user
-                Channel selectedChannel = findChannelByUserId(selectedUser.getId());
-                if (selectedChannel != null) {
-                    // Select the channel in the channelListView
-                    channelListView.getSelectionModel().select(selectedChannel);
-                    // Optionally, you can call the displayMessages method to show the channel's messages
-                    List<Message> messages = messageService.getMessagesByChannelId(selectedChannel.getId());
-                    displayMessages(messages, selectedChannel.getId());
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Channel Error", "No channel found for this user.");
-                }
+        if (selectedUser != null) {
+            this.selectedUser = selectedUser;
+            Channel existingChannel = channelService.getChannelBetweenUsers(currentUserId, selectedUser.getId());
+
+            if (existingChannel == null) {
+                Channel newChannel = new Channel();
+                newChannel.setUser1Id(currentUserId);
+                newChannel.setUser2Id(selectedUser.getId());
+                channelService.add(newChannel);
+
+                // Refresh channel list
+                List<Channel> updatedChannels = channelService.getall(currentUserId);
+                channelListView.setItems(FXCollections.observableArrayList(updatedChannels));
             } else {
-                showAlert(Alert.AlertType.ERROR, "User Error", "User not found.");
+                channelListView.getSelectionModel().select(existingChannel);
+                List<Message> messages = messageService.getMessagesByChannelId(existingChannel.getId());
+                displayMessages(messages, existingChannel.getId());
             }
-        }
-    }
-
-
-
-    @FXML
-    private void onUserSelected(Long selectedUserId) {
-        Long userId = 1L;  // Dynamically set based on logged-in user
-
-        Long channelId = messageService.getChannelIdBetweenUsers(userId, selectedUserId);
-        if (channelId == null) {
-            showAlert(Alert.AlertType.ERROR, "Channel Error", "No channel found between you and the selected user.");
-            return;
-        }
-
-        List<Message> messages = messageService.getMessagesByChannelId(channelId);
-        displayMessages(messages, channelId);  // Display messages for the selected channel
-    }
-
-    @FXML
-    private void createOrGetChannel(ActionEvent event) {
-        Long userId = 1L;  // Dynamically set based on logged-in user
-        Long selectedUserId = selectedUser != null ? selectedUser.getId() : null;
-
-        if (selectedUserId == null) {
-            showAlert(Alert.AlertType.ERROR, "Selection Error", "Please select a user first.");
-            return;
-        }
-
-        Long channelId = channelService.getOrCreateChannel(selectedUserId);
-        if (channelId != null) {
-            System.out.println("Channel ID: " + channelId);
         } else {
-            System.out.println("Failed to create or get the channel.");
+            showAlert(Alert.AlertType.ERROR, "User Error", "User not found.");
         }
+
+        searchBox.clear();
     }
-}
+    private ObservableList<String> suggestions = FXCollections.observableArrayList();
+
+    private void updateSuggestions(String searchText) {
+        // Clear the current suggestions
+        suggestions.clear();
+
+        // Get all users except current user
+        List<String> filteredUsers = userService.getall(null)
+                .stream()
+                .filter(user -> user.getId() != currentUserId)
+                .map(User::getName)
+                .collect(Collectors.toList());
+
+        // If search text is empty, show all users
+        if (searchText == null || searchText.trim().isEmpty()) {
+            suggestions.addAll(filteredUsers);
+        } else {
+            // Filter users based on search text
+            String searchLower = searchText.toLowerCase().trim();
+            filteredUsers.stream()
+                    .filter(name -> name.toLowerCase().contains(searchLower))
+                    .forEach(suggestions::add);
+        }
+
+        // Update UI in a more controlled way
+        Platform.runLater(() -> {
+            // First update the items
+            suggestionList.setItems(FXCollections.observableArrayList(suggestions));
+
+            // Then update the visibility and size
+            if (suggestions.isEmpty()) {
+                hideDropdown();
+            } else {
+                showDropdown();
+            }
+        });
+    }
+
+    private void showDropdown() {
+        suggestionList.setVisible(true);
+        suggestionList.setManaged(true);
+
+        // Make list wider than the search box
+        suggestionList.setPrefWidth(searchBox.getWidth() * 1.5);
+
+        // Adjust height based on content
+        double itemHeight = 30; // Increased height per item
+        double totalHeight = Math.min(suggestions.size() * itemHeight, 300); // Increased max height
+
+        suggestionList.setPrefHeight(totalHeight);
+        suggestionList.setMinHeight(totalHeight);
+        suggestionList.setMaxHeight(totalHeight);
+        suggestionList.toFront();
+    }
+    private void hideDropdown() {
+        suggestionList.setVisible(false);
+        suggestionList.setManaged(false);
+        suggestionList.setPrefHeight(0);
+        suggestionList.setMinHeight(0);
+    }
+
+    private void setupSearchBox() {
+        suggestionList.setPrefWidth(searchBox.getPrefWidth());
+        suggestionList.setMaxHeight(200);
+        suggestionList.setItems(suggestions);
+        suggestionList.setVisible(false);
+        suggestionList.setManaged(false);
+        suggestionList.getStyleClass().add("suggestion-list");
+
+        // Show suggestions when clicking on search box
+        searchBox.setOnMouseClicked(event -> {
+            updateSuggestions(searchBox.getText());
+            showDropdown();
+        });
+
+        // Text change listener
+        searchBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (suggestionList.isVisible()) {
+                updateSuggestions(newValue);
+            }
+        });
+
+        // Mouse click handler
+        suggestionList.setOnMouseClicked(event -> {
+            String selected = suggestionList.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                searchBox.setText(selected);
+                hideDropdown();
+                handleUserSearch(new ActionEvent());
+            }
+        });
+
+        // Key handler
+        searchBox.setOnKeyPressed(event -> {
+            if (!suggestions.isEmpty()) {
+                switch (event.getCode()) {
+                    case DOWN:
+                        suggestionList.getSelectionModel().selectFirst();
+                        suggestionList.requestFocus();
+                        event.consume();
+                        break;
+                    case ENTER:
+                        String selected = suggestionList.getSelectionModel().getSelectedItem();
+                        if (selected != null) {
+                            searchBox.setText(selected);
+                            hideDropdown();
+                            handleUserSearch(new ActionEvent());
+                        }
+                        event.consume();
+                        break;
+                    case ESCAPE:
+                        searchBox.clear();
+                        hideDropdown();
+                        event.consume();
+                        break;
+                }
+            }
+        });
+
+        // Focus lost handler
+        searchBox.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                PauseTransition delay = new PauseTransition(Duration.millis(200));
+                delay.setOnFinished(event -> hideDropdown());
+                delay.play();
+            }
+        });
+    }
+    private void configureMenuItems(MenuButton menuButton, Message message) {
+        MenuItem updateItem = new MenuItem("Update");
+        MenuItem deleteItem = new MenuItem("Delete");
+
+        updateItem.setOnAction(e -> {
+            messageListView.getSelectionModel().select(message);
+            updateMessage(new ActionEvent());
+        });
+
+        deleteItem.setOnAction(e -> {
+            messageListView.getSelectionModel().select(message);
+            deleteMessage(new ActionEvent());
+        });
+
+        menuButton.getItems().clear();
+        menuButton.getItems().addAll(updateItem, deleteItem);
+    }}

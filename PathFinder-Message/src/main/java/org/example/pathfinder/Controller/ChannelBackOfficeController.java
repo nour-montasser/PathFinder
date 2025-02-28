@@ -28,7 +28,7 @@ public class ChannelBackOfficeController {
 
     private void loadChannels() {
         channelList = FXCollections.observableArrayList();
-        for (Channel channel : channelService.getall()) {
+        for (Channel channel : channelService.getall(null)) {
             String channelText = String.format("ID: %d | User1: %d | User2: %d | Rating: %d",
                     channel.getId(), channel.getUser1Id(), channel.getUser2Id());
             channelList.add(channelText);

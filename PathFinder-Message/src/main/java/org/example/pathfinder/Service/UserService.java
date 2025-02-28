@@ -6,6 +6,7 @@ import org.example.pathfinder.Model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserService implements Services<User> {
     private Connection cnx;
@@ -55,8 +56,7 @@ public class UserService implements Services<User> {
         }
     }
 
-    @Override
-    public List<User> getall() {
+    public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM app_user";
 
@@ -79,6 +79,41 @@ public class UserService implements Services<User> {
 
         return users;
     }
+
+    @Override
+    public List<User> getall(Long userId) {
+        List<User> users = new ArrayList<>();
+        String query = "SELECT * FROM app_user";
+
+        // If you need to filter users based on userId
+        if (userId != null) {
+            query += " WHERE id_user = ?";
+        }
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            if (userId != null) {
+                stmt.setLong(1, userId);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    long idUser = rs.getLong("id_user");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String password = rs.getString("password");
+                    long role = rs.getLong("role");
+
+                    User user = new User(idUser, name, email, role, password);
+                    users.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return users;
+    }
+
     public Long getUserIdByUsername(String username) {
         // Use the existing method to get the user by username
         User user = getUserByUsername(username);
@@ -87,6 +122,12 @@ public class UserService implements Services<User> {
         } else {
             return -1L;  // Return -1 if user not found
         }
+    }
+    public List<User> searchUsers(String query) {
+        return getall(null)
+                .stream()
+                .filter(user -> user.getName().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -142,19 +183,25 @@ public class UserService implements Services<User> {
     }
     public String getProfilePictureById(long id) {
         String query = "SELECT photo FROM profile WHERE id_user = ?";
-        String s="C:\\Users\\User\\Downloads\\PathFinder-CV\\PathFinder-CV\\src\\main\\resources\\img\\pathfinder_logo_compass.png.png" ;// Default profile picture
+        String defaultImagePath = "/Sources/pathfinder_logo_compass.png.png";
 
         try (PreparedStatement stmt = cnx.prepareStatement(query)) {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    s = rs.getString("photo"); // Assign value to s
+                    String dbPath = rs.getString("photo");
+                    if (dbPath != null && !dbPath.isEmpty()) {
+                        // Get the resource URL to verify it exists
+                        if (getClass().getResource(dbPath) != null) {
+                            return dbPath;
+                        }
+                    }
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error getting profile picture: " + e.getMessage());
         }
-        return s; // Return either the retrieved photo or the default
+        return defaultImagePath;
     }
 
 }
