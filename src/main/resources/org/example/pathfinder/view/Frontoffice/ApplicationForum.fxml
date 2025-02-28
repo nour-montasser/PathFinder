@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.web.WebView?>
 <VBox xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.pathfinder.Controller.ApplicationServiceController"
@@ -15,15 +16,23 @@
 
         <!-- Search Bar -->
         <HBox spacing="10" alignment="CENTER_LEFT"
-              style="-fx-border-color: #ddd; -fx-border-radius: 20; -fx-padding: 8;
+              style="-fx-border-color: #F5F5F5; -fx-border-radius: 20; -fx-padding: 8;
                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);">
 
+
+            <Label text="Convert Prices To:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <ComboBox fx:id="currencySelector" prefWidth="150"/>
 
 
 
             <!-- Search Field -->
             <TextField fx:id="searchField" promptText="Search services..."
                        style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
+
+            <Label text="Select Skill:"/>
+            <ComboBox fx:id="skillsComboBox" promptText="Loading skills..." prefWidth="300"/>
+            <WebView fx:id="hcaptchaWebView" prefWidth="320" prefHeight="100"/>
+
         </HBox>
 
         <ComboBox fx:id="sortDropdown"

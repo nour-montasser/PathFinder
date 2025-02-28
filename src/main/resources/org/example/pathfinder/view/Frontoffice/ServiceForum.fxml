@@ -25,6 +25,11 @@
             <Label text="Title:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <TextField fx:id="titleField" promptText="Enter job title" prefWidth="300"/>
 
+            <Label text="Price ( Ai Suggestion Price) :" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <TextField fx:id="priceField" promptText="Enter price" prefWidth="300"/>
+
+
+
             <Label text="Description:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <TextArea fx:id="descriptionField" promptText="Enter job description" prefWidth="300" prefHeight="80"/>
 
@@ -32,20 +37,27 @@
             <Label text="Type:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <ComboBox fx:id="fieldField" promptText="Select type" prefWidth="300"/>
 
-            <Label text="Price starting from:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <TextField fx:id="priceField" promptText="Enter spots available" prefWidth="300"/>
+            <DatePicker fx:id="startDatePicker" promptText="Start Date" />
+            <DatePicker fx:id="endDatePicker" promptText="End Date" />
+            <Label fx:id="durationLabel" text="Duration: --" visible="false" />
 
-            <Label text="DATE:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <DatePicker fx:id="dateField" prefWidth="300" />
 
-            <Label text="Required Education:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+
+
+
+            <Label text=" Education:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <TextField fx:id="requiredEducationField" promptText="Enter education level" prefWidth="300"/>
 
-            <Label text="Required Experience:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <TextField fx:id="requiredExperienceField" promptText="Enter experience level" prefWidth="300"/>
+            <Label text="Experience Level:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <ComboBox fx:id="experienceLevelField" layoutX="150" layoutY="100" prefWidth="200"/>
+
 
             <Label text="Skills:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <TextField fx:id="skillsField" promptText="Enter required skills" prefWidth="300"/>
+            <TextField fx:id="skillsField" promptText="Enter skills" prefWidth="300"/>
+
+
+
+
 
             <!-- Buttons Section -->
             <HBox spacing="15" alignment="CENTER">

@@ -5,7 +5,6 @@ import org.example.pathfinder.App.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
 
 public class ApplicationServiceService implements Services<ApplicationService> {
@@ -58,6 +57,13 @@ public class ApplicationServiceService implements Services<ApplicationService> {
         } catch (SQLException e) {
             throw new RuntimeException("Error adding application: " + e.getMessage());
         }
+
+        System.out.println("🔹 DEBUG: Inserting Application");
+        System.out.println("🔹 User ID: " + app.getIdUser());
+
+        System.out.println("🔹 Offered Price: " + app.getPriceOffre());
+        System.out.println("🔹 Status: " + app.getStatus());
+
     }
 
 
@@ -146,7 +152,9 @@ public class ApplicationServiceService implements Services<ApplicationService> {
                 rs.getDouble("price_offre"),
                 rs.getInt("id_user"),
                 rs.getString("status"),
-                rs.getInt("id_service")
+                rs.getInt("id_service"),
+                rs.getInt("rating")
+
         );
     }
 
@@ -163,4 +171,19 @@ public class ApplicationServiceService implements Services<ApplicationService> {
             e.printStackTrace();
         }
     }
+
+    public void updateRating(int applicationId, int rating) {
+        String query = "UPDATE applicationservice SET rating = ? WHERE id_app = ?";
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setInt(1, rating);
+            stmt.setInt(2, applicationId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating rating: " + e.getMessage());
+        }
+    }
+
+
+
+
 }

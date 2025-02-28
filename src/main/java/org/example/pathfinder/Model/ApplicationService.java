@@ -6,13 +6,15 @@ public class ApplicationService {
     private int idUser;
     private String status;
     private int idService;
+    private int rating;
 
-    public ApplicationService(int idApplication, double priceOffre, int idUser, String status, int idService) {
+    public ApplicationService(int idApplication, double priceOffre, int idUser, String status, int idService,int Rating) {
         this.idApplication = idApplication;
         this.priceOffre = priceOffre;
         this.idUser = idUser;
         this.status = status;
         this.idService = idService;
+        this.rating = rating;
     }
 
     public int getIdApplication() { return idApplication; }
@@ -20,12 +22,14 @@ public class ApplicationService {
     public int getIdUser() { return idUser; }
     public String getStatus() { return status; }
     public int getIdService() { return idService; }
+    public int getRating() { return rating; }
 
     public void setPriceOffre(double priceOffre) { this.priceOffre = priceOffre; }
     public void setStatus(String status) { this.status = status; }
     public void setIdApplication(int idApplication) {
         this.idApplication = idApplication;
     }
+    public void setRating(int rating) { this.rating = rating; }
 
 
 
@@ -37,6 +41,7 @@ public class ApplicationService {
                 ", idUser=" + idUser +
                 ", status='" + status + '\'' +
                 ", idService=" + idService +
+                ", rating=" + rating +
                 '}';
     }
 }

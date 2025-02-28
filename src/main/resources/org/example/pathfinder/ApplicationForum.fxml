@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.web.WebView?>
 <VBox xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.pathfinder.Controller.ApplicationServiceController"
@@ -24,6 +25,12 @@
             <!-- Search Field -->
             <TextField fx:id="searchField" promptText="Search services..."
                        style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
+
+            <Label text="Select Skill:"/>
+            <ComboBox fx:id="skillsComboBox" promptText="Loading skills..." prefWidth="300"/>
+
+            <WebView fx:id="hcaptchaWebView" prefWidth="320" prefHeight="100"/>
+
         </HBox>
 
         <ComboBox fx:id="sortDropdown"

@@ -21,14 +21,18 @@
             <!-- Spacer to push elements to the right -->
             <Pane HBox.hgrow="ALWAYS"/>
 
-            <!-- Search Bar -->
+            <Label text="Convert Prices To:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <ComboBox fx:id="currencySelector" prefWidth="150"/>
+
+
+            <!-- Search Field -->
             <TextField fx:id="searchField" promptText="Search services..."
-                       style="-fx-padding: 8px; -fx-pref-width: 250px;
-                              -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+                       style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
+
 
             <!-- Sorting Dropdown -->
             <ComboBox fx:id="sortDropdown"
-                      style="-fx-background-color: white;
+                      style="-fx-background-color: white ;
                    -fx-border-width: 0;
                    -fx-font-size: 14px;
                    -fx-border-radius: 20;

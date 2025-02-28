@@ -43,7 +43,7 @@
                     style="-fx-background-color: transparent; -fx-text-fill: #F5E4C3;
                            -fx-font-size: 18px; -fx-font-weight: bold; -fx-border-width: 0;
                            -fx-padding: 10px 20px; -fx-cursor: hand;"/>
-            <Button fx:id="messagesButton" text="MESSAGES" onAction="#loadMessagesPage"
+            <Button fx:id="messagesButton" text="MY SERVICES" onAction="#loadMessagesPage"
                     style="-fx-background-color: transparent; -fx-text-fill: #F5E4C3;
                            -fx-font-size: 18px; -fx-font-weight: bold; -fx-border-width: 0;
                            -fx-padding: 10px 20px; -fx-cursor: hand;"/>

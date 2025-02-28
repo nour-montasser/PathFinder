@@ -17,18 +17,21 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public void add(ServiceOffre serviceOffre) {
-        String req = "INSERT INTO serviceoffre (id_user, title, description, date_posted, field, price, required_experience, required_education, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO serviceoffre (id_user, title, description, date_posted, field, price, required_education, skills, experience_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setInt(1, serviceOffre.getId_user());
             stm.setString(2, serviceOffre.getTitle());
             stm.setString(3, serviceOffre.getDescription());
-            stm.setDate(4, serviceOffre.getDate_posted());
+            stm.setTimestamp(4, serviceOffre.getDatePostedAsTimestamp());  // ✅ Convert LocalDateTime → SQL Timestamp
             stm.setString(5, serviceOffre.getField());
             stm.setDouble(6, serviceOffre.getPrice());
-            stm.setString(7, serviceOffre.getRequired_experience());
+
             stm.setString(8, serviceOffre.getRequired_education());
             stm.setString(9, serviceOffre.getSkills());
+            stm.setString(10, serviceOffre.getExperience_level()); // ✅ Added Experience Level
+
+            stm.setString(12, serviceOffre.getDuration());
             stm.executeUpdate();
             System.out.println("✅ Service added successfully!");
         } catch (SQLException e) {
@@ -38,18 +41,22 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public void update(ServiceOffre serviceOffre) {
-        String req = "UPDATE serviceoffre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?, required_experience = ?, required_education = ?, skills = ? WHERE id_service = ?";
+        String req = "UPDATE serviceoffre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?,  required_education = ?, skills = ?, experience_level = ? WHERE id_service = ?";
 
         try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setString(1, serviceOffre.getTitle());
             stm.setString(2, serviceOffre.getDescription());
-            stm.setDate(3, serviceOffre.getDate_posted());
+            stm.setTimestamp(3, serviceOffre.getDatePostedAsTimestamp());  // ✅ Convert LocalDateTime → Timestamp
             stm.setString(4, serviceOffre.getField());
             stm.setDouble(5, serviceOffre.getPrice());
-            stm.setString(6, serviceOffre.getRequired_experience());
+
             stm.setString(7, serviceOffre.getRequired_education());
             stm.setString(8, serviceOffre.getSkills());
-            stm.setInt(9, serviceOffre.getId_service());
+            stm.setString(9, serviceOffre.getExperience_level()); // ✅ Added Experience Level
+            stm.setInt(10, serviceOffre.getId_service());
+
+            stm.setString(12, serviceOffre.getDuration());
+
             stm.executeUpdate();
             System.out.println("✅ Service updated successfully!");
         } catch (SQLException e) {
@@ -98,19 +105,19 @@ public class ServiceOffreService implements Services<ServiceOffre> {
     }
 
     public List<ServiceOffre> getAllSortedByPrice() {
-        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY price ASC"); // ✅ Least to most expensive
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY price ASC");
     }
 
     public List<ServiceOffre> getAllSortedByPriceDesc() {
-        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY price DESC"); // ✅ Most to least expensive
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY price DESC");
     }
 
     public List<ServiceOffre> getAllSortedByDate() {
-        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted ASC"); // ✅ Oldest first
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted ASC");
     }
 
     public List<ServiceOffre> getAllSortedByDateDesc() {
-        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted DESC"); // ✅ Newest first
+        return getServicesByQuery("SELECT * FROM serviceoffre ORDER BY date_posted DESC");
     }
 
     private List<ServiceOffre> getServicesByQuery(String query) {
@@ -133,12 +140,19 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         service.setId_service(rs.getInt("id_service"));
         service.setTitle(rs.getString("title"));
         service.setDescription(rs.getString("description"));
-        service.setDate_posted(rs.getDate("date_posted"));
+
+        Timestamp timestamp = rs.getTimestamp("date_posted");
+        if (timestamp != null) {
+            service.setDate_posted(timestamp.toLocalDateTime()); // ✅ Convert back to LocalDateTime
+        }
         service.setField(rs.getString("field"));
         service.setPrice(rs.getDouble("price"));
-        service.setRequired_experience(rs.getString("required_experience"));
+
         service.setRequired_education(rs.getString("required_education"));
         service.setSkills(rs.getString("skills"));
+        service.setExperience_level(rs.getString("experience_level"));
+
+        service.setDuration(rs.getString("duration"));
         return service;
     }
 
@@ -171,4 +185,20 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         }
         return revenueMap;
     }
+
+
+    public void updateServiceStatus(int serviceId, String status) {
+        String query = "UPDATE serviceoffre SET status = ? WHERE id_service = ?";
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, serviceId);
+            stmt.executeUpdate();
+
+            System.out.println("✅ Service ID " + serviceId + " is now " + status);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating service status: " + e.getMessage());
+        }
+    }
+
 }
+

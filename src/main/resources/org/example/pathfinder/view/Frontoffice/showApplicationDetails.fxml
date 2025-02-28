@@ -3,28 +3,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.pathfinder.Controller.ShowApplicationDetailsController"
-            fitToWidth="true"
-            style="-fx-background-color: #2B2B2B;">
 
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pathfinder.Controller.ShowApplicationDetailsController">
+    <VBox spacing="15" style="-fx-padding: 20px; -fx-background-color: #f4f4f4;">
+        <Button fx:id="endServiceButton" text="End Service" onAction="#handleEndService"
+                style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 8px 16px;"
+                visible="false"/>
 
+        <!-- Top Section: Service Details -->
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: lightgray; -fx-border-width: 1;">
+            <Label fx:id="serviceTitleLabel" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+            <Label fx:id="serviceDescriptionArea" wrapText="true" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
 
-    <content>
-        <VBox fx:id="applicationsContainer" spacing="10" style="-fx-padding: 20;">
-            <Label text="View Requests."
-                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-
-
-
-
-
-
-
-
-            <!-- Dynamic content: Each application will be added here as an HBox -->
+            <HBox spacing="15">
+                <Label fx:id="servicePriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                <Label fx:id="serviceDurationLabel" style="-fx-font-size: 14px; -fx-text-fill: #777;"/>
+                <Label fx:id="serviceExperienceLabel" style="-fx-font-size: 14px; -fx-text-fill: #777;"/>
+            </HBox>
         </VBox>
 
-    </content>
-</ScrollPane>
+        <!-- Bottom Section: Freelancer Requests -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox fx:id="applicationsContainer" spacing="10" style="-fx-padding: 10px;"/>
+        </ScrollPane>
+
+    </VBox>
+</AnchorPane>
+

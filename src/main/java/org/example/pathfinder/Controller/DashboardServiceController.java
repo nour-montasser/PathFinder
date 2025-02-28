@@ -38,6 +38,8 @@ public class DashboardServiceController {
     }
 
     private void setupTableColumns() {
+        idServiceColumn.setVisible(false);
+        idUserColumn.setVisible(false);
         idServiceColumn.setCellValueFactory(new PropertyValueFactory<>("id_service"));
         idUserColumn.setCellValueFactory(new PropertyValueFactory<>("id_user"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
