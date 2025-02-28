@@ -6,10 +6,7 @@ import org.example.pathfinder.Model.Certificate;
 import org.example.pathfinder.Model.Language;
 import org.example.pathfinder.App.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -346,6 +343,64 @@ public class CVService implements Services<CV> {
 
         System.out.println("✅ CV Copy Successful! New CV ID: " + newCvId);
     }
+    public List<CV> getAllCVsWithDetails() {
+        List<CV> cvList = new ArrayList<>();
+
+        String query = """
+        SELECT cv.id_cv, 
+               u.name AS user_name, 
+               cv.title, 
+               cv.introduction, 
+               cv.skills, 
+               cv.date_creation,
+
+               -- Format Experiences
+               (SELECT GROUP_CONCAT(CONCAT(e.type, ' - ', e.position, ' at ', e.location_name, ' (', e.start_date, ' - ', e.end_date, ')') SEPARATOR ' | ')
+                FROM experience e WHERE e.id_cv = cv.id_cv) AS experiences,
+
+               -- Format Languages
+               (SELECT GROUP_CONCAT(CONCAT(l.language_name, ' (', l.level, ')') SEPARATOR ' | ')  -- 🔥 FIXED COLUMN NAME
+                FROM languages l WHERE l.id_cv = cv.id_cv) AS languages,
+
+               -- Format Certificates
+               (SELECT GROUP_CONCAT(CONCAT(c.title, ' - ', c.issued_by, ' (', c.issue_date, ')') SEPARATOR ' | ')
+                FROM certificate c WHERE c.id_cv = cv.id_cv) AS certificates
+
+        FROM CV cv
+        JOIN app_user u ON cv.id_user = u.id_user
+        ORDER BY cv.date_creation DESC;
+        """;
+
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                CV cv = new CV(
+                        resultSet.getInt("id_cv"),
+                        resultSet.getString("user_name"),  // ✅ Ensure user_name instead of ID
+                        resultSet.getString("title"),
+                        resultSet.getString("introduction"),
+                        resultSet.getString("skills"),
+                        resultSet.getTimestamp("date_creation")
+                );
+
+                // ✅ Set formatted fields safely
+                cv.setFormattedExperiences(resultSet.getString("experiences"));
+                cv.setFormattedLanguages(resultSet.getString("languages"));
+                cv.setFormattedCertificates(resultSet.getString("certificates"));
+
+
+                cvList.add(cv);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ SQL Error retrieving CVs: " + e.getMessage());
+            e.printStackTrace(); // 🔥 Useful for debugging
+        }
+        return cvList;
+    }
+
+
 
 
 

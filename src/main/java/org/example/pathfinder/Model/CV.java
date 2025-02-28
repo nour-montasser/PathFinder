@@ -16,7 +16,18 @@ public class CV {
     private List<Language> languageList; // List of associated languages
     private List<Certificate> certificates; // List of associated certificates
     private Timestamp lastViewed;
+    private String formattedExperiences;
+    private String formattedLanguages;
+    private String formattedCertificates;
+    private String username;
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     // Default constructor
     public CV() {
@@ -40,6 +51,43 @@ public class CV {
         this.languageList = new ArrayList<>();
         this.certificates = new ArrayList<>();
     }
+    // ✅ Add this constructor to CV.java
+    public CV(int idCV, String userName, String title, String introduction, String skills, Timestamp dateCreation) {
+        this.idCV = idCV;
+        this.title = title;
+        this.username=userName;
+        this.introduction = introduction;
+        this.skills = skills;
+        this.dateCreation = dateCreation;
+    }
+// ✅ Add these methods in CV.java
+
+
+
+    // 🔹 Getter & Setter for Experiences
+    public String getFormattedExperiences() {
+        return formattedExperiences;
+    }
+    public void setFormattedExperiences(String formattedExperiences) {
+        this.formattedExperiences = formattedExperiences;
+    }
+
+    // 🔹 Getter & Setter for Languages
+    public String getFormattedLanguages() {
+        return formattedLanguages;
+    }
+    public void setFormattedLanguages(String formattedLanguages) {
+        this.formattedLanguages = formattedLanguages;
+    }
+
+    // 🔹 Getter & Setter for Certificates
+    public String getFormattedCertificates() {
+        return formattedCertificates;
+    }
+    public void setFormattedCertificates(String formattedCertificates) {
+        this.formattedCertificates = formattedCertificates;
+    }
+
 
     public CV(CV original) {
         this.idCV = 0; // Reset ID to ensure it's treated as a new entry

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.pathfinder.Controller.CVBackofficeController"
+            prefHeight="600.0" prefWidth="900.0"
+            style="-fx-background-color: #F5F5F5;"> <!-- 🔹 Light Gray Background -->
+
+    <!-- 🔹 TableView to Display CV Data -->
+    <TableView fx:id="cvTable" layoutX="20" layoutY="20" prefWidth="860" prefHeight="500"
+               AnchorPane.topAnchor="10.0"
+               AnchorPane.bottomAnchor="10.0"
+               AnchorPane.leftAnchor="10.0"
+               AnchorPane.rightAnchor="10.0"
+               style="-fx-background-color: white;
+                      -fx-border-color: #D1D1D1;
+                      -fx-border-radius: 10;
+                      -fx-padding: 10;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+                      -fx-selection-bar: #4A90E2;
+                      -fx-selection-bar-non-focused: #B0C4DE;">
+
+        <!-- 🔹 Columns for CV Data -->
+        <columns>
+            <TableColumn text="ID" fx:id="colId" prefWidth="50"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER;"/>
+            <TableColumn text="User Name" fx:id="colUserName" prefWidth="150"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER-LEFT;"/>
+            <TableColumn text="Title" fx:id="colTitle" prefWidth="200"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER-LEFT;"/>
+            <TableColumn text="Skills" fx:id="colSkills" prefWidth="150"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER-LEFT;"/>
+            <TableColumn text="Experiences" fx:id="colExperiences" prefWidth="250"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER-LEFT;"/>
+            <TableColumn text="Languages" fx:id="colLanguages" prefWidth="200"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER-LEFT;"/>
+            <TableColumn text="Certificates" fx:id="colCertificates" prefWidth="200"
+                         style="-fx-font-weight: bold; -fx-alignment: CENTER-LEFT;"/>
+        </columns>
+
+    </TableView>
+
+</AnchorPane>

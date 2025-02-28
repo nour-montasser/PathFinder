@@ -1,4 +1,13 @@
 package org.example.pathfinder.Controller;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.input.*;
+import javafx.scene.layout.Priority;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.util.Duration;
 import org.example.pathfinder.Model.CV;
 import org.example.pathfinder.Model.Experience;
 import org.example.pathfinder.Service.CVService;
@@ -9,29 +18,29 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 import java.awt.Desktop;
 
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.File;
-import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -39,6 +48,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.example.pathfinder.Model.Certificate;
 import org.example.pathfinder.Service.CertificateService;
 import javafx.collections.FXCollections;
@@ -55,19 +67,41 @@ import javafx.scene.image.ImageView;
 
 
 public class CVController {
+
+    // Character limits
+    boolean disableGrammarCheck;
+    private final int TITLE_MAX = 100;
+    private final int INTRO_MAX = 300;
+    private final int DESC_MAX = 500;
+    private final int CERT_DESC_MAX = 300;
+    private final int CERT_NAME_MAX = 150;
+    private final int CERT_ASSOC_MAX = 150;
+    private final int LOC_MAX = 100;
+    private final int POS_MAX = 100;
     // CV Fields
+    @FXML private Label titleErrorLabel,experienceErrorLabel,skillsErrorLabel;
+    @FXML private Label introductionErrorLabel;
+    @FXML private Label descriptionErrorLabel;
+    @FXML private Label certificateDescriptionErrorLabel;
+    @FXML private Label languageErrorLabel;
     @FXML
     private TextField titleField;
     @FXML
     private TextArea introductionField;
     @FXML
+    private Label certificateHiddenPath;
+    @FXML
     private CV editingCV = null; // Tracks whether we are editing an existing CV
-
-
+    @FXML
+    private Label titleCounter, introductionCounter, descriptionCounter, certificateDescriptionCounter;
+    @FXML
+    private Label certificateNameErrorLabel, certificateAssociationErrorLabel,  certificateDateErrorLabel;
+    @FXML
+    private Label positionErrorLabel, locationErrorLabel,descritpionErrorLabel, startDateErrorLabel, endDateErrorLabel, endDateValidationError,durationErrorLabel;
     @FXML
     private TextArea cvPreview;
-
-    // Experience Fields
+    @FXML
+    private Label certificateUploadError;
     @FXML
     private VBox experienceContainer;
     @FXML
@@ -88,6 +122,10 @@ public class CVController {
     private DatePicker startDatePicker;
     @FXML
     private DatePicker endDatePicker;
+    @FXML
+    private VBox uploadBox;
+    @FXML
+    private Label certificateMediaLabel;
 
     private  List<Experience> experiences = new ArrayList<>();
     private Experience editingExperience = null; // To track editing mode
@@ -99,6 +137,8 @@ public class CVController {
     private static final String CERTIFICATE_DIRECTORY = "view/Certificates/";
     @FXML
     private VBox certificateContainer;
+    @FXML
+    private VBox cvPreviewContainer;
 
     @FXML
     private StackPane certificateModalOverlay;
@@ -115,8 +155,7 @@ public class CVController {
     @FXML
     private DatePicker certificateDatePicker;
 
-    @FXML
-    private Label certificateMediaLabel;
+
     @FXML
     private TextArea certificateDescriptionField; // Added description field for certificates
 
@@ -144,15 +183,148 @@ public class CVController {
 
     private final LanguageService languageService = new LanguageService();
     private String selectedLanguageLevel = ""; // Stores the selected level as text
+    @FXML private TextFlow titleTextFlow;
+    @FXML private TextFlow introductionTextFlow;
+
+    private final String GRAMMAR_API_URL = "https://api.languagetool.org/v2/check";
+    private final Map<String, List<String>> cachedCorrections = new HashMap<>();
+    private Map<String, Map<String, String>> correctionSuggestions = new HashMap<>();
 
 
+    private void setupGrammarCheck(TextInputControl textField) {
+        Timeline typingDelay = new Timeline(new KeyFrame(Duration.millis(500), event -> {
+            checkGrammarForField(textField);
+        }));
 
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!oldValue.equals(newValue)) { // Only check if value actually changed
+                typingDelay.stop();
+                typingDelay.playFromStart();
+            }
+        });
+
+        textField.setOnContextMenuRequested(event -> showCorrectionMenu(event, textField));
+    }
+
+    private void checkGrammarForField(TextInputControl textField) {
+        if (disableGrammarCheck) return; // Skip grammar check when auto-filling
+
+        String text = textField.getText().trim();
+        if (text.isBlank()) return;
+
+        // Check cache first
+        if (cachedCorrections.containsKey(text)) {
+            highlightErrors(textField, text, cachedCorrections.get(text));
+            return;
+        }
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(GRAMMAR_API_URL).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setDoOutput(true);
+
+            String requestBody = "text=" + URLEncoder.encode(text, "UTF-8") + "&language=en-US";
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(requestBody.getBytes(StandardCharsets.UTF_8));
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Parse JSON response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            JSONArray matches = jsonResponse.getJSONArray("matches");
+
+            Map<String, String> wordCorrections = new HashMap<>();
+            for (int i = 0; i < matches.length(); i++) {
+                JSONObject match = matches.getJSONObject(i);
+                int offset = match.getInt("offset");
+                int length = match.getInt("length");
+                String incorrectWord = text.substring(offset, offset + length);
+
+                JSONArray replacements = match.getJSONArray("replacements");
+                if (replacements.length() > 0) {
+                    String bestSuggestion = replacements.getJSONObject(0).getString("value");
+                    wordCorrections.put(incorrectWord, bestSuggestion);
+                }
+            }
+
+            cachedCorrections.put(text, new ArrayList<>(wordCorrections.keySet())); // Cache incorrect words
+            highlightErrors(textField, text, new ArrayList<>(wordCorrections.keySet()));
+
+            // Cache suggested corrections separately
+            correctionSuggestions.put(text, wordCorrections);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void highlightErrors(TextInputControl textField, String fullText, List<String> incorrectWords) {
+        if (incorrectWords.isEmpty()) {
+            textField.setStyle("-fx-control-inner-background: white;"); // Reset to default background
+            return;
+        }
+
+        // Apply red background for errors
+        textField.setStyle("-fx-control-inner-background: #FFD2D2;");
+    }
+
+
+    private void showCorrectionMenu(ContextMenuEvent event, TextInputControl textField) {
+        String text = textField.getText().trim();
+        if (!cachedCorrections.containsKey(text)) return;
+
+        List<String> incorrectWords = cachedCorrections.get(text);
+        ContextMenu contextMenu = new ContextMenu();
+
+        for (String incorrectWord : incorrectWords) {
+            List<String> suggestions = fetchSuggestionsForWord(incorrectWord);
+
+            for (String suggestion : suggestions) {
+                MenuItem item = new MenuItem("Replace '" + incorrectWord + "' with '" + suggestion + "'");
+                item.setOnAction(e -> textField.setText(text.replace(incorrectWord, suggestion)));
+                contextMenu.getItems().add(item);
+            }
+        }
+
+        if (!contextMenu.getItems().isEmpty()) {
+            contextMenu.show(textField, event.getScreenX(), event.getScreenY());
+        }
+    }
+
+
+    private List<String> fetchSuggestionsForWord(String word) {
+        for (Map<String, String> suggestionMap : correctionSuggestions.values()) {
+            if (suggestionMap.containsKey(word)) {
+                return List.of(suggestionMap.get(word)); // Return actual suggested correction
+            }
+        }
+        return List.of(); // No corrections found
+    }
     private void ensureCertificateDirectoryExists() {
         File directory = new File(CERTIFICATE_DIRECTORY);
         if (!directory.exists()) {
             directory.mkdirs(); // Create directory if it does not exist
         }
     }
+    private String extractDescription(String labelText) {
+        Pattern pattern = Pattern.compile("(?i)Description: (.*)"); // Case-insensitive match for "Description: "
+        Matcher matcher = pattern.matcher(labelText);
+        if (matcher.find()) {
+            return matcher.group(1).trim(); // Extract only the description part
+        }
+        return ""; // If no match is found, return an empty string
+    }
+
+
 
     @FXML
     private void fetchSkills() {
@@ -171,8 +343,7 @@ public class CVController {
             }
             in.close();
 
-            // Log raw API response
-            System.out.println("API Response: " + response);
+
 
             // Parse the JSON response
             JSONObject jsonResponse = new JSONObject(response.toString());
@@ -242,6 +413,7 @@ public class CVController {
             FXCollections.sort(languageOptions);
             allLanguages.setAll(languageOptions);
             languagesDropdown.setItems(allLanguages);
+
 
             // Enable searching but prevent new entries
             languagesDropdown.setEditable(true);
@@ -482,6 +654,30 @@ public class CVController {
 
     @FXML
     public void initialize() {
+        // Apply Auto Caps to all text fields
+        applyAutoCaps(titleField);
+        applyAutoCaps(introductionField);
+        applyAutoCaps(positionField);
+        applyAutoCaps(locationField);
+        applyAutoCaps(descriptionField);
+        applyAutoCaps(certificateNameField);
+        applyAutoCaps(certificateAssociationField);
+        applyAutoCaps(certificateDescriptionField);
+        setupCharacterLimit(titleField, titleCounter, TITLE_MAX);
+        setupCharacterLimit(introductionField, introductionCounter, INTRO_MAX);
+        setupCharacterLimit(descriptionField, descriptionCounter, DESC_MAX);
+        setupCharacterLimit(certificateDescriptionField, certificateDescriptionCounter, CERT_DESC_MAX);
+        setupCharacterLimit(positionField, null, POS_MAX);
+        setupCharacterLimit(locationField, null, LOC_MAX);
+        setupCharacterLimit(certificateNameField, null, CERT_NAME_MAX);
+        setupCharacterLimit(certificateAssociationField, null, CERT_ASSOC_MAX);
+        setupGrammarCheck(titleField);
+        setupGrammarCheck(introductionField);
+        setupGrammarCheck(descriptionField);
+        setupGrammarCheck(certificateDescriptionField);
+
+
+
         // ✅ Ensure languages are fetched from API
         populateLanguagesFromAPI(); // RESTORED API CALL
 
@@ -497,6 +693,13 @@ public class CVController {
 
         // ✅ Restrict Start Date (Min 1940-01-01)
         startDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(date.isBefore(LocalDate.of(1940, 1, 1)) || date.isAfter(LocalDate.now()));
+            }
+        });
+        certificateDatePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
@@ -532,6 +735,33 @@ public class CVController {
         });
     }
 
+    private void setupCharacterLimit(TextInputControl field, Label counter, int maxLength) {
+        field.textProperty().addListener((observable, oldValue, newValue) -> {
+            int length = newValue.length();
+
+            if (length > maxLength) {
+                field.setText(oldValue);  // Prevent more characters
+            }
+
+            if (counter != null) {
+                counter.setText(length + " / " + maxLength);
+                updateCounterColor(counter, length, maxLength);
+            }
+        });
+    }
+
+    /**
+     * Updates the counter color based on the character limit.
+     */
+    private void updateCounterColor(Label counter, int length, int maxLength) {
+        if (length >= maxLength) {
+            counter.setStyle("-fx-text-fill: red;");
+        } else if (length > maxLength * 0.9) { // Turn orange at 90%
+            counter.setStyle("-fx-text-fill: orange;");
+        } else {
+            counter.setStyle("-fx-text-fill: #666666;");
+        }
+    }
     @FXML
     private void showExperienceModal() {
         experienceModalOverlay.setVisible(true);
@@ -603,21 +833,54 @@ public class CVController {
     @FXML
     private void addExperience() {
         String type = typeDropdown.getValue();
-        String position = positionField.getText();
-        String location = locationField.getText();
-        String description = descriptionField.getText(); // Get Description
+        String position = positionField.getText().trim();
+        String location = locationField.getText().trim();
+        String description = descriptionField.getText().trim();
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
 
-        if (position.isEmpty() || location.isEmpty() || startDate == null || endDate == null || description.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "All fields must be filled out!");
-            return;
+        // Reset error messages
+        positionErrorLabel.setVisible(false);
+        locationErrorLabel.setVisible(false);
+        descritpionErrorLabel.setVisible(false);
+        startDateErrorLabel.setVisible(false);
+        endDateErrorLabel.setVisible(false);
+        durationErrorLabel.setVisible(false); // 🔥 New label for duration validation
+
+        boolean isValid = true;
+
+        if (position.isEmpty()) {
+            positionErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (location.isEmpty()) {
+            locationErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (description.isEmpty()) {
+            descritpionErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (startDate == null) {
+            startDateErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (endDate == null) {
+            endDateErrorLabel.setVisible(true);
+            isValid = false;
         }
 
-        if (endDate.isBefore(startDate)) {
-            showAlert(Alert.AlertType.WARNING, "End Date must be after Start Date.");
-            return;
+        // 🔥 Check if the duration is at least 7 days
+        if (startDate != null && endDate != null) {
+            long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate);
+            if (daysBetween < 7) {
+                durationErrorLabel.setText("The duration must be at least 7 days.");
+                durationErrorLabel.setVisible(true);
+                isValid = false;
+            }
         }
+
+        if (!isValid) return; // Stop execution if there’s an error
 
         if (editingExperience == null) {
             Experience experience = new Experience();
@@ -626,7 +889,7 @@ public class CVController {
             experience.setLocationName(location);
             experience.setStartDate(startDate.toString());
             experience.setEndDate(endDate.toString());
-            experience.setDescription(description); // Set Description
+            experience.setDescription(description);
 
             experiences.add(experience);
             addExperienceBox(experience);
@@ -636,7 +899,7 @@ public class CVController {
             editingExperience.setLocationName(location);
             editingExperience.setStartDate(startDate.toString());
             editingExperience.setEndDate(endDate.toString());
-            editingExperience.setDescription(description); // Update Description
+            editingExperience.setDescription(description);
 
             refreshExperienceContainer();
         }
@@ -645,6 +908,7 @@ public class CVController {
         hideExperienceModal(null);
     }
 
+
     @FXML
     private void refreshExperienceContainer() {
         experienceContainer.getChildren().clear();
@@ -652,24 +916,80 @@ public class CVController {
             addExperienceBox(experience);
         }
     }
+    private void applyAutoCaps(TextInputControl textInput) {
+        textInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.isEmpty()) return; // Don't process empty input
+
+            StringBuilder formattedText = new StringBuilder();
+            boolean capitalizeNext = true;
+
+            for (int i = 0; i < newValue.length(); i++) {
+                char c = newValue.charAt(i);
+
+                // Capitalize first letter or the letter after a period
+                if (capitalizeNext && Character.isLetter(c)) {
+                    formattedText.append(Character.toUpperCase(c));
+                    capitalizeNext = false;
+                } else {
+                    formattedText.append(c);
+                }
+
+                // Enable capitalization after a period + space
+                if (c == '.') {
+                    capitalizeNext = true;
+                }
+            }
+
+            // Avoid infinite loop by checking if text has changed
+            if (!formattedText.toString().equals(newValue)) {
+                textInput.setText(formattedText.toString());
+                textInput.positionCaret(formattedText.length()); // Keep caret at end
+            }
+        });
+    }
 
     @FXML
     private void submitCV() {
         try {
+            // Reset error labels
+            titleErrorLabel.setVisible(false);
+            introductionErrorLabel.setVisible(false);
+            skillsErrorLabel.setVisible(false);
+            experienceErrorLabel.setVisible(false);
+
+            boolean isValid = true;
+
             // Validate required fields
-            if (titleField.getText().trim().isEmpty() || introductionField.getText().trim().isEmpty() ||
-                    skillsDropdown.getValue() == null || experiences.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Please fill in all required fields before submitting.");
-                return;
+            if (titleField.getText().trim().isEmpty()) {
+                titleErrorLabel.setText("Title is required.");
+                titleErrorLabel.setVisible(true);
+                isValid = false;
             }
+            if (introductionField.getText().trim().isEmpty()) {
+                introductionErrorLabel.setText("Introduction is required.");
+                introductionErrorLabel.setVisible(true);
+                isValid = false;
+            }
+            if (skillsDropdown.getValue() == null) {
+                skillsErrorLabel.setText("Please select a skill.");
+                skillsErrorLabel.setVisible(true);
+                isValid = false;
+            }
+            if (experiences.isEmpty()) {
+                experienceErrorLabel.setText("At least one experience is required.");
+                experienceErrorLabel.setVisible(true);
+                isValid = false;
+            }
+
+            if (!isValid) return; // Stop execution if validation fails
 
             // Collect CV details
             String title = titleField.getText().trim();
             String introduction = introductionField.getText().trim();
             String skills = skillsDropdown.getValue().trim();
 
-            // Check if updating an existing CV
-            if (editingCV != null) { // 🔥 Check if we have an existing CV loaded
+            // ✅ Check if updating an existing CV
+            if (editingCV != null) {
                 // ✅ UPDATE EXISTING CV
                 editingCV.setTitle(title);
                 editingCV.setIntroduction(introduction);
@@ -724,10 +1044,9 @@ public class CVController {
 
                 // ✅ Handle Languages
                 List<Language> originalLanguages = languageService.getByCvId(editingCV.getIdCV());
-                System.out.println(originalLanguages);
+
                 for (Language originalLang : originalLanguages) {
                     boolean stillExists = false;
-
                     for (Language currentLang : languages) {
                         if (originalLang.getIdLanguage() == currentLang.getIdLanguage()) {
                             stillExists = true;
@@ -747,18 +1066,15 @@ public class CVController {
                     }
                 }
 
-                showAlert(Alert.AlertType.INFORMATION, "CV Updated Successfully!"); // 🎉
-
             } else {
-                // ✅ CREATE NEW CV (Same as before)
+                // ✅ CREATE NEW CV
                 CV cv = new CV(1, title, introduction, skills);
                 cvService.add(cv);
 
                 // Retrieve latest CV ID
                 int latestCvId = cvService.getLatestCVId();
                 if (latestCvId == -1) {
-                    showAlert(Alert.AlertType.ERROR, "Failed to retrieve the latest CV ID.");
-                    return;
+                    return; // Stop execution if CV ID retrieval fails
                 }
 
                 // Store experiences linked to the CV
@@ -778,8 +1094,6 @@ public class CVController {
                     language.setCvId(latestCvId);
                     languageService.add(language);
                 }
-
-                showAlert(Alert.AlertType.INFORMATION, "CV Submitted Successfully!");
             }
 
             // ✅ Clear form after submission
@@ -788,10 +1102,8 @@ public class CVController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "An error occurred while saving the CV.");
         }
     }
-
 
 
     @FXML
@@ -813,33 +1125,203 @@ public class CVController {
         languageContainer.getChildren().clear();
 
         // Reset CV preview
-        cvPreview.clear();
+
+    }
+    private String wrapText(String text, int lineLength) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder wrappedText = new StringBuilder();
+        String[] words = text.split("\\s+"); // Split words by spaces
+        int currentLineLength = 0;
+
+        for (String word : words) {
+            if (currentLineLength + word.length() > lineLength) {
+                wrappedText.append("\n"); // Move to next line
+                currentLineLength = 0;
+            }
+            wrappedText.append(word).append(" ");
+            currentLineLength += word.length() + 1;
+        }
+
+        return wrappedText.toString().trim();
     }
 
+    // 🔹 Creates a header section (NAME + ROLE + CONTACT INFO)
+    private VBox createHeaderSection() {
+        VBox header = new VBox();
+        header.setAlignment(Pos.CENTER);  // ✅ Center everything
+        header.setSpacing(5);
+        header.setMaxWidth(Double.MAX_VALUE);
+
+        Label nameLabel = createStyledLabel("DANETTE EASTWOOD", "header");
+        Label roleLabel = createStyledLabel("Full Stack Developer", "sub-header");
+        Label contactLabel = createStyledLabel("+1-555-555-5555  •  danette.eastwood@gmail.com  •  github.io/danette.east  •  San Francisco, CA", "contact");
+        nameLabel.setAlignment(Pos.CENTER);
+        roleLabel.setAlignment(Pos.CENTER);
+        contactLabel.setAlignment(Pos.CENTER);
+        header.getChildren().addAll(nameLabel, roleLabel, contactLabel);
+        return header;
+    }
 
     @FXML
     private void updateCVPreview() {
-        StringBuilder preview = new StringBuilder();
-        preview.append("Title: ").append(titleField.getText()).append("\n");
-        preview.append("Introduction: ").append(introductionField.getText()).append("\n");
+        cvPreviewContainer.getChildren().clear(); // Clear previous preview
 
-        preview.append("Skills: ").append(skillsDropdown.getValue()).append("\n\n");
+        // 🔹 HEADER (CENTERED)
+        cvPreviewContainer.getChildren().add(createHeaderSection());
 
-        preview.append("Experiences:\n");
+        // 🔹 SUMMARY (CENTERED WITH BROWN LINE)
+        cvPreviewContainer.getChildren().add(createSectionLabel("Summary"));
+        cvPreviewContainer.getChildren().add(createParagraphLabel(introductionField.getText()));
+
+        // 🔹 EXPERIENCE (Internships ONLY)
+        cvPreviewContainer.getChildren().add(createSectionLabel("Experience"));
+        boolean hasInternship = false;
         for (Experience exp : experiences) {
-            preview.append("- ").append(exp.getType()).append(": ").append(exp.getPosition())
-                    .append(" at ").append(exp.getLocationName())
-                    .append(" (").append(exp.getStartDate()).append(" to ").append(exp.getEndDate()).append(")\n");
+            if (exp.getType().equalsIgnoreCase("Internship")) {
+                hasInternship = true;
+                VBox experienceBox = new VBox();
+                experienceBox.setSpacing(3);
+
+                // 🔹 Create an HBox to align Company Name (Left) and Date (Right)
+                HBox companyDateBox = new HBox();
+                companyDateBox.setSpacing(10);
+                companyDateBox.setMaxWidth(Double.MAX_VALUE);
+
+                Label company = createStyledLabel(exp.getLocationName(), "bold");
+                Label dates = createStyledLabel(exp.getStartDate() + " - " + exp.getEndDate(), "small");
+
+                HBox.setHgrow(company, Priority.ALWAYS);  // Pushes date to the right
+                companyDateBox.getChildren().addAll(company, dates);
+
+                // 🔹 Job Title & Description
+                Label title = createStyledLabel(exp.getPosition(), "position_experience");
+                Label desc = createParagraphLabel(exp.getDescription());
+
+                experienceBox.getChildren().addAll(companyDateBox, title, desc);
+                cvPreviewContainer.getChildren().add(experienceBox);
+            }
+        }
+        if (!hasInternship) {
+            cvPreviewContainer.getChildren().add(createParagraphLabel("No Internship Experience Listed"));
         }
 
-        preview.append("\nCertificates:\n");
-        for (Certificate cert : certificates) {
-            preview.append("- ").append(cert.getTitle()).append(" (").append(cert.getAssociation())
-                    .append(", ").append(cert.getDate()).append(")\n")
-                    .append("  Description: ").append(cert.getDescription()).append("\n"); // Added description
+        // 🔹 EDUCATION (Academic ONLY)
+        cvPreviewContainer.getChildren().add(createSectionLabel("Education"));
+        boolean hasAcademic = false;
+        for (Experience exp : experiences) {
+            if (exp.getType().equalsIgnoreCase("Academic")) {
+                hasAcademic = true;
+                VBox educationBox = new VBox();
+                educationBox.setSpacing(3);
+
+                // 🔹 Create an HBox to align School Name (Left) and Date (Right)
+                HBox schoolDateBox = new HBox();
+                schoolDateBox.setSpacing(10);
+                schoolDateBox.setMaxWidth(Double.MAX_VALUE);
+
+                Label school = createStyledLabel(exp.getLocationName(), "italic");
+                Label dates = createStyledLabel(exp.getStartDate() + " - " + exp.getEndDate(), "small");
+
+                HBox.setHgrow(school, Priority.ALWAYS);  // Pushes date to the right
+                schoolDateBox.getChildren().addAll(school, dates);
+
+                // 🔹 Degree Title & Description
+                Label degree = createStyledLabel(exp.getPosition(), "position_experience");
+                Label desc = createParagraphLabel(exp.getDescription());
+
+                educationBox.getChildren().addAll(schoolDateBox, degree, desc);
+                cvPreviewContainer.getChildren().add(educationBox);
+            }
+        }
+        if (!hasAcademic) {
+            cvPreviewContainer.getChildren().add(createParagraphLabel("No Education Listed"));
         }
 
-        cvPreview.setText(preview.toString());
+        // 🔹 SKILLS (CENTERED WITH BROWN LINE)
+        cvPreviewContainer.getChildren().add(createSectionLabel("Skills"));
+        if (skillsDropdown.getValue() != null) {
+            cvPreviewContainer.getChildren().add(createParagraphLabel(skillsDropdown.getValue()));
+        } else {
+            cvPreviewContainer.getChildren().add(createParagraphLabel("No Skills Listed"));
+        }
+
+        // 🔹 LANGUAGES (CENTERED WITH BROWN LINE)
+        cvPreviewContainer.getChildren().add(createSectionLabel("Languages"));
+        if (languages.isEmpty()) {
+            cvPreviewContainer.getChildren().add(createParagraphLabel("No Languages Listed"));
+        } else {
+            for (Language lang : languages) {
+                cvPreviewContainer.getChildren().add(createStyledLabel("• " + lang.getName() + " - " + lang.getLevel(), "small"));
+            }
+        }
+    }
+
+
+
+    // 🔹 Creates a section title (CENTERED)
+    // 🔹 Creates a section title (CENTERED with Brown Line Underneath)
+    private VBox createSectionLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;");
+        label.setAlignment(Pos.CENTER);
+        label.setMaxWidth(Double.MAX_VALUE);
+
+        // 🔹 Brown Line Under the Title
+        Separator separator = new Separator();
+        separator.setStyle("-fx-background-color: #3B261D; ");
+        separator.setPrefWidth(400); // Width of the line
+
+        VBox sectionBox = new VBox(label, separator);
+        sectionBox.setAlignment(Pos.CENTER); // ✅ Center both elements
+        sectionBox.setSpacing(2); // Small spacing between title & line
+
+        return sectionBox;
+    }
+
+
+
+    // 🔹 Creates a standard paragraph-style label
+    private Label createParagraphLabel(String text) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setMaxWidth(600);
+        label.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+        return label;
+    }
+
+    // 🔹 Creates a custom styled label based on type
+    private Label createStyledLabel(String text, String type) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setMaxWidth(600);
+
+        switch (type) {
+            case "header":
+                label.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;");
+                break;
+            case "sub-header":
+                label.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #555555;");
+                break;
+            case "contact":
+                label.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+                break;
+            case "bold":
+                label.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;-fx-text-fill: #3B261D;");
+                break;
+            case "italic":
+                label.setStyle("-fx-font-size: 14px; -fx-font-style: italic;");
+                break;
+            case "position_experience":
+                label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #555555;");
+                break;
+            case "small":
+                label.setStyle("-fx-font-size: 12px; -fx-text-fill: #777777;");
+                break;
+        }
+        return label;
     }
 
 
@@ -866,13 +1348,73 @@ public class CVController {
         certificateMediaLabel.setText("No file selected");
     }
     @FXML
+    private void handleDragOver(DragEvent event) {
+        if (event.getDragboard().hasFiles()) {
+            event.acceptTransferModes(TransferMode.COPY);
+        }
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragDropped(DragEvent event) {
+        Dragboard dragboard = event.getDragboard();
+        boolean success = false;
+
+        if (dragboard.hasFiles()) {
+            File file = dragboard.getFiles().get(0); // Get the first file dropped
+
+            if (validateFile(file)) {
+                saveFile(file);
+                certificateMediaLabel.setText(file.getName());
+                certificateUploadError.setVisible(false);
+                success = true;
+            } else {
+                certificateUploadError.setText("Invalid file type or size exceeds limit!");
+                certificateUploadError.setVisible(true);
+            }
+        }
+
+        event.setDropCompleted(success);
+        event.consume();
+    }
+    private boolean validateFile(File file) {
+        String fileName = file.getName().toLowerCase();
+        long fileSize = file.length(); // Size in bytes (1MB = 1,048,576 bytes)
+
+        // Allowed file types
+        List<String> allowedExtensions = List.of(".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx");
+
+        for (String ext : allowedExtensions) {
+            if (fileName.endsWith(ext) && fileSize <= 5 * 1024 * 1024) { // 5MB max
+                return true;
+            }
+        }
+        return false;
+    }
+    private void saveFile(File file) {
+        try {
+            ensureCertificateDirectoryExists(); // Ensure directory exists
+            String fileExtension = file.getName().substring(file.getName().lastIndexOf("."));
+            String uniqueFileName = System.currentTimeMillis() + fileExtension;
+            Path destinationPath = Path.of("view/Certificates/", uniqueFileName);
+
+            Files.copy(file.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            certificateMediaLabel.setText(uniqueFileName); // Display filename
+        } catch (IOException e) {
+            e.printStackTrace();
+            certificateUploadError.setText("Error saving file!");
+            certificateUploadError.setVisible(true);
+        }
+    }
+
+    @FXML
     private void uploadCertificateMedia() {
         ensureCertificateDirectoryExists(); // Ensure directory exists
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Certificate File");
 
-        // Set allowed file extensions
+        // ✅ Restrict allowed file types
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
                 new FileChooser.ExtensionFilter("PDF Files", "*.pdf"),
@@ -880,26 +1422,40 @@ public class CVController {
         );
 
         File selectedFile = fileChooser.showOpenDialog(null);
+
         if (selectedFile != null) {
             try {
-                // Generate unique filename
+                long fileSize = Files.size(selectedFile.toPath()); // Get file size in bytes
+                long maxSize = 5 * 1024 * 1024; // 5MB limit
+
+                if (fileSize > maxSize) {
+                    certificateUploadError.setText("File size exceeds 5MB limit.");
+                    certificateUploadError.setVisible(true);
+                    return; // Stop if the file is too large
+                }
+
+                // ✅ Generate unique filename
                 String fileExtension = selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
                 String uniqueFileName = System.currentTimeMillis() + fileExtension;
 
-                // Destination path
+                // ✅ Save the file to destination folder
                 File destinationFile = new File(CERTIFICATE_DIRECTORY + uniqueFileName);
-
-                // Copy file to destination
                 Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                // Set file name in the label
+                // ✅ Update UI: Show file name & hide error message
+                certificateHiddenPath.setText(destinationFile.getAbsolutePath()); // Store full path
                 certificateMediaLabel.setText(uniqueFileName);
+                certificateUploadError.setVisible(false); // Hide error
+
             } catch (IOException e) {
                 e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Error saving certificate file.");
+                certificateUploadError.setText("Error saving file.");
+                certificateUploadError.setVisible(true);
             }
         }
     }
+
+
 
     @FXML
     private void addCertificateBox(Certificate certificate) {
@@ -945,24 +1501,50 @@ public class CVController {
     private void addCertificate() {
         String name = certificateNameField.getText().trim();
         String association = certificateAssociationField.getText().trim();
-        String description = certificateDescriptionField.getText().trim(); // Get description
+        String description = certificateDescriptionField.getText().trim();
         LocalDate date = certificateDatePicker.getValue();
         String mediaPath = certificateMediaLabel.getText();
 
-        if (name.isEmpty() || association.isEmpty() || description.isEmpty() || date == null || mediaPath.equals("No file selected")) {
-            showAlert(Alert.AlertType.WARNING, "Please fill in all certificate fields.");
-            return;
+        // Reset error messages
+        certificateNameErrorLabel.setVisible(false);
+        certificateAssociationErrorLabel.setVisible(false);
+        certificateDescriptionErrorLabel.setVisible(false);
+        certificateDateErrorLabel.setVisible(false);
+        certificateUploadError.setVisible(false);
+
+        boolean isValid = true;
+
+        if (name.isEmpty()) {
+            certificateNameErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (association.isEmpty()) {
+            certificateAssociationErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (description.isEmpty()) {
+            certificateDescriptionErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (date == null) {
+            certificateDateErrorLabel.setVisible(true);
+            isValid = false;
+        }
+        if (mediaPath.equals("No file selected")) {
+            certificateUploadError.setVisible(true);
+            isValid = false;
         }
 
+        if (!isValid) return; // Stop execution if there's an error
+
         if (editingCertificate == null) {
-            Certificate certificate = new Certificate(0, name,description,mediaPath, association, Date.valueOf(date));
-            certificate.setDescription(description); // Set description
+            Certificate certificate = new Certificate(0, name, description, mediaPath, association, Date.valueOf(date));
             certificates.add(certificate);
             addCertificateBox(certificate);
         } else {
             editingCertificate.setTitle(name);
             editingCertificate.setAssociation(association);
-            editingCertificate.setDescription(description); // Update description
+            editingCertificate.setDescription(description);
             editingCertificate.setDate(Date.valueOf(date));
             editingCertificate.setMedia(mediaPath);
             refreshCertificateContainer();
@@ -974,7 +1556,6 @@ public class CVController {
     }
 
 
-
     @FXML
     private void refreshCertificateContainer() {
         certificateContainer.getChildren().clear();
@@ -982,21 +1563,31 @@ public class CVController {
             addCertificateBox(certificate);
         }
     }
+
     @FXML
     private void openCertificateFile(String fileName) {
-        File file = new File(CERTIFICATE_DIRECTORY + fileName);
+        // Ensure file path is correct
+        File file = new File("view/Certificates/" + fileName).getAbsoluteFile();
+
+        System.out.println("Opening file: " + file.getAbsolutePath());
+
         if (!file.exists()) {
-            showAlert(Alert.AlertType.ERROR, "File not found!");
+            System.err.println("❌ File not found!");
             return;
         }
 
         try {
-            Desktop.getDesktop().open(file); // Open with default app
-        } catch (IOException e) {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            } else {
+                new ProcessBuilder("xdg-open", file.getAbsolutePath()).start(); // Linux fallback
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error opening file.");
+            System.err.println("❌ Error opening file.");
         }
     }
+
     @FXML
     private void hideCertificateModalCancel() {
         certificateModalOverlay.setVisible(false);
@@ -1010,6 +1601,11 @@ public class CVController {
             titleField.setText(editingCV.getTitle());
             introductionField.setText(editingCV.getIntroduction());
             skillsDropdown.setValue(editingCV.getSkills()); // 🔥 Adjust if Skills is a list
+            new Timeline(new KeyFrame(Duration.millis(1000), event -> {
+                disableGrammarCheck = false;
+                checkGrammarForField(titleField);
+                checkGrammarForField(introductionField);
+            })).play();
 
             // 🔹 Clear old data before inserting new ones
             experienceContainer.getChildren().clear();
@@ -1052,7 +1648,4 @@ public class CVController {
                 "-fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 8px 12px; -fx-border-radius: 6px;");
         return button;
     }
-
-
-
 }

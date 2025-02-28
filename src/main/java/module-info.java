@@ -11,4 +11,6 @@ module org.example.pathfinder {
     opens org.example.pathfinder.Controller to javafx.fxml;
     opens org.example.pathfinder.App to javafx.fxml; // Open the package for JavaFX
     exports org.example.pathfinder.App;
+
+    opens org.example.pathfinder.Model to javafx.base;  // 🔥 Add this line
 }

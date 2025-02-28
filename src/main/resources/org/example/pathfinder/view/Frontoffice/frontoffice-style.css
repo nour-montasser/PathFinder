@@ -1,0 +1,50 @@
+/* General Background */
+.stack-pane {
+    -fx-background-color: #f4f4f4;
+}
+
+/* Button Styling */
+.button {
+    -fx-background-color: #3B261D;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 12px;
+}
+
+/* Input Fields */
+.text-field, .text-area {
+    -fx-border-color: #3B261D;
+    -fx-border-radius: 5px;
+}
+.text-area .scroll-pane {
+    -fx-hbar-policy: NEVER;  /* Hide horizontal scrollbar */
+    -fx-vbar-policy: NEVER;  /* Hide vertical scrollbar */
+}
+.text-field {
+    -fx-overflow: hidden;
+}
+.label {
+    -fx-wrap-text: true;
+}
+.button {
+    -fx-wrap-text: true;
+}
+.text-area {
+    -fx-wrap-text: true;
+}
+.text-area {
+    -fx-pref-height: 200px; /* Adjust height as needed */
+}
+
+/* Hide Scrollbars */
+.text-area .scroll-bar, .text-field .scroll-bar {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+/* Error Labels */
+.label.error {
+    -fx-text-fill: red;
+    -fx-font-size: 12px;
+}
