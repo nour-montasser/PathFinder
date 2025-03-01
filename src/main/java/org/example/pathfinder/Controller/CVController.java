@@ -1,8 +1,11 @@
 package org.example.pathfinder.Controller;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.layout.properties.TextAlignment;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.input.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
@@ -61,8 +64,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.VBox;
+import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
 
 
@@ -190,6 +208,66 @@ public class CVController {
     private final Map<String, List<String>> cachedCorrections = new HashMap<>();
     private Map<String, Map<String, String>> correctionSuggestions = new HashMap<>();
 
+    private static final String API_KEY = "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";
+    private static final String API_URL = "https://api-inference.huggingface.co/models/algiraldohe/lm-ner-linkedin-skills-recognition"; // Model endpoint
+
+    @FXML
+    private void exportToPDF() {
+        // Choose file location
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                // Increase snapshot resolution for higher quality
+                double scaleFactor = 3.0; // Adjust this for higher quality (3x scale)
+                SnapshotParameters params = new SnapshotParameters();
+                params.setTransform(javafx.scene.transform.Transform.scale(scaleFactor, scaleFactor));
+
+                // Take high-resolution snapshot of cvPreviewContainer
+                WritableImage snapshot = new WritableImage(
+                        (int) (cvPreviewContainer.getWidth() * scaleFactor),
+                        (int) (cvPreviewContainer.getHeight() * scaleFactor)
+                );
+                cvPreviewContainer.snapshot(params, snapshot);
+
+                // Convert JavaFX image to BufferedImage
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+
+                // Save image as PNG (high quality)
+                File imageFile = new File("cv_preview_high_res.png");
+                ImageIO.write(bufferedImage, "png", imageFile);
+
+                // Create PDF
+                PdfWriter writer = new PdfWriter(new FileOutputStream(file));
+                PdfDocument pdfDoc = new PdfDocument(writer);
+                Document document = new Document(pdfDoc);
+
+                // Set Page Size to match A4 or Image Aspect Ratio
+                float imageWidth = bufferedImage.getWidth();
+                float imageHeight = bufferedImage.getHeight();
+                PageSize customPageSize = new PageSize(imageWidth, imageHeight);
+                pdfDoc.setDefaultPageSize(customPageSize);
+
+                // Add Image to PDF (scaled to fit full page)
+                com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(
+                        com.itextpdf.io.image.ImageDataFactory.create(imageFile.getAbsolutePath()));
+
+                img.scaleToFit(customPageSize.getWidth(), customPageSize.getHeight());
+                img.setFixedPosition(0, 0); // Ensure full-page alignment
+
+                document.add(img);
+                document.close();
+
+                System.out.println("✅ PDF saved at: " + file.getAbsolutePath());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void setupGrammarCheck(TextInputControl textField) {
         Timeline typingDelay = new Timeline(new KeyFrame(Duration.millis(500), event -> {
@@ -205,7 +283,61 @@ public class CVController {
 
         textField.setOnContextMenuRequested(event -> showCorrectionMenu(event, textField));
     }
+    public void exportHybridCVPreview() {
+        try {
+            // Step 1: Take snapshot of VBox
+            WritableImage snapshot = cvPreviewContainer.snapshot(null, null);
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+            File imageFile = new File("cv_preview.png");
+            ImageIO.write(bufferedImage, "png", imageFile);
 
+            // Step 2: Create a new PDF
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            // Step 3: Add Image to PDF
+            PDImageXObject pdImage = PDImageXObject.createFromFile("cv_preview.png", document);
+            contentStream.drawImage(pdImage, 50, 300, 500, 400); // Adjust position & size
+
+            // Step 4: Add Selectable Text Overlay
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(50, 750);
+            contentStream.showText("Curriculum Vitae - " + titleField.getText());
+            contentStream.endText();
+
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(50, 720);
+            contentStream.showText("Name: " + "DANETTE EASTWOOD");
+            contentStream.endText();
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(50, 700);
+            contentStream.showText("Summary: " + introductionField.getText());
+            contentStream.endText();
+
+            // Step 5: Add Experiences as Text
+            int y = 670;
+            for (Experience exp : experiences) {
+                contentStream.beginText();
+                contentStream.newLineAtOffset(50, y);
+                contentStream.showText(exp.getType() + " - " + exp.getPosition() + " at " + exp.getLocationName());
+                contentStream.endText();
+                y -= 20; // Move down
+            }
+
+            contentStream.close();
+            document.save("cv_hybrid.pdf");
+            document.close();
+            System.out.println("✅ CV saved as Hybrid PDF!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void checkGrammarForField(TextInputControl textField) {
         if (disableGrammarCheck) return; // Skip grammar check when auto-filling
 
@@ -328,13 +460,33 @@ public class CVController {
 
     @FXML
     private void fetchSkills() {
-        String apiUrl = "https://ec.europa.eu/esco/api/search?type=skill&text=&language=en&limit=100&";
+        // Hugging Face API endpoint
+        String apiUrl = "https://api-inference.huggingface.co/models/algiraldohe/lm-ner-linkedin-skills-recognition";
+        // Your Hugging Face API token
+        String apiToken = "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"; // Replace with your actual token
+
+        // Input text (e.g., a LinkedIn profile or job description)
+        String inputText = "Experienced software engineer with expertise in Python, C++, and project management. Strong leadership and team collaboration skills.";
+
         try {
+            // Create the HTTP connection
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + apiToken);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
 
+            // Create the JSON payload
+            String jsonInputString = "{\"inputs\": \"" + inputText + "\"}";
+
+            // Send the request
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Read the response
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder response = new StringBuilder();
             String line;
@@ -343,26 +495,23 @@ public class CVController {
             }
             in.close();
 
-
-
             // Parse the JSON response
-            JSONObject jsonResponse = new JSONObject(response.toString());
-            if (!jsonResponse.has("_embedded")) {
-                System.out.println("The key '_embedded' is missing in the API response!");
-                return;
-            }
-
-            JSONArray skillsArray = jsonResponse.getJSONObject("_embedded").getJSONArray("results");
+            JSONArray jsonResponse = new JSONArray(response.toString());
+            System.out.print(jsonResponse);
 
             // Clear previous items and add new skills
             skillsDropdown.getItems().clear();
-            for (int i = 0; i < skillsArray.length(); i++) {
-                JSONObject skill = skillsArray.getJSONObject(i);
-                String skillName = skill.getString("title");
+            for (int i = 0; i < jsonResponse.length(); i++) {
+                JSONObject entity = jsonResponse.getJSONObject(i);
+                String entityType = entity.getString("entity_group");
+                String skillName = entity.getString("word");
 
-                // Only include short, single-word skills (or up to 2 words)
-                if (skillName.split(" ").length <= 2) {
-                    skillsDropdown.getItems().add(skillName);
+                // Filter for skills (assuming the model labels skills as "SKILL")
+                if ("SOFT".equals(entityType) || "TECHNOLOGY".equals(entityType) ) {
+                    // Only include short, single-word skills (or up to 2 words)
+                    if (skillName.split(" ").length <= 2) {
+                        skillsDropdown.getItems().add(skillName);
+                    }
                 }
             }
 
@@ -374,7 +523,6 @@ public class CVController {
             e.printStackTrace();
         }
     }
-
 
 
     @FXML
