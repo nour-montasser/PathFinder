@@ -1,5 +1,6 @@
 package org.example.pathfinder.Service;
 
+import javafx.application.Application;
 import org.example.pathfinder.Model.ApplicationJob;
 import org.example.pathfinder.App.DatabaseConnection;
 import org.example.pathfinder.Model.JobOffer;
@@ -351,6 +352,38 @@ public class ApplicationService implements Services<ApplicationJob> {
         }
         return false;  // Return false if no result or error
     }
+
+    public ApplicationJob getApplicationByUserAndSkillTest(long userId, long skillTestId) {
+        ApplicationJob application = null;
+        String query = "SELECT * FROM Application_job app " +
+                "JOIN SkillTest st ON app.job_offer_id = st.id_job_offer " +
+                "WHERE app.id_user = ? AND st.id_test = ?";
+
+        try (PreparedStatement statement = cnx.prepareStatement(query)) {
+            // Set parameters for userId and skillTestId
+            statement.setLong(1, userId);
+            statement.setLong(2, skillTestId);
+
+            // Execute the query
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                // Map the result set to an Application object
+                application = new ApplicationJob(
+                        rs.getLong("application_id"),
+                        rs.getLong("job_offer_id"),
+                        rs.getLong("id_user"),
+                        rs.getLong("cv_id"),
+                        rs.getString("status")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving application by userId and skillTestId: " + e.getMessage());
+        }
+
+        return application;
+    }
+
 
 
 

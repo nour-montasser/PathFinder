@@ -8,6 +8,8 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/workspace.xml
+
 .idea/misc.xml
 pom.xml
 *.iws
@@ -15,6 +17,7 @@ pom.xml
 *.ipr
 .idea/misc.xml
 pom.xml
+src/main/java/org/example/pathfinder/App/DatabaseConnection.java
 
 ### Eclipse ###
 .apt_generated

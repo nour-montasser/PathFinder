@@ -3,6 +3,31 @@
     -fx-background-color: inherit;
     -fx-effect: null;
 }
+/* Remove ListView background */
+.list-view {
+    -fx-background-color: transparent;
+}
+
+/* Remove ListView viewport background */
+.list-view .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Remove cell background, selection, and hover effects */
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10px; /* Adds spacing between items */
+}
+
+.list-cell:filled:selected,
+.list-cell:filled:selected:hover {
+    -fx-background-color: transparent; /* Removes selection highlight */
+    -fx-text-fill: black; /* Keeps text color normal */
+}
+
+.list-cell:hover {
+    -fx-background-color: transparent; /* Removes hover effect */
+}
 
 /* Remove blue selection highlight */
 .list-cell:filled:selected,

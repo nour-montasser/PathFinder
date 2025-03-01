@@ -1,13 +1,24 @@
 module org.example.pathfinder {
-    requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
-    requires java.desktop;
     requires org.json;
-    requires java.net.http;
     requires mysql.connector.j;
     requires org.apache.pdfbox;
     requires okhttp3;
+    requires commons.email;
+    requires com.google.api.services.calendar;
+    requires com.google.api.client;
+    requires google.api.client;
+    requires com.google.api.client.auth;
+    requires com.google.auth.oauth2;
+    requires com.google.api.client.json.jackson2;
+    requires com.google.auth;
+    requires com.google.api.client.extensions.java6.auth;
+    requires com.google.api.client.extensions.jetty.auth;
+    requires jdk.httpserver;
+    requires javafx.web;
+    requires java.desktop;
+    requires java.net.http;
 
 
     opens org.example.pathfinder.Controller to javafx.fxml;

@@ -4,6 +4,7 @@ public class LoggedUser {
     private static LoggedUser instance;
     private long userId;
     private String role;
+    private String email;
 
     // Private constructor to prevent instantiation
     private LoggedUser() {}
@@ -31,5 +32,12 @@ public class LoggedUser {
     }
     public String getRole() {
         return role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
     }
 }

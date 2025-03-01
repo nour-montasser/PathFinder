@@ -1,14 +1,13 @@
 package org.example.pathfinder.Controller;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.pathfinder.Model.LoggedUser;
-import org.example.pathfinder.Model.Question;
-import org.example.pathfinder.Model.SkillTest;
-import org.example.pathfinder.Model.TestResult;
+import org.example.pathfinder.Model.*;
+import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.TestResultService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -117,9 +116,15 @@ public class ViewSkillTestController {
         } else {
             showAlert("Error", "Failed to save test result.");
         }
-
+        if (statusInt==0){
+            ApplicationService applicationService = new ApplicationService();
+            ApplicationJob application = applicationService.getApplicationByUserAndSkillTest(loggedInUserId,  currentSkillTest.getId());
+            application.setStatus("Rejected");
+            applicationService.update(application);
+        }
         //if result =1 => pending applincation
         //if result == 0 => application rejected by application
+
         ((Stage) skillTestDescription.getScene().getWindow()).close();
     }
 

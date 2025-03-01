@@ -8,7 +8,7 @@ public class DatabaseConnection {
     private static DatabaseConnection instance;
     private Connection cnx;
 
-    private final String URL = "jdbc:mysql://localhost:3306/pathfinder";
+    private final String URL = "jdbc:mysql://localhost:3307/pathfinder";
     private final String USER = "root"; // Change this if needed
     private final String PASSWORD = ""; // Change this if needed
 

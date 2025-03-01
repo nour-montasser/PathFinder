@@ -4,8 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="ya rabi ostorna 2">
+    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="ya rabi ostorna 4.0">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ApplicationMeetSetupController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/ApplicationMeetSetup.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Sources/credentials.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_02_2025_20_47_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_02_2025_20_47__Changes_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/CoverLetterTemplatesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/CoverLetterTemplatesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferApplicationListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferApplicationListController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ViewSkillTestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ViewSkillTestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/ApplicationJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/ApplicationJob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/LoggedUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/LoggedUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ApplicationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,31 +77,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.App.executor": "Run",
-    "Application.HelloApplication.executor": "Run",
-    "Application.RunnConfigApp.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "merged-branch",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/nourm/Documents/esprit/3eme/Project/PathFinder/src/main/resources/org/example/pathfinder/view/Sources/Templates",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.40229884",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.App.executor&quot;: &quot;Run&quot;,
+    &quot;Application.HelloApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.RunnConfigApp.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;merged-branch&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/nourm/Documents/esprit/3eme/Project/PathFinder/src/main/java/org/example/pathfinder/Model&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.40229884&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\java\org\example\pathfinder\Model" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources\Templates" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Frontoffice\Templates" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view" />
@@ -90,10 +110,10 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources" />
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Frontoffice" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\" />
-      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="org.example.pathfinder" />
@@ -153,7 +173,16 @@
       <workItem from="1740433979058" duration="24265000" />
       <workItem from="1740565716034" duration="3316000" />
       <workItem from="1740597923365" duration="57371000" />
-      <workItem from="1740699348841" duration="834000" />
+      <workItem from="1740699348841" duration="8138000" />
+      <workItem from="1740708108865" duration="3444000" />
+      <workItem from="1740711573703" duration="5328000" />
+      <workItem from="1740748854959" duration="4964000" />
+      <workItem from="1740753876955" duration="1762000" />
+      <workItem from="1740762807753" duration="7809000" />
+      <workItem from="1740770711711" duration="335000" />
+      <workItem from="1740771058546" duration="1127000" />
+      <workItem from="1740773261549" duration="4187000" />
+      <workItem from="1740790139007" duration="10229000" />
     </task>
     <task id="LOCAL-00001" summary="crud joboffer+application">
       <option name="closed" value="true" />
@@ -267,7 +296,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740699857265</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="ya rabi ostorna 4.0">
+      <option name="closed" value="true" />
+      <created>1740700341768</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1740700341768</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -293,7 +330,8 @@
     <MESSAGE value="fix ai+ added pdf generation and templates" />
     <MESSAGE value="merged joboffer+skill test  + touskie algorithmique" />
     <MESSAGE value="ya rabi ostorna 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="ya rabi ostorna 2" />
+    <MESSAGE value="ya rabi ostorna 4.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="ya rabi ostorna 4.0" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

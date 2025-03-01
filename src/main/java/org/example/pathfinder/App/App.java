@@ -40,6 +40,7 @@ public class App extends Application {
 
         LoggedUser.getInstance().setRole(u.getRole());
         LoggedUser.getInstance().setUserId(logged);
+        LoggedUser.getInstance().setEmail(u.getEmail());
 
         System.out.println("logged"+LoggedUser.getInstance().getUserId());
         System.out.println("logged"+LoggedUser.getInstance().getRole());

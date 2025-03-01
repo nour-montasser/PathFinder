@@ -28,6 +28,13 @@ public class ApplicationJob {
         this.dateApplication = new Timestamp(System.currentTimeMillis());
         this.status = "pending";
     }
+    public ApplicationJob(Long id_Application,Long id_JobOffer, Long id_User, Long id_Cv ,String status) {
+        this.id_Application = id_Application;
+        this.id_JobOffer = id_JobOffer;
+        this.id_User = id_User;
+        this.id_Cv = id_Cv;
+        this.status = status;
+    }
 
     public ApplicationJob() {
 

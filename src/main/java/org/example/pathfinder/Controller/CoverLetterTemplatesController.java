@@ -19,6 +19,7 @@ import org.example.pathfinder.Service.CoverLetterService;
 import org.example.pathfinder.Service.QuestionService;
 import org.example.pathfinder.Service.SkillTestService;
 
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -208,26 +209,40 @@ private long id;
     @FXML
     private void handleCloseButtonClick(ActionEvent event) {
         try {
-            // Close the current stage (window)
+            // Fermer la fenêtre actuelle
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.close();
 
-            // Load the new FXML for ViewSkillTest
+            // Vérifier si un SkillTest existe
+            SkillTest sk = skillTestService.getSkillTestByJobOfferId(coverLetterService.getJobOfferIdByCoverLetterId(id));
+            if (sk == null) {
+                return; // Arrêter l'exécution ici
+            }
+
+            // Charger les questions du test
+            List<Question> qst = questionService.getQuestionsForSkillTest(sk.getIdTest());
+
+            // Charger le fichier FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ViewSkillTest.fxml"));
             Parent root = loader.load();
 
-            SkillTest sk = skillTestService.getSkillTestByJobOfferId(coverLetterService.getJobOfferIdByCoverLetterId(id));
-            List<Question> qst = questionService.getQuestionsForSkillTest(sk.getIdTest());
+            // Passer les données au contrôleur
             ViewSkillTestController ctrl = loader.getController();
-            ctrl.setSkillTestData(sk,qst);
-            // Get the stage to display the new FXML
+            ctrl.setSkillTestData(sk, qst);
+
+            // Afficher la nouvelle fenêtre
             Stage newStage = new Stage();
             newStage.setScene(new Scene(root));
             newStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle any errors here (e.g., show an alert if the FXML is not found)
+            // Gérer les erreurs (ex: fichier FXML introuvable)
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Une erreur est survenue lors du chargement du test.");
+            alert.showAndWait();
         }
     }
 
