@@ -1,52 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.ViewSkillTestController">
 
-    <!-- 🔹 Top Section: Title & Description Centered -->
+    <!-- 🔹 Top Section: Title & Description -->
     <top>
-        <VBox spacing="10" alignment="CENTER"
+        <VBox alignment="CENTER" spacing="10"
               style="-fx-padding: 20px; -fx-background-color: #c19d7b;
                      -fx-border-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 2, 2);">
-            <Label fx:id="skillTestTitle" text="Skill Test Title"
-                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-            <Label fx:id="skillTestDescription" text="Skill Test Description"
-                   style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+            <Label fx:id="skillTestTitle"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"
+                   text="Skill Test Title"/>
+
+            <Label fx:id="skillTestDescription"
+                   wrapText="true" maxWidth="800"
+                   style="-fx-font-size: 16px; -fx-text-fill: white; -fx-padding: 10px;"
+                   text="Skill Test Description"/>
+            <Label fx:id="timerLabel" text="⏳ Time Left: 00:00"
+                   style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold;"/>
+
         </VBox>
     </top>
 
-    <!-- 🔹 Center Section: Main Content (Quiz Questions) -->
+    <!-- 🔹 Center Section: Questions Container -->
     <center>
-        <ScrollPane fx:id="scrollPane" fitToWidth="true"
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true"
                     style="-fx-padding: 15px; -fx-background-color: transparent; -fx-border-color: transparent;">
-            <VBox fx:id="questionsContainer" spacing="15"
+            <VBox fx:id="questionsContainer" spacing="15" maxHeight="500"
                   style="-fx-padding: 20px; -fx-background-color: #ffffff; -fx-border-color: #ddd;
                          -fx-border-radius: 10px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 2, 2);"/>
         </ScrollPane>
     </center>
 
-    <!-- 🔹 Right Sidebar: PieChart Statistics -->
+    <!-- 🔹 Right Sidebar: Chart & Dictionary -->
     <right>
-        <VBox spacing="15" alignment="CENTER"
+        <VBox alignment="CENTER" spacing="15"
               style="-fx-padding: 20px; -fx-background-color: #f4f4f4; -fx-border-radius: 8px;
                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 2, 2);">
-            <Label text="Quiz Performance" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
-            <VBox fx:id="chartContainer" spacing="10" alignment="CENTER"/>
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Quiz Performance"/>
+            <VBox fx:id="chartContainer" alignment="CENTER" spacing="10"/>
+
+            <!-- 🔹 Dictionary API Section (Under the Chart) -->
+            <Separator/>
+            <Label text="📖 Dictionary Lookup" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <HBox spacing="10" alignment="CENTER">
+                <TextField fx:id="wordInputField" promptText="Enter a word..."
+                           style="-fx-pref-width: 150px; -fx-padding: 5px;"/>
+                <Button text="🔍 Search" onAction="#searchDefinition"
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 5px;"/>
+            </HBox>
+
+            <Label fx:id="definitionLabel" wrapText="true" maxWidth="250"
+                   style="-fx-font-size: 14px; -fx-text-fill: black;"/>
         </VBox>
     </right>
 
     <!-- 🔹 Bottom Section: Action Buttons -->
     <bottom>
-        <HBox spacing="20" alignment="CENTER"
+        <HBox alignment="CENTER" spacing="20"
               style="-fx-padding: 15px; -fx-background-color: #fdfdfd; -fx-border-color: #ddd; -fx-border-radius: 8px;
                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 2, 2);">
-            <Button text="Submit Test" onAction="#submitTest"
-                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"/>
+            <Button onAction="#readTestDescription"
+                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"
+                    text="🔊 Read Test Description"/>
 
-            <Button text="Clear Selection" onAction="#clearSelection"
-                    style="-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"/>
+            <Button onAction="#submitTest"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"
+                    text="Submit Test"/>
+
+            <Button onAction="#clearSelection"
+                    style="-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"
+                    text="Clear Selection"/>
         </HBox>
     </bottom>
 

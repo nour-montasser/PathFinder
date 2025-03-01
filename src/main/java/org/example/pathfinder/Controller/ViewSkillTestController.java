@@ -1,18 +1,16 @@
 package org.example.pathfinder.Controller;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.pathfinder.Model.*;
-import org.example.pathfinder.Service.ApplicationService;
-import org.example.pathfinder.Service.TestResultService;
+import org.example.pathfinder.Service.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
-import javafx.scene.layout.VBox;
+
 import java.util.Map;
 
 import java.sql.Date;
@@ -31,14 +29,38 @@ public class ViewSkillTestController {
     private TestResultService testResultService = new TestResultService(); // ✅ Ensure service is initialized
     @FXML private VBox chartContainer; // Make sure to add this in the FXML file
     private long loggedInUserId = LoggedUser.getInstance().getUserId();
+    @FXML
+    private TextField wordInputField;
+    @FXML
+    private Label definitionLabel;
+    private long startTime;  // Quiz start time in UNIX format
+    private long quizDuration ; //  Set quiz time limit (600 seconds = 10 minutes)
+    @FXML private Label timerLabel; //  Label to show countdown timer
+
 
     public void setSkillTestData(SkillTest skillTest, List<Question> questions) {
         this.currentSkillTest = skillTest;
-        this.questions = questions; // ✅ Store questions
+        this.questions = questions;
+
+        // ✅ Set quiz title and description
         skillTestTitle.setText(skillTest.getTitle());
         skillTestDescription.setText(skillTest.getDescription());
+
+        // ✅ Load pass/fail statistics into the chart
         loadPassFailChart(skillTest.getIdTest());
-        // Clear any previous questions
+
+        // ✅ Fetch the quiz duration from the database
+        this.quizDuration = skillTest.getDuration();
+        System.out.println("⏳ Quiz Duration (from DB): " + this.quizDuration + " seconds");
+
+        // ✅ Ensure UI elements are updated before starting the timer
+        Platform.runLater(() -> {
+            startTime = TimeTrackingAPI.getCurrentTime();
+            System.out.println("🔹 Timer Start Time: " + startTime);
+            startQuizTimer();
+        });
+
+        // ✅ Clear any previous questions before adding new ones
         questionsContainer.getChildren().clear();
 
         for (Question question : questions) {
@@ -55,7 +77,7 @@ public class ViewSkillTestController {
             for (String response : responses) {
                 RadioButton radioButton = new RadioButton(response.trim());
                 radioButton.setToggleGroup(toggleGroup);
-                radioButton.setUserData(response.trim()); // ✅ Store answer as UserData
+                radioButton.setUserData(response.trim());
                 answersBox.getChildren().add(radioButton);
             }
 
@@ -63,19 +85,22 @@ public class ViewSkillTestController {
             questionsContainer.getChildren().add(questionBox);
         }
 
+        // ✅ Ensure ScrollPane updates properly
         scrollPane.applyCss();
         scrollPane.layout();
     }
 
+
     @FXML
     private void submitTest() {
+        System.out.println("📤 Auto-submitting quiz...");
+
         if (currentSkillTest == null || questions == null || questions.isEmpty()) {
             showAlert("Error", "No skill test available.");
             return;
         }
 
         int score = 0;
-
         int totalPossibleScore = 0;
         int answeredQuestions = 0;
 
@@ -90,7 +115,7 @@ public class ViewSkillTestController {
                     if (radioButton.isSelected()) {
                         answeredQuestions++;
                         if (radioButton.getUserData().equals(question.getCorrectResponse())) {
-                            score += question.getScore(); // ✅ Add question score if correct
+                            score += question.getScore();
                         }
                     }
                 }
@@ -102,7 +127,7 @@ public class ViewSkillTestController {
 
         // ✅ Save result in database
         TestResult testResult = new TestResult(
-                loggedInUserId, // TODO: Replace with actual user ID
+                loggedInUserId,
                 currentSkillTest.getId(),
                 score,
                 Date.valueOf(LocalDate.now()),
@@ -112,21 +137,39 @@ public class ViewSkillTestController {
         boolean resultSaved = testResultService.addTestResult(testResult);
 
         if (resultSaved) {
-            showAlert("Success", "Your test result has been saved! Score: " + score + "/" + totalPossibleScore );
+            showAlert("Success", "Your test result has been saved! Score: " + score + "/" + totalPossibleScore);
         } else {
             showAlert("Error", "Failed to save test result.");
         }
-        if (statusInt==0){
-            ApplicationService applicationService = new ApplicationService();
-            ApplicationJob application = applicationService.getApplicationByUserAndSkillTest(loggedInUserId,  currentSkillTest.getId());
-            application.setStatus("Rejected");
-            applicationService.update(application);
-        }
-        //if result =1 => pending applincation
-        //if result == 0 => application rejected by application
 
-        ((Stage) skillTestDescription.getScene().getWindow()).close();
+        // 🔹 Debug: Check if application exists before updating
+        ApplicationService applicationService = new ApplicationService();
+        ApplicationJob application = applicationService.getApplicationByUserAndSkillTest(loggedInUserId, currentSkillTest.getId());
+
+        if (application == null) {
+            System.out.println("⚠️ No application found for user ID " + loggedInUserId + " and skill test ID " + currentSkillTest.getId());
+        } else {
+            if (statusInt == 0) {
+                application.setStatus("Rejected");
+                applicationService.update(application);
+                System.out.println("🚨 Application status updated to REJECTED.");
+            }
+        }
+
+        // ✅ Close window after submission
+        Platform.runLater(() -> ((Stage) skillTestDescription.getScene().getWindow()).close());
     }
+
+    @FXML
+    private void readTestDescription() {
+        String description = skillTestDescription.getText();
+        if (description != null && !description.isEmpty()) {
+            TextToSpeechAPI.speak(description);
+        } else {
+            System.out.println("⚠️ No description to read.");
+        }
+    }
+
 
     @FXML
     private void clearSelection() {
@@ -197,6 +240,54 @@ public class ViewSkillTestController {
             chartContainer.getChildren().add(pieChart); // Add new chart
         });
     }
+    @FXML
+    private void searchDefinition() {
+        String word = wordInputField.getText().trim();
+        if (word.isEmpty()) {
+            definitionLabel.setText("⚠️ Please enter a word.");
+            return;
+        }
+
+        // 🔹 Fetch definition from API
+        String definition = DictionaryAPI.getDefinition(word);
+        definitionLabel.setText(definition);
+    }
+    private void startQuizTimer() {
+        new Thread(() -> {
+            while (true) {
+                long currentTime = TimeTrackingAPI.getCurrentTime(); // 🔹 Get current time
+                long timeElapsed = currentTime - startTime; // 🔹 Time passed since start
+                long timeLeft = quizDuration - timeElapsed; // 🔹 Time remaining
+
+                // 🔹 Debugging output
+                System.out.println("⏳ Current Time: " + currentTime);
+                System.out.println("📌 Start Time: " + startTime);
+                System.out.println("🕐 Time Elapsed: " + timeElapsed);
+                System.out.println("⏰ Time Left: " + timeLeft);
+
+                // 🔹 Ensure UI updates properly
+                Platform.runLater(() -> {
+                    if (timeLeft > 0) {
+                        timerLabel.setText("⏳ Time Left: " + timeLeft + "s");
+                    } else {
+                        timerLabel.setText("⏳ Time's Up! Auto-submitting...");
+                        submitTest();
+                    }
+                });
+
+                if (timeLeft <= 0) break;
+
+                try {
+                    Thread.sleep(1000); // 🔹 Update every second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
+
 
 
 

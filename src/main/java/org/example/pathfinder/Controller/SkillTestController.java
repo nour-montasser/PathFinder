@@ -17,7 +17,6 @@ import org.example.pathfinder.Service.QuestionService;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SkillTestController {
@@ -271,18 +270,24 @@ public class SkillTestController {
 
             ViewSkillTestController controller = loader.getController();
             List<Question> questions = questionService.getQuestionsForSkillTest(selectedTest.getIdTest());
-
             controller.setSkillTestData(selectedTest, questions);
 
             Stage stage = new Stage();
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root, 900, 600); // 🔹 Set fixed window size
+            stage.setScene(scene);
             stage.setTitle("Skill Test Preview");
+
+            stage.setMinWidth(900);  // 🔹 Prevent resizing smaller
+            stage.setMinHeight(600);
+            stage.setResizable(true);  // 🔹 Allow resizing manually if needed
+
             stage.show();
 
         } catch (IOException e) {
             showAlert("Error", "Failed to load Skill Test.");
         }
     }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
