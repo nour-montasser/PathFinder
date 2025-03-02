@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -18,6 +20,7 @@ import org.example.pathfinder.Service.ServiceOffreService;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import com.google.gson.Gson;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -46,6 +49,12 @@ public class ApplicationServiceController {
 
     private static final String HCAPTCHA_SITE_KEY = "ES_3ca1f53f02154f12aac8f49642c189ec"; // Replace with your actual hCaptcha site key
 
+
+    @FXML
+    private ImageView logoImage; // ✅ Logo ImageView
+
+    @FXML
+    private ImageView searchIcon; // ✅ Search Icon ImageView
 
 
 
@@ -94,8 +103,43 @@ public class ApplicationServiceController {
         fetchExchangeRates(); // ✅ Fetch exchange rates at startup
 
 
-        loadHcaptcha();
+        // ✅ Load Navbar Components
+        loadLogo();
+        loadSearchIcon();
     }
+    private void loadLogo() {
+        try {
+            Image image = new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo.png")
+            ));
+            logoImage.setImage(image);
+
+            // ✅ Scale Logo Without Expanding Navbar
+            logoImage.setFitWidth(140);
+            logoImage.setPreserveRatio(true);
+            logoImage.setSmooth(true);
+        } catch (NullPointerException e) {
+            System.err.println("❌ Error: Logo image not found! Check file path.");
+        }
+    }
+
+    private void loadSearchIcon() {
+        try {
+            Image searchImage = new Image(Objects.requireNonNull(
+                    getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/compass.png")
+            ));
+            searchIcon.setImage(searchImage);
+
+            // ✅ Set Icon Size Inside Search Bar
+            searchIcon.setFitWidth(30);
+            searchIcon.setFitHeight(30);
+            searchIcon.setPreserveRatio(true);
+            searchIcon.setSmooth(true);
+        } catch (NullPointerException e) {
+            System.err.println("❌ Error: Search icon not found! Check file path.");
+        }
+    }
+
 
     private void setupCurrencySelector() {
         currencySelector.getItems().addAll("USD", "EUR", "TND", "GBP", "CAD", "AUD", "JPY");
@@ -166,7 +210,7 @@ public class ApplicationServiceController {
         HBox hbox = new HBox(20);
 
         VBox priceBox = new VBox();
-        Label priceLabel = new Label("$" + service.getPrice());
+        Label priceLabel = new Label("" + service.getPrice());
         priceLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #008000;");
         Label priceTypeLabel = new Label("Starting-price");
         priceTypeLabel.setStyle("-fx-text-fill: #A9A9A9; -fx-font-size: 12px;");

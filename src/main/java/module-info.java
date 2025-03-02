@@ -8,7 +8,8 @@ module com.example.pathfinder {
 
     requires org.apache.httpcomponents.core5.httpcore5;
     requires org.json;
-    requires javafx.web;  // Add this for JSON parsing
+    requires javafx.web;
+    requires jdk.jsobject;  // Add this for JSON parsing
     opens org.example.pathfinder to javafx.fxml;
 
     exports org.example.pathfinder.App;

@@ -7,48 +7,86 @@
 <BorderPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.pathfinder.Controller.ClientDashboardController"
-            prefWidth="1000" prefHeight="600"
-            style="-fx-background-color: #F5F5F5; -fx-padding: 20px;">
+            prefWidth="1200" prefHeight="650"
+            style="-fx-background-color: white; -fx-padding: 20px;">
 
-    <!-- HEADER SECTION -->
+    <!-- HEADER SECTION (Sleek Navigation Bar) -->
     <top>
-        <HBox spacing="15" alignment="CENTER_LEFT"
-              style="-fx-background-color: #512E1B; -fx-padding: 15px; -fx-border-radius: 10px;">
+        <HBox spacing="20" alignment="CENTER_LEFT"
+              style="-fx-background-color: white;
+                     -fx-padding: 15px;
+                     -fx-border-radius: 10px;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 6, 0, 0, 4);">
 
-            <Label text="Service Marketplace"
-                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <ImageView fx:id="logoImage"
+                       fitHeight="40" fitWidth="120"/>
 
-            <!-- Spacer to push elements to the right -->
+
+            <!-- "Find Talent" Dropdown -->
+            <ComboBox fx:id="currencySelector"
+                      promptText="Find Talent"
+                      style="-fx-background-color: transparent;
+                              -fx-border-width: 0;
+                              -fx-text-fill: black;
+                              -fx-font-size: 14px;"
+                      prefWidth="120"/>
+
+            <!-- "Find Work" Dropdown -->
+            <ComboBox fx:id="sortDropdown"
+                      promptText="Find Work"
+                      style="-fx-background-color: transparent;
+                              -fx-border-width: 0;
+                              -fx-text-fill: black;
+                              -fx-font-size: 14px;"
+                      prefWidth="120"/>
+
+            <!-- Spacer to push search bar to the right -->
             <Pane HBox.hgrow="ALWAYS"/>
 
-            <!-- Search Bar -->
-            <TextField fx:id="searchField" promptText="Search services..."
-                       style="-fx-padding: 8px; -fx-pref-width: 250px;
-                              -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+            <!-- 🔍 Rounded Search Bar with Skills Dropdown -->
+            <HBox spacing="8"
+                  style="-fx-background-color: white;
+                         -fx-border-radius: 25px;
+                         -fx-border-color: #ccc;
+                         -fx-padding: 6px 14px;
+                         -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 6, 0, 0, 2);
+                         -fx-alignment: center-left;">
+                <!-- 🔍 Search Icon -->
+                <ImageView fx:id="searchIcon" fitWidth="20" fitHeight="20"/>
+                <!-- Search Field -->
+                <TextField fx:id="searchField"
+                           promptText="Search"
+                           style="-fx-background-color: transparent;
+                                  -fx-border-width: 0;
+                                  -fx-font-size: 14px;
+                                  -fx-text-fill: black;"
+                           prefWidth="230"/>
 
-            <!-- Sorting Dropdown -->
-            <ComboBox fx:id="sortDropdown"
-                      style="-fx-background-color: white;
-                   -fx-border-width: 0;
-                   -fx-font-size: 14px;
-                   -fx-border-radius: 20;
-                   -fx-padding: 5;
-                   -fx-border-color: #FFFFFF;"
-                      minWidth="150" maxWidth="150"
-                      minHeight="35" maxHeight="100">
-            </ComboBox>
-
+                <!-- Skills Dropdown (Inside Search Bar, Transparent) -->
+                <ComboBox fx:id="skillsDropdown"
+                          promptText="Skills &amp; Expertise"
+                          style="-fx-background-color: transparent;
+                                 -fx-border-width: 0;
+                                 -fx-text-fill: black;
+                                 -fx-font-size: 14px;
+                                 -fx-padding: 0 10px;"
+                          prefWidth="160"/>
+            </HBox>
         </HBox>
     </top>
 
     <!-- MAIN CONTENT: Services Grid -->
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true"
-                    style="-fx-background-color: transparent; -fx-padding: 10;">
-            <GridPane fx:id="servicesGrid"
-                      style="-fx-padding: 20; -fx-alignment: center; -fx-background-color: transparent;"
-                      hgap="30" vgap="30"/>
-        </ScrollPane>
+        <StackPane>
+            <ScrollPane fitToWidth="true" fitToHeight="true"
+                        style="-fx-background-color: transparent; -fx-padding: 10;">
+                <GridPane fx:id="servicesGrid"
+                          style="-fx-padding: 20;
+                                 -fx-alignment: center;
+                                 -fx-background-color: transparent;"
+                          hgap="30" vgap="30"/>
+            </ScrollPane>
+        </StackPane>
     </center>
 
 </BorderPane>

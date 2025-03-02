@@ -200,6 +200,7 @@ public class ServiceOffre {
                 ", price=" + price +
 
                 ", required_education='" + required_education + '\'' +
+                ", status='" + status + '\'' +
                 ", skills='" + skills + '\'' +
                 ", experience_level='" + experience_level + '\'' +  // ✅ New field added
                 ", applications=" + applications +

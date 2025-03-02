@@ -17,7 +17,7 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public void add(ServiceOffre serviceOffre) {
-        String req = "INSERT INTO serviceoffre (id_user, title, description, date_posted, field, price, required_education, skills, experience_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO serviceoffre (id_user, title, description, date_posted, field, price, required_education, skills, experience_level,status,duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
         try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setInt(1, serviceOffre.getId_user());
@@ -27,11 +27,13 @@ public class ServiceOffreService implements Services<ServiceOffre> {
             stm.setString(5, serviceOffre.getField());
             stm.setDouble(6, serviceOffre.getPrice());
 
-            stm.setString(8, serviceOffre.getRequired_education());
-            stm.setString(9, serviceOffre.getSkills());
-            stm.setString(10, serviceOffre.getExperience_level()); // ✅ Added Experience Level
-
-            stm.setString(12, serviceOffre.getDuration());
+            stm.setString(7, serviceOffre.getRequired_education());
+            stm.setString(8, serviceOffre.getSkills());
+            stm.setString(9, serviceOffre.getExperience_level()); // ✅ Added Experience Level
+// ✅ Ensure status is always set
+            String status = (serviceOffre.getStatus() == null || serviceOffre.getStatus().isEmpty()) ? "Open" : serviceOffre.getStatus();
+            stm.setString(10, status);
+            stm.setString(11, serviceOffre.getDuration());
             stm.executeUpdate();
             System.out.println("✅ Service added successfully!");
         } catch (SQLException e) {
@@ -41,21 +43,22 @@ public class ServiceOffreService implements Services<ServiceOffre> {
 
     @Override
     public void update(ServiceOffre serviceOffre) {
-        String req = "UPDATE serviceoffre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?,  required_education = ?, skills = ?, experience_level = ? WHERE id_service = ?";
+        String req = "UPDATE serviceoffre SET title = ?, description = ?, date_posted = ?, field = ?, price = ?, required_education = ?, skills = ?, experience_level = ?, duration = ?, status = ? WHERE id_service = ?";
+
 
         try (PreparedStatement stm = cnx.prepareStatement(req)) {
             stm.setString(1, serviceOffre.getTitle());
             stm.setString(2, serviceOffre.getDescription());
-            stm.setTimestamp(3, serviceOffre.getDatePostedAsTimestamp());  // ✅ Convert LocalDateTime → Timestamp
+            stm.setTimestamp(3, serviceOffre.getDatePostedAsTimestamp()); // ✅ Date conversion
             stm.setString(4, serviceOffre.getField());
             stm.setDouble(5, serviceOffre.getPrice());
+            stm.setString(6, serviceOffre.getRequired_education());
+            stm.setString(7, serviceOffre.getSkills());
+            stm.setString(8, serviceOffre.getExperience_level());
+            stm.setString(9, serviceOffre.getDuration());  // ✅ Fix: Add duration
+            stm.setString(10, serviceOffre.getStatus());    // ✅ Fix: Add status
+            stm.setInt(11, serviceOffre.getId_service());   // ✅ Fix: Correct ID index
 
-            stm.setString(7, serviceOffre.getRequired_education());
-            stm.setString(8, serviceOffre.getSkills());
-            stm.setString(9, serviceOffre.getExperience_level()); // ✅ Added Experience Level
-            stm.setInt(10, serviceOffre.getId_service());
-
-            stm.setString(12, serviceOffre.getDuration());
 
             stm.executeUpdate();
             System.out.println("✅ Service updated successfully!");
@@ -152,7 +155,10 @@ public class ServiceOffreService implements Services<ServiceOffre> {
         service.setSkills(rs.getString("skills"));
         service.setExperience_level(rs.getString("experience_level"));
 
-        service.setDuration(rs.getString("duration"));
+        String duration = rs.getString("duration");  // ✅ Get duration from database
+        System.out.println("📌 Duration retrieved: " + duration); // ✅ Debugging print
+        service.setDuration(duration);
+        service.setStatus(rs.getString("status"));
         return service;
     }
 

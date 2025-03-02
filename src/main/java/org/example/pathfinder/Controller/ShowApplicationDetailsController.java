@@ -83,13 +83,13 @@ public class ShowApplicationDetailsController {
 
         // 🔹 Display applications in the UI
         for (ApplicationService app : applications) {
-            applicationsContainer.getChildren().add(createApplicationCard(app));
+            applicationsContainer.getChildren().add(createApplicationCard(app, isServiceCompleted));
         }
     }
 
 
 
-    private VBox createApplicationCard(ApplicationService app) {
+    private VBox createApplicationCard(ApplicationService app, boolean isServiceCompleted) {
         VBox card = new VBox(10);
         card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-border-radius: 10; "
                 + "-fx-background-radius: 10; -fx-border-color: lightgray; -fx-border-width: 1;");
@@ -101,20 +101,15 @@ public class ShowApplicationDetailsController {
         Label statusLabel = new Label("📌 Status: " + app.getStatus());
         statusLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: black;");
 
-        // Fetch the service status to check if it's completed
-        ServiceOffre service = serviceOffreService.getById(app.getIdService());
-        boolean isServiceCompleted = "Completed".equals(service.getStatus());
-
-        // Create buttons
         Button acceptButton = new Button("✔ Accept");
         acceptButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        acceptButton.setDisable(isServiceCompleted); // Disable if service is completed
         acceptButton.setOnAction(e -> confirmAndUpdateApplicationStatus(app, "Accepted"));
-        acceptButton.setDisable(isServiceCompleted);  // ✅ Disable if service is completed
 
         Button rejectButton = new Button("✖ Reject");
         rejectButton.setStyle("-fx-background-color: #FF3B30; -fx-text-fill: white;");
+        rejectButton.setDisable(isServiceCompleted); // Disable if service is completed
         rejectButton.setOnAction(e -> confirmAndUpdateApplicationStatus(app, "Rejected"));
-        rejectButton.setDisable(isServiceCompleted);  // ✅ Disable if service is completed
 
         HBox buttons = new HBox(10, acceptButton, rejectButton);
         card.getChildren().addAll(priceLabel, statusLabel, buttons);

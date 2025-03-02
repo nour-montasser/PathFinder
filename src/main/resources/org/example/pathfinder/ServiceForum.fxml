@@ -22,41 +22,47 @@
               style="-fx-padding: 20px; -fx-background-color: white; -fx-border-radius: 10px;
                      -fx-border-color: #DDD; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);">
 
+            <!-- Title Field -->
             <Label text="Title:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <TextField fx:id="titleField" promptText="Enter job title" prefWidth="300"/>
 
-            <Label text="Price ( Ai Suggestion Price) :" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <TextField fx:id="priceField" promptText="Enter price" prefWidth="300"/>
+            <!-- Write with AI Button -->
+            <Button fx:id="writeWithAIButton" text="Write with AI" onAction="#handleWriteWithAI"
+                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px;
+                           -fx-border-radius: 5px; -fx-padding: 8px 16px;"/>
 
-
-
+            <!-- Description Field -->
             <Label text="Description:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <TextArea fx:id="descriptionField" promptText="Enter job description" prefWidth="300" prefHeight="80"/>
+            <TextArea fx:id="descriptionField" promptText="Enter job description" prefWidth="400" prefHeight="150" style="-fx-font-size: 14px; -fx-border-color: #ccc; -fx-padding: 10px;"/>
 
-
+            <!-- Type Field -->
             <Label text="Type:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <ComboBox fx:id="fieldField" promptText="Select type" prefWidth="300"/>
 
-            <DatePicker fx:id="startDatePicker" promptText="Start Date" />
-            <DatePicker fx:id="endDatePicker" promptText="End Date" />
-            <Label fx:id="durationLabel" text="Duration: --" visible="false" />
+            <!-- Start and End Date Fields -->
+            <DatePicker fx:id="startDatePicker" promptText="Start Date" prefWidth="300"/>
+            <DatePicker fx:id="endDatePicker" promptText="End Date" prefWidth="300"/>
+            <Label fx:id="durationLabel" text="Duration: --" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
 
-
-
-
-
-            <Label text=" Education:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <!-- Education Field -->
+            <Label text="Education:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <TextField fx:id="requiredEducationField" promptText="Enter education level" prefWidth="300"/>
 
+            <!-- Experience Level Field -->
             <Label text="Experience Level:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
-            <ComboBox fx:id="experienceLevelField" layoutX="150" layoutY="100" prefWidth="200"/>
+            <ComboBox fx:id="experienceLevelField" prefWidth="300"/>
 
+            <!-- AI Status and Loading Indicator -->
+            <Label fx:id="aiStatusLabel" text="AI Status" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <ProgressIndicator fx:id="loadingIndicator" visible="false" prefWidth="30" prefHeight="30"/>
+
+            <!-- Price Field -->
+            <Label text="Price (AI Suggested Price):" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
+            <TextField fx:id="priceField" promptText="Enter price" prefWidth="300"/>
+
+            <!-- Skills Field -->
             <Label text="Skills:" style="-fx-font-weight: bold; -fx-text-fill: #512E1B;"/>
             <TextField fx:id="skillsField" promptText="Enter skills" prefWidth="300"/>
-
-
-
-
 
             <!-- Buttons Section -->
             <HBox spacing="15" alignment="CENTER">
@@ -64,11 +70,7 @@
                         onAction="#handleSubmit"
                         style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;
                                -fx-border-radius: 5px; -fx-padding: 8px 16px;"/>
-
-
             </HBox>
-
         </VBox>
     </center>
-
 </BorderPane>

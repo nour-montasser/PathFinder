@@ -1,54 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.web.WebView?>
 <VBox xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.pathfinder.Controller.ApplicationServiceController"
       style="-fx-background-color: #F5F5F5; -fx-padding: 20; -fx-alignment: center;">
 
-    <!-- Search Bar & Add Button Container -->
-    <HBox spacing="20" style="-fx-alignment: center-left; -fx-padding: 5;">
+    <!-- 🌟 Modern Navigation Bar -->
+    <HBox spacing="20" alignment="CENTER_LEFT"
+          style="-fx-background-color: white;
+                 -fx-padding: 12px 18px;
+                 -fx-border-radius: 12px;
+                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 5);
+                 -fx-alignment: center-left;">
 
-        <!-- Search Bar -->
-        <HBox spacing="10" alignment="CENTER_LEFT"
-              style="-fx-border-color: #ddd; -fx-border-radius: 20; -fx-padding: 8;
-                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);">
+        <!-- Pathfinder Logo -->
+        <ImageView fx:id="logoImage" fitHeight="55" preserveRatio="true"/>
 
+        <!-- Currency Selector -->
+        <ComboBox fx:id="currencySelector"
+                  promptText="Currency"
+                  style="-fx-background-color: transparent;
+                         -fx-font-size: 15px;
+                         -fx-border-width: 0;
+                         -fx-text-fill: #333;
+                         -fx-padding: 5px 10px;"/>
 
+        <!-- Sorting Dropdown -->
+        <ComboBox fx:id="sortDropdown"
+                  promptText="Sort Services"
+                  style="-fx-background-color: transparent;
+                         -fx-font-size: 15px;
+                         -fx-border-width: 0;
+                         -fx-text-fill: #333;
+                         -fx-padding: 5px 10px;"/>
 
+        <!-- Spacer to push elements right -->
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <!-- 🔍 Beautiful Search Bar (Premium Look) -->
+        <HBox spacing="10" style="-fx-background-color: white;
+                                  -fx-border-radius: 30px;
+                                  -fx-border-color: #ddd;
+                                  -fx-padding: 10px 18px;
+                                  -fx-min-width: 400px; /* Increased width */
+                                  -fx-max-width: 450px;
+                                  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 4, 0, 0, 3);
+                                  -fx-alignment: center-left;">
+
+            <!-- Search Icon Inside -->
+            <ImageView fx:id="searchIcon" fitHeight="18" fitWidth="18" style="-fx-opacity: 0.7;"/>
 
             <!-- Search Field -->
             <TextField fx:id="searchField" promptText="Search services..."
-                       style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
-
-            <Label text="Select Skill:"/>
-            <ComboBox fx:id="skillsComboBox" promptText="Loading skills..." prefWidth="300"/>
-
-            <WebView fx:id="hcaptchaWebView" prefWidth="320" prefHeight="100"/>
+                       style="-fx-background-color: transparent;
+                              -fx-border-width: 0;
+                              -fx-font-size: 16px;
+                              -fx-text-fill: #555;
+                              -fx-padding: 2px 5px;"/>
 
         </HBox>
 
-        <ComboBox fx:id="sortDropdown"
-                  promptText="Sort Services"
-                  style="-fx-background-color: #FFFFFF; -fx-font-size: 14px;"/>
-        <!-- Add New Service Button -->
-        <Button fx:id="addServiceButton" text="+" onAction="#openServiceForumModal"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 28px;
-                -fx-min-width: 60px; -fx-min-height: 60px; -fx-border-radius: 50%;
-                -fx-font-weight: bold;"/>
-
-
+        <!-- ➕ Add New Service Button -->
+        <Button fx:id="addServiceButton" text="+"
+                onAction="#openServiceForumModal"
+                style="-fx-background-color: #4CAF50;
+                       -fx-text-fill: white;
+                       -fx-font-size: 28px;
+                       -fx-min-width: 50px;
+                       -fx-min-height: 50px;
+                       -fx-border-radius: 50%;
+                       -fx-font-weight: bold;
+                       -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 5, 0, 0, 3);"/>
     </HBox>
 
-
-    <!-- Services Display -->
+    <!-- 🌟 Services Display Section -->
     <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true"
-                style="-fx-padding: 10; -fx-background: transparent;">
+                style="-fx-padding: 12px; -fx-background: transparent;">
         <GridPane fx:id="servicesGrid"
                   style="-fx-padding: 20; -fx-alignment: center; -fx-background-color: transparent;"
                   hgap="30" vgap="30"/>
