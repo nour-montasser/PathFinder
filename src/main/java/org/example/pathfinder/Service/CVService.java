@@ -22,15 +22,18 @@ public class CVService implements Services<CV> {
         // ✅ Ensure the title is unique before inserting
         String uniqueTitle = generateUniqueTitle(cv.getTitle(), cv.getUserId());
 
-        String query = "INSERT INTO CV (id_user, title, introduction, skills, date_creation, last_viewed) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO CV (id_user, title, user_title, introduction, skills, date_creation, last_viewed, favorite) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, cv.getUserId());
             statement.setString(2, uniqueTitle); // 🔹 Ensure unique title
-            statement.setString(3, cv.getIntroduction());
-            statement.setString(4, cv.getSkills());
-            statement.setTimestamp(5, new Timestamp(System.currentTimeMillis())); // ✅ Set creation date
-            statement.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // ✅ Initialize last_viewed
+            statement.setString(3, cv.getUserTitle()); // 🔥 Insert user_title field
+            statement.setString(4, cv.getIntroduction());
+            statement.setString(5, cv.getSkills());
+            statement.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // ✅ Set creation date
+            statement.setTimestamp(7, new Timestamp(System.currentTimeMillis())); // ✅ Initialize last_viewed
+            statement.setBoolean(8, false); // 🔥 Explicitly set favorite to false
 
             statement.executeUpdate();
             System.out.println("✅ CV added successfully with unique title.");
@@ -38,6 +41,7 @@ public class CVService implements Services<CV> {
             System.err.println("❌ Error adding CV: " + e.getMessage());
         }
     }
+
 
     private String generateUniqueTitle(String baseTitle, int userId) {
         String newTitle = baseTitle;
@@ -69,10 +73,10 @@ public class CVService implements Services<CV> {
 
     @Override
     public void update(CV cv) {
-        String query = "UPDATE CV SET id_user = ?, title = ?, introduction = ?, skills = ? WHERE id_cv = ?";
+        String query = "UPDATE CV SET id_user = ?, user_title = ?, introduction = ?, skills = ? WHERE id_cv = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, cv.getUserId());
-            statement.setString(2, cv.getTitle());
+            statement.setString(2, cv.getUserTitle());
             statement.setString(3, cv.getIntroduction());
             statement.setString(4, cv.getSkills());
             statement.setInt(5, cv.getIdCV());
@@ -114,7 +118,7 @@ public class CVService implements Services<CV> {
                 CV cv = new CV(
                         resultSetCV.getInt("id_cv"),
                         resultSetCV.getInt("id_user"),
-                        resultSetCV.getString("title"),
+                        resultSetCV.getString("user_title"),
                         resultSetCV.getString("introduction"),
                         resultSetCV.getString("skills"),
                         resultSetCV.getTimestamp("date_creation"),
@@ -190,9 +194,17 @@ public class CVService implements Services<CV> {
             System.err.println("❌ Error updating last viewed: " + e.getMessage());
         }
     }
+    public void updateFavorite(int cvId) {
+        String query = "UPDATE CV SET favorite = NOT favorite WHERE id_cv = ?";
 
-
-
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, cvId); // Set the CV ID
+            statement.executeUpdate();
+            System.out.println("✅ Favorite status toggled for CV ID: " + cvId);
+        } catch (Exception e) {
+            System.err.println("❌ Error toggling favorite status: " + e.getMessage());
+        }
+    }
 
 
 
@@ -257,7 +269,7 @@ public class CVService implements Services<CV> {
 
     public List<CV> getCVsByUserId(int userId) {
         List<CV> cvs = new ArrayList<>();
-        String query = "SELECT id_cv, title, date_creation,  last_viewed FROM CV WHERE id_user = ?";
+        String query = "SELECT id_cv, title, date_creation, last_viewed, favorite FROM CV WHERE id_user = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, userId);
@@ -271,9 +283,12 @@ public class CVService implements Services<CV> {
                         "", // No introduction needed
                         "", // No skills needed
                         resultSet.getTimestamp("date_creation"),
-
                         resultSet.getTimestamp("last_viewed")
                 );
+
+                // ✅ Set the favorite status from DB
+                cv.setFavorite(resultSet.getBoolean("favorite"));
+
                 cvs.add(cv);
             }
         } catch (Exception e) {
@@ -281,6 +296,7 @@ public class CVService implements Services<CV> {
         }
         return cvs;
     }
+
 
 
     public void makeCopyOfCV(int originalCvId) {

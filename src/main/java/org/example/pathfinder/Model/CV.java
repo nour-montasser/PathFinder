@@ -20,9 +20,27 @@ public class CV {
     private String formattedLanguages;
     private String formattedCertificates;
     private String username;
+    private String userTitle; // New field for user-defined title
+    private boolean favorite=false; // New field for favorite CV pinning
 
     public String getUsername() {
         return username;
+    }
+
+    public String getUserTitle() {
+        return userTitle;
+    }
+
+    public void setUserTitle(String userTitle) {
+        this.userTitle = userTitle;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public void setUsername(String username) {
@@ -40,13 +58,12 @@ public class CV {
     public CV(int idCV, int userId, String title, String introduction, String skills, Timestamp dateCreation, Timestamp lastViewed) {
         this.idCV = idCV;
         this.userId = userId;
+        this.userTitle= title;
         this.title = title;
         this.introduction = introduction;
         this.skills = skills;
         this.dateCreation = dateCreation;
-
         this.lastViewed = lastViewed;
-
         this.experiences = new ArrayList<>();
         this.languageList = new ArrayList<>();
         this.certificates = new ArrayList<>();
@@ -54,6 +71,7 @@ public class CV {
     // ✅ Add this constructor to CV.java
     public CV(int idCV, String userName, String title, String introduction, String skills, Timestamp dateCreation) {
         this.idCV = idCV;
+        this.userTitle=title;
         this.title = title;
         this.username=userName;
         this.introduction = introduction;
@@ -92,6 +110,7 @@ public class CV {
     public CV(CV original) {
         this.idCV = 0; // Reset ID to ensure it's treated as a new entry
         this.userId = original.userId;
+        this.userTitle=original.userTitle;
         this.title = original.title + " (Copy)"; // Append "(Copy)" to differentiate
         this.introduction = original.introduction;
         this.skills = original.skills;
@@ -120,14 +139,12 @@ public class CV {
     public CV(int userId, String title, String introduction, String skills) {
         this.userId = userId;
         this.title = title;
+        this.userTitle = title;
         this.introduction = introduction;
         this.skills = skills;
         this.dateCreation = new Timestamp(System.currentTimeMillis());
-
         // Generate unique file name from introduction
-
         this.lastViewed = new Timestamp(System.currentTimeMillis());
-
         this.experiences = new ArrayList<>();
         this.languageList = new ArrayList<>();
         this.certificates = new ArrayList<>();
@@ -240,6 +257,7 @@ public class CV {
         return idCV == cv.idCV &&
                 userId == cv.userId &&
                 Objects.equals(title, cv.title) &&
+                Objects.equals(userTitle, cv.userTitle) &&
                 Objects.equals(introduction, cv.introduction) &&
                 Objects.equals(skills, cv.skills) &&
                 Objects.equals(dateCreation, cv.dateCreation) &&
@@ -250,7 +268,7 @@ public class CV {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCV, userId, title, introduction, skills, dateCreation, experiences, languageList, certificates);
+        return Objects.hash(idCV, userId,userTitle, title, introduction, skills, dateCreation, experiences, languageList, certificates);
     }
 
     // toString
@@ -259,6 +277,7 @@ public class CV {
         return "CV{" +
                 "idCV=" + idCV +
                 ", userId=" + userId +
+                ", UserTitle='" + userTitle + '\'' +
                 ", title='" + title + '\'' +
                 ", introduction='" + introduction + '\'' +
                 ", skills='" + skills + '\'' +

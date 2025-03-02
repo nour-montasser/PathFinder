@@ -2,8 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.text.TextFlow?>
+
 <StackPane xmlns="http://javafx.com/javafx/17"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="org.example.pathfinder.Controller.CVController"
@@ -16,7 +16,6 @@
         <!-- Left Side (Scrollable Input Fields) -->
         <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
             <VBox spacing="15" alignment="TOP_CENTER" style="-fx-padding: 20;">
-
                 <!-- 🔹 Title -->
                 <Label text="Create CV" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <!-- CV Form -->
@@ -26,14 +25,13 @@
                         <Label text="CV Title" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                         <TextField fx:id="titleField" promptText="Enter CV Title"
                                    style="-fx-background-color: white; -fx-border-color: #3B261D; -fx-border-radius: 5;"/>
-
                         <Label fx:id="titleCounter" text="0 / 100" style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
                         <Label fx:id="titleErrorLabel" text="Title is required!" style="-fx-text-fill: red;" visible="false"/>
                     </VBox>
                     <!-- CV Introduction -->
                     <VBox spacing="5" alignment="CENTER_LEFT">
                         <Label text="CV Introduction" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
-                        <TextArea fx:id="introductionField" promptText="Enter CV Introduction"  wrapText="true" prefRowCount="3"
+                        <TextArea fx:id="introductionField" promptText="Enter CV Introduction" wrapText="true" prefRowCount="3"
                                   style="-fx-background-color: white; -fx-border-color: #3B261D; -fx-border-radius: 5;"/>
                         <Label fx:id="introductionCounter" text="0 / 300" style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
                         <Label fx:id="introductionErrorLabel" text="Introduction is required!" style="-fx-text-fill: red;" visible="false"/>
@@ -51,16 +49,14 @@
                 <VBox spacing="12" alignment="CENTER_LEFT">
                     <Label text="Languages" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                     <VBox fx:id="languageContainer" spacing="10"/>
-
                     <!-- Language Selection -->
                     <VBox spacing="5" alignment="CENTER_LEFT">
                         <Label text="Select a Language" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
-                    <ComboBox fx:id="languagesDropdown" editable="true" maxWidth="300" promptText="Select a language"
-                              onAction="#showLanguageLevelSelection"
-                              style="-fx-background-color: white; -fx-border-color: #3B261D;"/>
+                        <ComboBox fx:id="languagesDropdown" editable="true" maxWidth="300" promptText="Select a language"
+                                  onAction="#showLanguageLevelSelection"
+                                  style="-fx-background-color: white; -fx-border-color: #3B261D;"/>
                         <Label fx:id="languageErrorLabel" text="Please select a language!" style="-fx-text-fill: red;" visible="false"/>
                     </VBox>
-
                     <!-- Language Level Selection -->
                     <HBox fx:id="languageLevelContainer" spacing="5" visible="false">
                         <Label text="Proficiency Level" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
@@ -73,14 +69,12 @@
                         </HBox>
                         <Label fx:id="levelErrorLabel" text="Select a proficiency level!" style="-fx-text-fill: red;" visible="false"/>
                     </HBox>
-
                     <Button text="Add Language" onAction="#addLanguage"
                             style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
                 </VBox>
 
                 <!-- 🔹 Experience Section -->
                 <VBox spacing="12" alignment="CENTER_LEFT">
-
                     <Label text="Experiences" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                     <Label fx:id="experienceErrorLabel" text="At least one experience is required!" style="-fx-text-fill: red;" visible="false"/>
                     <VBox fx:id="experienceContainer" spacing="10"/>
@@ -102,10 +96,8 @@
             </VBox>
         </ScrollPane>
 
-
-
+        <!-- Right Side (CV Preview and Export) -->
         <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-
             <!-- Title and Export Button Container -->
             <HBox spacing="10" alignment="CENTER_RIGHT" maxWidth="Infinity">
                 <Label text="CV Preview" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
@@ -113,16 +105,21 @@
                         style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
             </HBox>
             <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+                <!-- Main preview container with dedicated sub-containers -->
                 <VBox fx:id="cvPreviewContainer" spacing="10" style="-fx-padding: 20; -fx-background-color: white;
             -fx-border-color: #3B261D; -fx-border-width: 2px; -fx-border-radius: 5px;">
-                    <!-- The Java code will populate this dynamically -->
+                    <!-- Dedicated Header Section -->
+                    <VBox fx:id="headerContainer" spacing="10" style="-fx-padding: 10;"/>
+                    <!-- Each section container can be updated individually -->
+                    <VBox fx:id="summaryContainer" spacing="10" style="-fx-padding: 10;"/>
+                    <VBox fx:id="experiencePreviewContainer" spacing="10" style="-fx-padding: 10;"/>
+                    <VBox fx:id="educationPreviewContainer" spacing="10" style="-fx-padding: 10;"/>
+                    <VBox fx:id="skillsPreviewContainer" spacing="10" style="-fx-padding: 10;"/>
+                    <VBox fx:id="languagesPreviewContainer" spacing="10" style="-fx-padding: 10;"/>
+                    <VBox fx:id="certificatesPreviewContainer" spacing="10" style="-fx-padding: 10;"/>
                 </VBox>
             </ScrollPane>
-
-
         </VBox>
-
-
     </SplitPane>
 
     <!-- Experience Modal Overlay (Gray Background) -->
@@ -130,22 +127,19 @@
                visible="false"
                style="-fx-background-color: rgba(0, 0, 0, 0.5);"
                onMouseClicked="#hideExperienceModal">
-
         <!-- Centered Modal Box -->
         <VBox fx:id="experienceModal"
               spacing="10"
               alignment="CENTER"
-             style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #3B261D; -fx-border-radius: 5;"
+              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #3B261D; -fx-border-radius: 5;"
               maxWidth="400" maxHeight="350"
               onMouseClicked="#consumeClick">
-
-            <Label text="Add Experience" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;" />
+            <Label text="Add Experience" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Experience Type" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
-                <ComboBox fx:id="typeDropdown" />
+                <ComboBox fx:id="typeDropdown"/>
                 <Label fx:id="typeErrorLabel" text="Select an experience type!" style="-fx-text-fill: red;" visible="false"/>
             </VBox>
-
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Position" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <TextField fx:id="positionField" promptText="Enter Position"/>
@@ -158,7 +152,7 @@
             </VBox>
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Experience Description" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
-                <TextArea fx:id="descriptionField" promptText="Enter Description" prefRowCount="3"  wrapText="true" />
+                <TextArea fx:id="descriptionField" promptText="Enter Description" prefRowCount="3" wrapText="true"/>
                 <Label fx:id="descriptionCounter" text="0 / 500" style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
                 <Label fx:id="descritpionErrorLabel" text="Location cannot be empty!" style="-fx-text-fill: red;" visible="false"/>
             </VBox>
@@ -173,11 +167,9 @@
                 <Label fx:id="endDateErrorLabel" text="End date is required!" style="-fx-text-fill: red;" visible="false"/>
             </VBox>
             <Label fx:id="durationErrorLabel" text="Duration must be at least 7 days!" style="-fx-text-fill: red;" visible="false"/>
-
-
             <HBox spacing="10">
-                <Button text="Add" onAction="#addExperience" />
-                <Button text="Cancel" onAction="#hideExperienceModalCancel" />
+                <Button text="Add" onAction="#addExperience"/>
+                <Button text="Cancel" onAction="#hideExperienceModalCancel"/>
             </HBox>
         </VBox>
     </StackPane>
@@ -187,7 +179,6 @@
                visible="false"
                style="-fx-background-color: rgba(0, 0, 0, 0.5);"
                onMouseClicked="#hideCertificateModal">
-
         <!-- Centered Modal Box -->
         <VBox fx:id="certificateModal"
               spacing="10"
@@ -195,28 +186,23 @@
               style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #3B261D; -fx-border-radius: 5;"
               maxWidth="400" maxHeight="400"
               onMouseClicked="#consumeClick">
-
-
-            <Label text="Add Certificate" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;" />
+            <Label text="Add Certificate" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Certificate Name" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <TextField fx:id="certificateNameField" promptText="Enter Certificate Name"/>
                 <Label fx:id="certificateNameErrorLabel" text="Certificate name cannot be empty!" style="-fx-text-fill: red;" visible="false"/>
             </VBox>
-
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Issuing Organization" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <TextField fx:id="certificateAssociationField" promptText="Enter Organization"/>
                 <Label fx:id="certificateAssociationErrorLabel" text="Issuing organization cannot be empty!" style="-fx-text-fill: red;" visible="false"/>
             </VBox>
-
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Certificate Description" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
-                <TextArea fx:id="certificateDescriptionField" promptText="Enter Description" prefRowCount="3"  wrapText="true"/>
+                <TextArea fx:id="certificateDescriptionField" promptText="Enter Description" prefRowCount="3" wrapText="true"/>
                 <Label fx:id="certificateDescriptionCounter" text="0 / 300" style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
                 <Label fx:id="certificateDescriptionErrorLabel" text="Description cannot be empty!" style="-fx-text-fill: red;" visible="false"/>
             </VBox>
-
             <VBox spacing="5" alignment="CENTER_LEFT">
                 <Label text="Issue Date" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <DatePicker fx:id="certificateDatePicker"/>
@@ -225,47 +211,23 @@
             <VBox fx:id="uploadBox" spacing="10" alignment="CENTER"
                   onDragOver="#handleDragOver"
                   onDragDropped="#handleDragDropped"
-                  style="
-    -fx-border-color: #CCCCCC;
-    -fx-border-width: 2px;
-    -fx-border-style: dashed;
-    -fx-padding: 20;
-    -fx-background-color: #FAFAFA;
-    -fx-border-radius: 10px;
-    -fx-alignment: CENTER;
-    -fx-max-width: 400px;
-    -fx-min-height: 165px;">
-
-                <!-- Cloud Icon -->
+                  style="-fx-border-color: #CCCCCC; -fx-border-width: 2px; -fx-border-style: dashed; -fx-padding: 20; -fx-background-color: #FAFAFA; -fx-border-radius: 10px; -fx-alignment: CENTER; -fx-max-width: 400px; -fx-min-height: 165px;">
                 <Label text="☁" style="-fx-font-size: 32px; -fx-text-fill: #999999;"/>
-
-                <!-- Instruction Text -->
                 <Label text="Choose a file or drag &amp; drop it here"
                        style="-fx-font-size: 14px; -fx-text-fill: #3B261D; -fx-font-weight: bold;"/>
-
                 <Label text="JPEG, PNG, PDF, DOC, DOCX formats only"
                        style="-fx-font-size: 12px; -fx-text-fill: gray;"/>
-
-                <!-- Upload Button -->
                 <Button text="Browse File" onAction="#uploadCertificateMedia"
-                        style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 14px;
-               -fx-border-radius: 5; -fx-padding: 5 10;"/>
-
-                <!-- Display File Name -->
+                        style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-padding: 5 10;"/>
                 <Label fx:id="certificateMediaLabel"
                        text="No file selected"
                        style="-fx-font-size: 12px; -fx-text-fill: gray;"/>
-
             </VBox>
-
-            <!-- Hidden label to store file path -->
             <Label fx:id="certificateHiddenPath" visible="false"/>
             <Label fx:id="certificateUploadError" text="" style="-fx-text-fill: red;" visible="false"/>
-
-
             <HBox spacing="10">
-                <Button text="Add" onAction="#addCertificate" />
-                <Button text="Cancel" onAction="#hideCertificateModalCancel" />
+                <Button text="Add" onAction="#addCertificate"/>
+                <Button text="Cancel" onAction="#hideCertificateModalCancel"/>
             </HBox>
         </VBox>
     </StackPane>

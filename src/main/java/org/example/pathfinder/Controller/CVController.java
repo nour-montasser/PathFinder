@@ -1,5 +1,6 @@
 package org.example.pathfinder.Controller;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.layout.properties.TextAlignment;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -7,7 +8,7 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.input.*;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
@@ -19,9 +20,6 @@ import org.example.pathfinder.Service.ExperienceService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 
@@ -143,6 +141,10 @@ public class CVController {
     @FXML
     private VBox uploadBox;
     @FXML
+    private VBox summaryContainer;
+    @FXML
+    private VBox headerContainer;
+    @FXML
     private Label certificateMediaLabel;
 
     private  List<Experience> experiences = new ArrayList<>();
@@ -210,10 +212,14 @@ public class CVController {
 
     private static final String API_KEY = "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";
     private static final String API_URL = "https://api-inference.huggingface.co/models/algiraldohe/lm-ner-linkedin-skills-recognition"; // Model endpoint
+    @FXML private VBox experiencePreviewContainer;
+    @FXML private VBox educationPreviewContainer;
+    @FXML private VBox skillsPreviewContainer;
+    @FXML private VBox languagesPreviewContainer;
+    @FXML private VBox certificatesPreviewContainer;
 
     @FXML
     private void exportToPDF() {
-        // Choose file location
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save PDF");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
@@ -221,52 +227,116 @@ public class CVController {
 
         if (file != null) {
             try {
-                // Increase snapshot resolution for higher quality
-                double scaleFactor = 3.0; // Adjust this for higher quality (3x scale)
-                SnapshotParameters params = new SnapshotParameters();
-                params.setTransform(javafx.scene.transform.Transform.scale(scaleFactor, scaleFactor));
-
                 // Take high-resolution snapshot of cvPreviewContainer
+
+                SnapshotParameters params = new SnapshotParameters();
                 WritableImage snapshot = new WritableImage(
-                        (int) (cvPreviewContainer.getWidth() * scaleFactor),
-                        (int) (cvPreviewContainer.getHeight() * scaleFactor)
+                        (int) cvPreviewContainer.getWidth(),
+                        (int) cvPreviewContainer.getHeight()
                 );
+
+
                 cvPreviewContainer.snapshot(params, snapshot);
 
-                // Convert JavaFX image to BufferedImage
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+                BufferedImage fullImage = SwingFXUtils.fromFXImage(snapshot, null);
 
-                // Save image as PNG (high quality)
-                File imageFile = new File("cv_preview_high_res.png");
-                ImageIO.write(bufferedImage, "png", imageFile);
-
-                // Create PDF
+                // Setup PDF
                 PdfWriter writer = new PdfWriter(new FileOutputStream(file));
                 PdfDocument pdfDoc = new PdfDocument(writer);
-                Document document = new Document(pdfDoc);
+                Document document = new Document(pdfDoc, PageSize.A4);
 
-                // Set Page Size to match A4 or Image Aspect Ratio
-                float imageWidth = bufferedImage.getWidth();
-                float imageHeight = bufferedImage.getHeight();
-                PageSize customPageSize = new PageSize(imageWidth, imageHeight);
-                pdfDoc.setDefaultPageSize(customPageSize);
+                float a4Width = PageSize.A4.getWidth(); // 595 points (A4 width)
+                float a4Height = PageSize.A4.getHeight(); // 842 points (A4 height)
 
-                // Add Image to PDF (scaled to fit full page)
-                com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(
-                        com.itextpdf.io.image.ImageDataFactory.create(imageFile.getAbsolutePath()));
+                int imgWidth = fullImage.getWidth();
+                int imgHeight = fullImage.getHeight();
 
-                img.scaleToFit(customPageSize.getWidth(), customPageSize.getHeight());
-                img.setFixedPosition(0, 0); // Ensure full-page alignment
+                // Scale width to A4 and adjust height proportionally
+                float scaleFactor = a4Width / imgWidth;
+                int scaledImgHeight = (int) (imgHeight * scaleFactor);
 
-                document.add(img);
+                int y = 0;
+                int pageNum = 1;
+
+                while (y < scaledImgHeight) {
+                    // Calculate crop height for the current page
+                    int cropHeight = Math.min((int) a4Height, scaledImgHeight - y);
+
+                    // Ensure we don't cut text awkwardly
+                    cropHeight = findOptimalCut(fullImage, (int) (y / scaleFactor), cropHeight);
+
+                    // Extract the sub-image
+                    BufferedImage subImage = fullImage.getSubimage(0, (int) (y / scaleFactor), imgWidth, (int) (cropHeight / scaleFactor));
+                    y += cropHeight;
+
+                    // Save the sub-image temporarily
+                    File tempImageFile = new File("temp_cv_page_" + pageNum + ".png");
+                    ImageIO.write(subImage, "png", tempImageFile);
+
+                    // Add a new A4 page
+                    pdfDoc.addNewPage(PageSize.A4);
+
+                    // Load the image
+                    com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(
+                            com.itextpdf.io.image.ImageDataFactory.create(tempImageFile.getAbsolutePath())
+                    );
+
+                    // Scale the image to fit A4 width, ensuring last page is correctly positioned
+
+                    img.scaleToFit(a4Width, cropHeight);
+
+                    // 🔹 Correct Last Page Position 🔹
+                    float yPos;
+                    if (cropHeight < a4Height) {
+                        yPos = a4Height - cropHeight; // Align to top without extra space
+                    } else {
+                        yPos = 0; // Normal positioning for full pages
+                    }
+
+                    img.setFixedPosition(pageNum, 0, yPos);
+                    document.add(img);
+
+                    pageNum++; // Move to the next page
+                }
+
                 document.close();
-
-                System.out.println("✅ PDF saved at: " + file.getAbsolutePath());
+                System.out.println("✅ PDF exported successfully: " + file.getAbsolutePath());
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    private int findOptimalCut(BufferedImage image, int startY, int maxHeight) {
+        int scanHeight = Math.min(maxHeight, image.getHeight() - startY);
+
+        // Look for a natural text break (avoid cutting text mid-line)
+        for (int y = startY + scanHeight - 80; y < startY + scanHeight; y++) {
+            if (y >= image.getHeight()) break; // Prevent overflow
+
+            for (int x = 0; x < image.getWidth(); x++) {
+                if (isNonEmptyPixel(image, x, y)) {
+                    return scanHeight; // Text found, use full A4 height
+                }
+            }
+        }
+
+        // If no text is found in the bottom 80 pixels, cut slightly higher
+        return scanHeight - 80;
+    }
+    private boolean isNonEmptyPixel(BufferedImage image, int x, int y) {
+        if (y >= image.getHeight() || x >= image.getWidth()) return false;
+
+        int pixel = image.getRGB(x, y);
+        int alpha = (pixel >> 24) & 0xff;
+        int red = (pixel >> 16) & 0xff;
+        int green = (pixel >> 8) & 0xff;
+        int blue = pixel & 0xff;
+
+        // Adjust white threshold if needed (more robust detection)
+        return alpha > 200 && (red < 235 || green < 235 || blue < 235);
     }
 
     private void setupGrammarCheck(TextInputControl textField) {
@@ -725,6 +795,7 @@ public class CVController {
         languagesDropdown.getSelectionModel().clearSelection();
         selectedLevel = 0;
         languageLevelContainer.setVisible(false);
+        updateLanguagesSection();
     }
     @FXML
     private void refreshLanguageContainer() {
@@ -788,13 +859,16 @@ public class CVController {
     private void deleteLanguage(Language language, HBox languageBox) {
         languages.remove(language);
         languageContainer.getChildren().remove(languageBox);
-        updateCVPreview();
+        updateLanguagesSection();
 
         // Restore the deleted language back to the dropdown
         allLanguages.add(language.getName());
         FXCollections.sort(allLanguages);
         languagesDropdown.setItems(allLanguages);
     }
+
+
+
 
 
 
@@ -823,8 +897,8 @@ public class CVController {
         setupGrammarCheck(introductionField);
         setupGrammarCheck(descriptionField);
         setupGrammarCheck(certificateDescriptionField);
-
-
+        introductionField.textProperty().addListener((obs, oldText, newText) -> updateSummarySection());
+        skillsDropdown.valueProperty().addListener((obs, oldVal, newVal) -> updateSkillsSection());
 
         // ✅ Ensure languages are fetched from API
         populateLanguagesFromAPI(); // RESTORED API CALL
@@ -881,6 +955,12 @@ public class CVController {
                 });
             }
         });
+        // 🔹 HEADER (Always Present)
+      updateHeaderSection();
+        titleField.textProperty().addListener((obs, oldText, newText) -> updateHeaderSection());
+
+
+
     }
 
     private void setupCharacterLimit(TextInputControl field, Label counter, int maxLength) {
@@ -972,7 +1052,8 @@ public class CVController {
         deleteButton.setOnAction(e -> {
             experiences.remove(experience);
             experienceContainer.getChildren().remove(experienceBox);
-            updateCVPreview();
+            updateExperienceSection();
+            updateEducationSection();
         });
 
         experienceBox.getChildren().addAll(details, editButton, deleteButton);
@@ -1051,8 +1132,8 @@ public class CVController {
 
             refreshExperienceContainer();
         }
-
-        updateCVPreview();
+        updateEducationSection();
+        updateExperienceSection();
         hideExperienceModal(null);
     }
 
@@ -1139,7 +1220,7 @@ public class CVController {
             // ✅ Check if updating an existing CV
             if (editingCV != null) {
                 // ✅ UPDATE EXISTING CV
-                editingCV.setTitle(title);
+                editingCV.setUserTitle(title);
                 editingCV.setIntroduction(introduction);
                 editingCV.setSkills(skills);
                 cvService.update(editingCV);
@@ -1299,113 +1380,291 @@ public class CVController {
     // 🔹 Creates a header section (NAME + ROLE + CONTACT INFO)
     private VBox createHeaderSection() {
         VBox header = new VBox();
-        header.setAlignment(Pos.CENTER);  // ✅ Center everything
+        header.setAlignment(Pos.CENTER);
         header.setSpacing(5);
         header.setMaxWidth(Double.MAX_VALUE);
 
+        // Always display the name
         Label nameLabel = createStyledLabel("DANETTE EASTWOOD", "header");
-        Label roleLabel = createStyledLabel("Full Stack Developer", "sub-header");
-        Label contactLabel = createStyledLabel("+1-555-555-5555  •  danette.eastwood@gmail.com  •  github.io/danette.east  •  San Francisco, CA", "contact");
         nameLabel.setAlignment(Pos.CENTER);
-        roleLabel.setAlignment(Pos.CENTER);
+        header.getChildren().add(nameLabel);
+
+        // Only create the role label if the CV Title field has something
+        String cvTitle = titleField.getText().trim();
+        if (!cvTitle.isEmpty()) {
+            Label roleLabel = createStyledLabel(cvTitle, "sub-header");
+            roleLabel.setAlignment(Pos.CENTER);
+            header.getChildren().add(roleLabel);
+        }
+
+        // Always display the contact information
+        Label contactLabel = createStyledLabel("+1-555-555-5555  •  danette.eastwood@gmail.com  •  github.io/danette.east  •  San Francisco, CA", "contact");
         contactLabel.setAlignment(Pos.CENTER);
-        header.getChildren().addAll(nameLabel, roleLabel, contactLabel);
+        header.getChildren().add(contactLabel);
+
         return header;
     }
 
+
     @FXML
     private void updateCVPreview() {
-        cvPreviewContainer.getChildren().clear(); // Clear previous preview
+        // Clear previous content before updating
+        System.out.println("Updating CV Preview...");
+        System.out.println("Header: CV Title = '" + titleField.getText().trim() + "'");
+        System.out.println("Summary: '" + introductionField.getText().trim() + "'");
+        System.out.println("Experiences: " + experiences.size() + " items");
+        updateHeaderSection();
+        updateSummarySection();
+        updateExperienceSection();
+        updateEducationSection();
+        updateSkillsSection();
+        updateLanguagesSection();
+        updateCertificatesSection();
+    }
+    @FXML
+    private void exportToPDF2() {
+        // Choose file location
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        File file = fileChooser.showSaveDialog(null);
 
-        // 🔹 HEADER (CENTERED)
-        cvPreviewContainer.getChildren().add(createHeaderSection());
+        if (file != null) {
+            try {
+                // Increase snapshot resolution for higher quality
+                double scaleFactor = 3.0; // Adjust this for higher quality (3x scale)
+                SnapshotParameters params = new SnapshotParameters();
+                params.setTransform(javafx.scene.transform.Transform.scale(scaleFactor, scaleFactor));
 
-        // 🔹 SUMMARY (CENTERED WITH BROWN LINE)
-        cvPreviewContainer.getChildren().add(createSectionLabel("Summary"));
-        cvPreviewContainer.getChildren().add(createParagraphLabel(introductionField.getText()));
+                // Take high-resolution snapshot of cvPreviewContainer
+                WritableImage snapshot = new WritableImage(
+                        (int) (cvPreviewContainer.getWidth() * scaleFactor),
+                        (int) (cvPreviewContainer.getHeight() * scaleFactor)
+                );
+                cvPreviewContainer.snapshot(params, snapshot);
 
-        // 🔹 EXPERIENCE (Internships ONLY)
-        cvPreviewContainer.getChildren().add(createSectionLabel("Experience"));
+                // Convert JavaFX image to BufferedImage
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+
+                // Save image as PNG (high quality)
+                File imageFile = new File("cv_preview_high_res.png");
+                ImageIO.write(bufferedImage, "png", imageFile);
+
+                // Create PDF
+                PdfWriter writer = new PdfWriter(new FileOutputStream(file));
+                PdfDocument pdfDoc = new PdfDocument(writer);
+                Document document = new Document(pdfDoc);
+
+                // Set Page Size to match A4 or Image Aspect Ratio
+                float imageWidth = bufferedImage.getWidth();
+                float imageHeight = bufferedImage.getHeight();
+                PageSize customPageSize = new PageSize(imageWidth, imageHeight);
+                pdfDoc.setDefaultPageSize(customPageSize);
+
+                // Add Image to PDF (scaled to fit full page)
+                com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(
+                        com.itextpdf.io.image.ImageDataFactory.create(imageFile.getAbsolutePath()));
+
+                img.scaleToFit(customPageSize.getWidth(), customPageSize.getHeight());
+                img.setFixedPosition(0, 0); // Ensure full-page alignment
+
+                document.add(img);
+                document.close();
+
+                System.out.println("✅ PDF saved at: " + file.getAbsolutePath());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private void updateHeaderSection() {
+        // Clear the header container first
+        headerContainer.getChildren().clear();
+
+        // Create a new header VBox
+        VBox header = new VBox();
+        header.setAlignment(Pos.CENTER);
+        header.setSpacing(5);
+        header.setMaxWidth(Double.MAX_VALUE);
+
+        // Name is always displayed
+        Label nameLabel = createStyledLabel("DANETTE EASTWOOD", "header");
+        nameLabel.setAlignment(Pos.CENTER);
+        header.getChildren().add(nameLabel);
+
+        // Only display the role label if the CV Title field is not empty
+        String cvTitle = titleField.getText().trim();
+        if (!cvTitle.isEmpty()) {
+            Label roleLabel = createStyledLabel(cvTitle, "sub-header");
+            roleLabel.setAlignment(Pos.CENTER);
+            header.getChildren().add(roleLabel);
+        }
+
+        // Contact information is always displayed
+        Label contactLabel = createStyledLabel("+1-555-555-5555  •  danette.eastwood@gmail.com  •  github.io/danette.east  •  San Francisco, CA", "contact");
+        contactLabel.setAlignment(Pos.CENTER);
+        header.getChildren().add(contactLabel);
+
+        // Add the header to the dedicated header container in the preview
+        headerContainer.getChildren().add(header);
+    }
+
+    private void updateSummarySection() {
+        summaryContainer.getChildren().clear();
+        String introText = introductionField.getText().trim();
+        if (!introText.isEmpty()) {
+            summaryContainer.getChildren().add(createSectionLabel("Summary"));
+            summaryContainer.getChildren().add(createParagraphLabel(introText));
+        }
+    }
+
+    private void updateExperienceSection() {
+        // Clear the dedicated experience preview container first
+        experiencePreviewContainer.getChildren().clear();
+
         boolean hasInternship = false;
+        VBox experienceSection = new VBox();
+        experienceSection.setSpacing(10);
+
         for (Experience exp : experiences) {
             if (exp.getType().equalsIgnoreCase("Internship")) {
                 hasInternship = true;
                 VBox experienceBox = new VBox();
-                experienceBox.setSpacing(3);
+                experienceBox.setSpacing(5);
 
-                // 🔹 Create an HBox to align Company Name (Left) and Date (Right)
+                // Create an HBox to align Company Name (left) and Date (right)
                 HBox companyDateBox = new HBox();
                 companyDateBox.setSpacing(10);
                 companyDateBox.setMaxWidth(Double.MAX_VALUE);
 
                 Label company = createStyledLabel(exp.getLocationName(), "bold");
                 Label dates = createStyledLabel(exp.getStartDate() + " - " + exp.getEndDate(), "small");
-
                 HBox.setHgrow(company, Priority.ALWAYS);  // Pushes date to the right
+
                 companyDateBox.getChildren().addAll(company, dates);
 
-                // 🔹 Job Title & Description
+                // Job Title & Description
                 Label title = createStyledLabel(exp.getPosition(), "position_experience");
                 Label desc = createParagraphLabel(exp.getDescription());
 
                 experienceBox.getChildren().addAll(companyDateBox, title, desc);
-                cvPreviewContainer.getChildren().add(experienceBox);
+                experienceSection.getChildren().add(experienceBox);
             }
         }
-        if (!hasInternship) {
-            cvPreviewContainer.getChildren().add(createParagraphLabel("No Internship Experience Listed"));
+        if (hasInternship) {
+            // Add the section header and the built section to the dedicated container
+            experiencePreviewContainer.getChildren().add(createSectionLabel("Experience"));
+            experiencePreviewContainer.getChildren().add(experienceSection);
         }
+    }
 
-        // 🔹 EDUCATION (Academic ONLY)
-        cvPreviewContainer.getChildren().add(createSectionLabel("Education"));
+
+    private void updateEducationSection() {
+        // Clear the dedicated education preview container first
+        educationPreviewContainer.getChildren().clear();
+
         boolean hasAcademic = false;
+        VBox educationSection = new VBox();
+        educationSection.setSpacing(10);
+
         for (Experience exp : experiences) {
             if (exp.getType().equalsIgnoreCase("Academic")) {
                 hasAcademic = true;
                 VBox educationBox = new VBox();
-                educationBox.setSpacing(3);
+                educationBox.setSpacing(5);
 
-                // 🔹 Create an HBox to align School Name (Left) and Date (Right)
+                // Create an HBox to align School Name (left) and Date (right)
                 HBox schoolDateBox = new HBox();
                 schoolDateBox.setSpacing(10);
                 schoolDateBox.setMaxWidth(Double.MAX_VALUE);
 
-                Label school = createStyledLabel(exp.getLocationName(), "italic");
+                Label school = createStyledLabel(exp.getLocationName(), "bold");
                 Label dates = createStyledLabel(exp.getStartDate() + " - " + exp.getEndDate(), "small");
-
                 HBox.setHgrow(school, Priority.ALWAYS);  // Pushes date to the right
+
                 schoolDateBox.getChildren().addAll(school, dates);
 
-                // 🔹 Degree Title & Description
+                // Degree Title & Description
                 Label degree = createStyledLabel(exp.getPosition(), "position_experience");
                 Label desc = createParagraphLabel(exp.getDescription());
 
                 educationBox.getChildren().addAll(schoolDateBox, degree, desc);
-                cvPreviewContainer.getChildren().add(educationBox);
+                educationSection.getChildren().add(educationBox);
             }
         }
-        if (!hasAcademic) {
-            cvPreviewContainer.getChildren().add(createParagraphLabel("No Education Listed"));
+        if (hasAcademic) {
+            // Add the header and the built section to the dedicated container
+            educationPreviewContainer.getChildren().add(createSectionLabel("Education"));
+            educationPreviewContainer.getChildren().add(educationSection);
         }
+    }
 
-        // 🔹 SKILLS (CENTERED WITH BROWN LINE)
-        cvPreviewContainer.getChildren().add(createSectionLabel("Skills"));
-        if (skillsDropdown.getValue() != null) {
-            cvPreviewContainer.getChildren().add(createParagraphLabel(skillsDropdown.getValue()));
-        } else {
-            cvPreviewContainer.getChildren().add(createParagraphLabel("No Skills Listed"));
+
+    private void updateSkillsSection() {
+        // Clear the dedicated skills container first
+        skillsPreviewContainer.getChildren().clear();
+
+        if (skillsDropdown.getValue() != null && !skillsDropdown.getValue().trim().isEmpty()) {
+            skillsPreviewContainer.getChildren().add(createSectionLabel("Skills"));
+            skillsPreviewContainer.getChildren().add(createParagraphLabel(skillsDropdown.getValue().trim()));
         }
+    }
 
-        // 🔹 LANGUAGES (CENTERED WITH BROWN LINE)
-        cvPreviewContainer.getChildren().add(createSectionLabel("Languages"));
-        if (languages.isEmpty()) {
-            cvPreviewContainer.getChildren().add(createParagraphLabel("No Languages Listed"));
-        } else {
+    private void updateLanguagesSection() {
+        // Clear the dedicated languages container first
+        languagesPreviewContainer.getChildren().clear();
+
+        if (!languages.isEmpty()) {
+            languagesPreviewContainer.getChildren().add(createSectionLabel("Languages"));
             for (Language lang : languages) {
-                cvPreviewContainer.getChildren().add(createStyledLabel("• " + lang.getName() + " - " + lang.getLevel(), "small"));
+                languagesPreviewContainer.getChildren().add(
+                        createStyledLabel("• " + lang.getName() + " - " + lang.getLevel(), "small")
+                );
             }
         }
     }
+
+    private void updateCertificatesSection() {
+        // Clear the dedicated certificates container first
+        certificatesPreviewContainer.getChildren().clear();
+
+        boolean hasCertificates = false;
+        VBox certificateSection = new VBox();
+        certificateSection.setSpacing(10);
+
+        for (Certificate cert : certificates) {
+            hasCertificates = true;
+            VBox certificateBox = new VBox();
+            certificateBox.setSpacing(5);
+
+            // Create an HBox to align Issuing Organization (left) and Date (right)
+            HBox certDateBox = new HBox();
+            certDateBox.setSpacing(10);
+            certDateBox.setMaxWidth(Double.MAX_VALUE);
+
+            Label organization = createStyledLabel(cert.getAssociation(), "bold");
+            Label issueDate = createStyledLabel(cert.getDate().toString(), "small");
+            HBox.setHgrow(organization, Priority.ALWAYS);  // Pushes date to the right
+
+            certDateBox.getChildren().addAll(organization, issueDate);
+
+            // Certificate Name & Description
+            Label certName = createStyledLabel(cert.getTitle(), "position_experience");
+            Label certDesc = createParagraphLabel(cert.getDescription());
+
+            certificateBox.getChildren().addAll(certDateBox, certName, certDesc);
+            certificateSection.getChildren().add(certificateBox);
+        }
+
+        if (hasCertificates) {
+            certificatesPreviewContainer.getChildren().add(createSectionLabel("Certificates"));
+            certificatesPreviewContainer.getChildren().add(certificateSection);
+        }
+    }
+
+
+
 
 
 
@@ -1431,20 +1690,23 @@ public class CVController {
 
 
 
-    // 🔹 Creates a standard paragraph-style label
     private Label createParagraphLabel(String text) {
         Label label = new Label(text);
-        label.setWrapText(true);
-        label.setMaxWidth(600);
+        label.setWrapText(true); // ✅ Ensure wrapping
+        label.setMaxHeight(Double.MAX_VALUE); // ✅ Allow expansion in VBox
+        label.setMinHeight(Region.USE_PREF_SIZE); // ✅ Prevent unnecessary shrinking
         label.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+
+        VBox.setVgrow(label, Priority.ALWAYS); // ✅ Ensure label grows inside VBox
         return label;
     }
 
-    // 🔹 Creates a custom styled label based on type
     private Label createStyledLabel(String text, String type) {
         Label label = new Label(text);
-        label.setWrapText(true);
-        label.setMaxWidth(600);
+        label.setWrapText(true); // ✅ Enable text wrapping
+        label.setMaxHeight(Double.MAX_VALUE); // ✅ Allow expansion in VBox
+        label.setMinHeight(Region.USE_PREF_SIZE); // ✅ Prevent unwanted shrinkage
+        VBox.setVgrow(label, Priority.ALWAYS); // ✅ Ensure proper layout
 
         switch (type) {
             case "header":
@@ -1469,6 +1731,7 @@ public class CVController {
                 label.setStyle("-fx-font-size: 12px; -fx-text-fill: #777777;");
                 break;
         }
+
         return label;
     }
 
@@ -1636,7 +1899,7 @@ public class CVController {
         deleteButton.setOnAction(e -> {
             certificates.remove(certificate);
             certificateContainer.getChildren().remove(certificateBox);
-            updateCVPreview();
+            updateCertificatesSection();
         });
 
         certificateBox.getChildren().addAll(details, openFileButton, editButton, deleteButton);
@@ -1701,6 +1964,7 @@ public class CVController {
 
         clearCertificateForm();
         hideCertificateModal(null);
+        updateCertificatesSection();
     }
 
 
@@ -1743,24 +2007,25 @@ public class CVController {
     }
 
     public void loadCVData(int cvId) {
-         editingCV= cvService.getById(cvId); // 🔥 Fetch CV from database
-        if (editingCV!= null) {
-            // 🔹 Fill in basic details
-            titleField.setText(editingCV.getTitle());
+        editingCV = cvService.getById(cvId); // Fetch CV from database
+        if (editingCV != null) {
+            // Fill in basic details
+            titleField.setText(editingCV.getUserTitle());
             introductionField.setText(editingCV.getIntroduction());
-            skillsDropdown.setValue(editingCV.getSkills()); // 🔥 Adjust if Skills is a list
+            skillsDropdown.setValue(editingCV.getSkills()); // Adjust if Skills is a list
+
             new Timeline(new KeyFrame(Duration.millis(1000), event -> {
                 disableGrammarCheck = false;
                 checkGrammarForField(titleField);
                 checkGrammarForField(introductionField);
             })).play();
 
-            // 🔹 Clear old data before inserting new ones
+            // Clear old data before inserting new ones
             experienceContainer.getChildren().clear();
             certificateContainer.getChildren().clear();
             languageContainer.getChildren().clear();
 
-            // 🔥 Load Experiences
+            // Load Experiences
             experiences = editingCV.getExperiences();
             if (experiences != null) {
                 for (Experience experience : experiences) {
@@ -1768,27 +2033,28 @@ public class CVController {
                 }
             }
 
-            // 🔥 Load Certificates
-          certificates = editingCV.getCertificates();
+            // Load Certificates
+            certificates = editingCV.getCertificates();
             if (certificates != null) {
                 for (Certificate certificate : certificates) {
                     addCertificateBox(certificate);
                 }
             }
 
-            // 🔥 Load Languages
-         languages = editingCV.getLanguageList();
-
+            // Load Languages
+            languages = editingCV.getLanguageList();
             if (languages != null) {
                 for (Language language : languages) {
                     addLanguageBox(language);
                 }
             }
 
+            Platform.runLater(() -> updateCVPreview());
         } else {
             System.err.println("❌ CV not found for ID: " + cvId);
         }
     }
+
     // 🔥 Styled Button Factory
     private Button createStyledButton(String text, String bgColor, String textColor) {
         Button button = new Button(text);

@@ -161,7 +161,12 @@ public class CVShowController implements Initializable {
         switch (criteria) {
             case "Most Relevant":
                 // Logic for sorting by relevance (Modify based on your own logic)
-                allCVs.sort((cv1, cv2) -> Integer.compare(cv2.getIdCV(), cv1.getIdCV())); // Example: Latest first
+                allCVs.sort((cv1, cv2) -> {
+                    if (cv1.isFavorite() != cv2.isFavorite()) {
+                        return Boolean.compare(cv2.isFavorite(), cv1.isFavorite()); // Favorites first
+                    }
+                    return cv2.getDateCreation().compareTo(cv1.getDateCreation()); // Then sort by latest
+                });
                 break;
             case "Newest Edited":
                 allCVs.sort((cv1, cv2) -> cv2.getDateCreation().compareTo(cv1.getDateCreation()));
@@ -261,14 +266,20 @@ public class CVShowController implements Initializable {
 
         // ⭐ Favorite Button (Toggle)
         ToggleButton favoriteButton = new ToggleButton();
-        favoriteButton.setGraphic(getResizedIcon("/org/example/pathfinder/view/Sources/star_outline.png", 20, 20));
+        favoriteButton.setGraphic(getResizedIcon("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png", 20, 20));
         favoriteButton.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
 
         // Toggle Star Icon on Click
-        favoriteButton.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            String iconPath = isSelected ? "/org/example/pathfinder/view/Sources/star_filled.png"
+        favoriteButton.setOnAction(event -> {
+            cvService.updateFavorite(cv.getIdCV()); // Toggle favorite in DB
+            boolean newFavoriteStatus = !cv.isFavorite();
+            cv.setFavorite(newFavoriteStatus); // Update local object
+
+            String newIconPath = newFavoriteStatus ? "/org/example/pathfinder/view/Sources/star_filled.png"
                     : "/org/example/pathfinder/view/Sources/star_outline.png";
-            favoriteButton.setGraphic(getResizedIcon(iconPath, 20, 20));
+            favoriteButton.setGraphic(getResizedIcon(newIconPath, 20, 20));
+
+
         });
 
         // ⋮ Dropdown Menu (MenuButton)
