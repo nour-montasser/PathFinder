@@ -28,6 +28,7 @@ import org.example.pathfinder.Service.CoverLetterService;
 import org.example.pathfinder.Service.JobOfferService;
 import org.example.pathfinder.Service.UserService;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -127,8 +128,11 @@ public class JobOfferProfileController {
         // Set company info
         companyName.setText(applicationService.getUserNameById(jobOffer.getIdUser()));  // assuming user profile contains the company name
         companyAddress.setText(jobOffer.getAddress());  // assuming user profile contains the address
-        companyImage.setImage(new Image(applicationService.getUserProfilePicture(jobOffer.getIdUser())));  // assuming user profile contains the image path
-
+        String url = applicationService.getUserProfilePicture(jobOffer.getIdUser());
+        File imageFile = new File(url);
+        if (imageFile.exists()) {
+            companyImage.setImage(new Image(imageFile.toURI().toString()));
+        }
         if(applicationService.hasUserAppliedForJob(jobOffer, LoggedUser.getInstance().getUserId())){
             applyButton.setVisible(false);
             ApplicationJob applicationJob = applicationService.getApplicationByJobOfferAndUser(jobOffer.getIdOffer(), LoggedUser.getInstance().getUserId());
