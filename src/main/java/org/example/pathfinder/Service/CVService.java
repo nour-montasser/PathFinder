@@ -124,6 +124,7 @@ public class CVService implements Services<CV> {
                         resultSetCV.getTimestamp("date_creation"),
                         resultSetCV.getTimestamp("last_viewed") // ✅ Fetch lastViewed
                 );
+                cv.setTitle(resultSetCV.getString("title"));
 
                 // 🔹 Update `last_viewed` every time the CV is retrieved
                 updateLastViewed(id);
