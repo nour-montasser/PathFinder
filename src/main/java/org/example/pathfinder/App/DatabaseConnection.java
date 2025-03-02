@@ -11,7 +11,7 @@ public class DatabaseConnection {
 
     public DatabaseConnection() {
         System.out.println("Attempting to connect to the database...");
-        String url = "jdbc:mysql://localhost:3306/pathfinder"; // Database URL
+        String url = "jdbc:mysql://localhost:3307/pathfinder"; // Database URL
         String username = "root"; // Database username
         String password = ""; // Database password
 

@@ -78,7 +78,7 @@ public class ChannelMessageController {
     private User selectedUser;  // Currently selected user
     private Long currentChannelId;
     private UserService userService;
-    private Long currentUserId =7L; // Change this to test different users (1, 2, etc.)
+    private Long currentUserId =2L; // Change this to test different users (1, 2, etc.)
 
     public ChannelMessageController() {
         messageService = new MessageService();
@@ -695,6 +695,7 @@ public class ChannelMessageController {
                 newChannel.setUser1Id(currentUserId);
                 newChannel.setUser2Id(selectedUser.getId());
                 channelService.add(newChannel);
+
 
                 // Refresh channel list
                 List<Channel> updatedChannels = channelService.getall(currentUserId);
