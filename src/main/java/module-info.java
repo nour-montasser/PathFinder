@@ -1,5 +1,7 @@
 module org.example.pathfinder {
     requires javafx.fxml;
+    requires javafx.controls;
+
     requires java.sql;
     requires org.json;
     requires mysql.connector.j;

@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import java.io.IOException;
+import java.net.URL;
 
 public class FrontOfficeController {
 
@@ -49,18 +50,35 @@ public class FrontOfficeController {
     // 📌 Function to Load New Pages in contentArea
     private void loadPage(String fxmlFile) {
         try {
-            // Load the new view
-            Parent newView = FXMLLoader.load(getClass().getResource("/org/example/pathfinder/view/Frontoffice/" + fxmlFile));
+            String fxmlPath = "/org/example/pathfinder/view/Frontoffice/" + fxmlFile;
+            URL fxmlUrl = FrontOfficeController.class.getResource(fxmlPath);
 
-            // Clear the content area and add the new view
+            if (fxmlUrl == null) {
+                System.err.println("❌ Cannot find FXML: " + fxmlPath);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent newView = loader.load();
+
+            // If it's the Messages page, add the CSS
+            if (fxmlFile.equals("Message.fxml")) {
+                String cssPath = "/styles/style.css";
+                URL cssUrl = FrontOfficeController.class.getResource(cssPath);
+
+                if (cssUrl != null) {
+                    newView.getStylesheets().add(cssUrl.toExternalForm());
+                } else {
+                    System.err.println("❌ Cannot find CSS: " + cssPath);
+                }
+            }
+
             contentArea.getChildren().clear();
             contentArea.getChildren().add(newView);
 
-            // Add the CSS to the new view
-            /*String css = getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm();
-            newView.getStylesheets().add(css);*/
         } catch (IOException e) {
-            System.err.println("❌ Error loading " + fxmlFile + ": " + e.getMessage());
+            System.err.println("❌ Error loading " + fxmlFile);
+            e.printStackTrace();
         }
     }
     // ✅ Function to Set Active Button (Turns White & Adds Underline)
@@ -101,7 +119,7 @@ public class FrontOfficeController {
     @FXML
     private void loadMessagesPage() {
         setActiveButton(messagesButton);
-        loadPage("Messages.fxml");
+        loadPage("Message.fxml");
     }
 
     @FXML
@@ -115,7 +133,6 @@ public class FrontOfficeController {
     public void loadView(Parent newView) {
         contentArea.getChildren().clear();
         contentArea.getChildren().add(newView);
-
     }
 
     @FXML

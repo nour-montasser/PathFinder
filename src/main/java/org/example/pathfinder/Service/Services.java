@@ -6,8 +6,9 @@ public interface Services<T> {
     public void add(T t);
     public void update(T t);
 
-    public void delete(long a);
+    void delete(long id); // Delete & update UI
 
+    public List<T> getall2(Long userId);
     public List<T> getall();
 
     public T getone();

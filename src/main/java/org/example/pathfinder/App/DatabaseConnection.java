@@ -5,22 +5,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static DatabaseConnection instance;
-    private Connection cnx;
 
-    private final String URL = "jdbc:mysql://localhost:3307/pathfinder";
-    private final String USER = "root"; // Change this if needed
-    private final String PASSWORD = ""; // Change this if needed
+    private Connection cnx; // Make private
+    private static DatabaseConnection instance; // Singleton instance
 
-    private DatabaseConnection() {
+    public DatabaseConnection() {
+        System.out.println("Attempting to connect to the database...");
+        String url = "jdbc:mysql://localhost:3306/pathfinder"; // Database URL
+        String username = "root"; // Database username
+        String password = ""; // Database password
+
         try {
-            cnx = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✅ Connexion à la base de données réussie !");
+            cnx = DriverManager.getConnection(url, username, password);
+            System.out.println("Connexion établie"); // Connection success
         } catch (SQLException e) {
-            System.err.println("❌ Erreur de connexion à la base : " + e.getMessage());
+            System.err.println("Erreur de connexion à la base de données : " + e.getMessage());
+            throw new RuntimeException(e); // Throw runtime exception for fatal error
         }
     }
 
+    // Singleton method to get the instance
     public static DatabaseConnection getInstance() {
         if (instance == null) {
             instance = new DatabaseConnection();
@@ -28,26 +32,8 @@ public class DatabaseConnection {
         return instance;
     }
 
+    // Getter for the connection
     public Connection getCnx() {
-        try {
-            if (cnx == null || cnx.isClosed()) {
-                cnx = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("🎯 Nouvelle connexion ouverte !");
-            }
-        } catch (SQLException e) {
-            System.err.println("❌ Impossible d'ouvrir une nouvelle connexion : " + e.getMessage());
-        }
         return cnx;
     }
-    public void closeConnection() {
-        try {
-            if (cnx != null && !cnx.isClosed()) {
-                cnx.close();
-                System.out.println("✅ Connexion fermée !");
-            }
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la fermeture de la connexion : " + e.getMessage());
-        }
-    }
-
 }
