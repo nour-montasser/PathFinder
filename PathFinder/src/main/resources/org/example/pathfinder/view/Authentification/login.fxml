@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="523.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.LoginController">
+    <VBox alignment="CENTER" prefHeight="522.0" prefWidth="350.0" spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10;">
+      <ImageView fitHeight="82.0" fitWidth="84.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../Sources/pathfinder_logo_compass.png" />
+         </image>
+      </ImageView>
+
+        <!-- Title -->
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Login Form" />
+
+        <!-- Toggle Login/Signup -->
+        <HBox spacing="5" />
+
+        <!-- Email Field -->
+        <TextField fx:id="EmailAddressText" promptText="Email Address" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+        <!-- Password Field -->
+        <PasswordField fx:id="passwordText" promptText="Password" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+
+        <!-- CAPTCHA Section -->
+        <ImageView fx:id="captchaImageView" fitHeight="50.0" fitWidth="150.0" />
+      <GridPane prefHeight="99.0" prefWidth="310.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="210.0" minWidth="10.0" prefWidth="191.8000244140625" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="184.6" minWidth="10.0" prefWidth="118.1999755859375" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+              <TextField fx:id="captchaInput" prefHeight="39.0" prefWidth="205.0" promptText="Enter answer" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" GridPane.rowIndex="1" />
+              <Button fx:id="refreshCaptchaButton" onAction="#generateNewCaptcha" prefHeight="26.0" prefWidth="110.0" style="-fx-background-color: #dcdcdc; -fx-text-fill: black;" text="New CAPTCHA" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="7.0" />
+               </GridPane.margin>
+            </Button>
+         </children>
+      </GridPane>
+
+      
+              <!-- Signup Button -->
+        <Button onMouseClicked="#signInClicked" style="-fx-background-color: #b49474; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5;" text="Sign in">
+         <VBox.margin>
+            <Insets top="21.0" />
+         </VBox.margin>
+      </Button>
+
+        <!-- Login Link -->
+        <HBox spacing="5">
+            <Label style="-fx-font-size: 12px;" text="Already have an account?" />
+            <Label onMouseClicked="#registerChange" style="-fx-text-fill: #b49474; -fx-font-size: 12px; -fx-cursor: hand;" text="Register here" textFill="#b49474" />
+        </HBox>
+      <HBox spacing="5">
+         <children>
+            <Label style="-fx-font-size: 12px;" text="Forgot password?" />
+            <Label onMouseClicked="#resetPassword" style="-fx-text-fill: #b49474; -fx-font-size: 12px; -fx-cursor: hand;" text="Reset password" textFill="#b49474" />
+         </children>
+      </HBox>
+
+        <!-- Separator -->
+        <Label style="-fx-font-size: 12px; -fx-font-weight: bold;" text="---------------- Or ----------------" />
+
+        <!-- Social Login Buttons -->
+        <HBox alignment="TOP_CENTER" spacing="5">
+            <Button fx:id="facebookLogin" onAction="#signInWithFacebookClicked" style="-fx-background-color: #3b5998; -fx-text-fill: white;" text="Login with Facebook" textAlignment="CENTER" />
+            <Button fx:id="googleLogin" onAction="#signInWithGoogleClicked" style="-fx-background-color: #db4437; -fx-text-fill: white;" text="Login with Google" textAlignment="CENTER" />
+        </HBox>
+    </VBox>
+</AnchorPane>
