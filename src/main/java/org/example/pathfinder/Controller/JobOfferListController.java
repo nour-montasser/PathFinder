@@ -80,7 +80,7 @@ public class JobOfferListController {
     private ComboBox<String> cityComboBox;*/
     @FXML
     public void initialize() {
-        String imagePath = String.valueOf(getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png"));
+        String imagePath = String.valueOf(getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png"));
         searchIcon.setImage(new Image(imagePath));
         jobOfferService = new JobOfferService();
         jobOffers = FXCollections.observableArrayList();

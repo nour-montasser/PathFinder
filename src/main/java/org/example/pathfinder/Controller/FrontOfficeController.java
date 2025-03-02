@@ -29,7 +29,7 @@ public class FrontOfficeController {
 
         // Load Logo Image
         try {
-            String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_navbar.png").toExternalForm();
+            String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_navbar.png.png").toExternalForm();
             logoImage.setImage(new Image(logoPath));
         } catch (Exception e) {
             System.err.println("⚠️ Logo Image not found: " + e.getMessage());

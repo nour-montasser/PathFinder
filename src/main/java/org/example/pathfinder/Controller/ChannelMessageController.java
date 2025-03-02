@@ -3,6 +3,7 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -90,6 +91,8 @@ public class ChannelMessageController {
     private void initialize() {
         setupSearchBox();
 
+        setupMessageInput();
+
         messageListView.setStyle(
                 "-fx-background-color: transparent;" +
                         "-fx-control-inner-background: transparent;" +
@@ -97,15 +100,19 @@ public class ChannelMessageController {
                         "-fx-padding: 0;"
         );
 
-        messageListView.getStyleClass().add("no-hover-list-view");        VBox.setVgrow(messageListView, Priority.ALWAYS);
+
+        messageListView.getStyleClass().add("no-hover-list-view");
+        VBox.setVgrow(messageListView, Priority.ALWAYS);
         channelListView.setStyle("-fx-background-insets: 0; -fx-padding: 0;");
         channelListView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
+
         // Scroll to bottom when items change
         messageListView.getItems().addListener((ListChangeListener<Message>) change -> {
             if (messageListView.getItems().size() > 0) {
                 messageListView.scrollTo(messageListView.getItems().size() - 1);
             }
         });
+
 
         // Fetch channels for current user only
         List<Channel> channelsList = channelService.getall(currentUserId);
@@ -135,16 +142,12 @@ public class ChannelMessageController {
             }
         });
 
-        // Populate ComboBox with users except current user
 
-
-            // Handle ComboBox user selection
-
-
-
-        // Set up channel list cell factory
+        // Set up search box
         searchBox.setPromptText("Search users...");
         searchBox.setOnAction(this::handleUserSearch);
+
+        // Set up cell factory for channel list
         channelListView.setCellFactory(listView -> new ListCell<Channel>() {
             private String truncateMessage(String message, int maxLength) {
                 if (message == null || message.length() <= maxLength) {
@@ -153,9 +156,11 @@ public class ChannelMessageController {
                 return message.substring(0, maxLength - 3) + "...";
             }
 
+
             @Override
             protected void updateItem(Channel item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
@@ -173,7 +178,7 @@ public class ChannelMessageController {
                     ImageView profileImage = new ImageView();
 
                     if (url == null || url.isEmpty()) {
-                        url = "/Sources/pathfinder_logo_compass.png";
+                        url = "/Sources/pathfinder_logo_compass.png.png";
                     }
 
                     try {
@@ -185,7 +190,7 @@ public class ChannelMessageController {
                             profileImage.setImage(image);
                         } else {
                             // Fallback to default image
-                            InputStream defaultStream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png");
+                            InputStream defaultStream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png.png");
                             Image defaultImage = new Image(defaultStream);
                             profileImage.setImage(defaultImage);
                         }
@@ -238,13 +243,20 @@ public class ChannelMessageController {
 
                     setGraphic(channelLayout);
                 }
+
+
             }
+
         });
+
 
         // Set up button handlers
         sendButton.setOnMouseClicked(event -> sendMessage());
         deleteChannelButton.setOnAction(event -> deleteSelectedChannel());
     }
+
+
+
 
     @FXML
     private void deleteSelectedChannel() {
@@ -457,7 +469,7 @@ public class ChannelMessageController {
     private final Image defaultAvatar = loadDefaultAvatar();
 
     private Image loadDefaultAvatar() {
-        try (InputStream stream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png")) {
+        try (InputStream stream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png.png")) {
             if (stream == null) {
                 System.err.println("Could not find default avatar image");
                 return null;
@@ -475,6 +487,7 @@ public class ChannelMessageController {
             private final VBox messageBox = new VBox();
             private final Label contentLabel = new Label();
             private final MenuButton menuButton = new MenuButton("⋮");
+            private final ImageView profilePicture = new ImageView();
 
             {
                 contentLabel.setWrapText(true);
@@ -483,9 +496,19 @@ public class ChannelMessageController {
                 contentLabel.setMinWidth(50);
                 contentLabel.setPadding(new Insets(8));
 
+                // Configure profile picture
+                profilePicture.setFitHeight(40);
+                profilePicture.setFitWidth(40);
+                profilePicture.setPreserveRatio(true);
+
+                // Make profile picture circular
+                Circle clip = new Circle(20, 20, 20);
+                profilePicture.setClip(clip);
+
                 messageBox.setPadding(new Insets(4, 8, 4, 8));
                 messageContainer.setSpacing(8);
                 messageContainer.setMaxWidth(Region.USE_PREF_SIZE);
+                messageContainer.setAlignment(Pos.CENTER_LEFT);
 
                 menuButton.getStyleClass().add("message-menu");
                 menuButton.setVisible(false);
@@ -518,7 +541,7 @@ public class ChannelMessageController {
                 if (message.getIdUserSender().equals(currentUserId)) {
                     setupSenderMessage(message);
                 } else {
-                    setupReceiverMessage(message.getIdUserSender());
+                    setupReceiverMessage(message);
                 }
 
                 messageBox.getChildren().add(messageContainer);
@@ -547,11 +570,37 @@ public class ChannelMessageController {
                 messageContainer.getChildren().addAll(contentLabel, menuButton);
             }
 
-            private void setupReceiverMessage(Long senderId) {
+            private void setupReceiverMessage(Message message) {
                 messageBox.setAlignment(Pos.CENTER_LEFT);
                 messageContainer.setAlignment(Pos.CENTER_LEFT);
                 contentLabel.setStyle("-fx-background-color: #e9ecef; -fx-text-fill: black; -fx-background-radius: 15px;");
-                messageContainer.getChildren().add(contentLabel);
+
+                // Load profile picture
+                ApplicationService applicationService = new ApplicationService();
+                String url = applicationService.getUserProfilePicture(message.getIdUserSender());
+
+                if (url == null || url.isEmpty()) {
+                    url = "/Sources/pathfinder_logo_compass.png";
+                }
+
+                try {
+                    String finalUrl = url.startsWith("/") ? url : "/" + url;
+                    InputStream stream = getClass().getResourceAsStream(finalUrl);
+
+                    if (stream != null) {
+                        profilePicture.setImage(new Image(stream));
+                    } else {
+                        // Fallback to default image
+                        InputStream defaultStream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png");
+                        if (defaultStream != null) {
+                            profilePicture.setImage(new Image(defaultStream));
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error loading profile picture: " + e.getMessage());
+                }
+
+                messageContainer.getChildren().addAll(profilePicture, contentLabel);
             }
         });
 
@@ -564,7 +613,9 @@ public class ChannelMessageController {
                 messageListView.scrollTo(messages.size() - 1);
             }
         });
-    }    private void configureMenuButton(MenuButton menuButton, Message message) {
+    }
+
+    private void configureMenuButton(MenuButton menuButton, Message message) {
         menuButton.getItems().clear();
 
         MenuItem updateItem = new MenuItem("Update");
@@ -720,6 +771,14 @@ public class ChannelMessageController {
         suggestionList.setManaged(false);
         suggestionList.setPrefHeight(0);
         suggestionList.setMinHeight(0);
+    }
+    private void setupMessageInput() {
+        messageInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER && !event.isShiftDown()) {
+                event.consume(); // Prevent new line
+                sendMessage();
+            }
+        });
     }
 
     private void setupSearchBox() {

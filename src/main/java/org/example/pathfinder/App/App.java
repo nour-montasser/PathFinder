@@ -22,7 +22,7 @@ public class App extends Application {
         // Set up the window title, icon, and scene
         stage.setTitle("PathFinder");
         stage.setScene(scene);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png")));
         stage.setMaximized(true);
 
         // Show the stage (window)

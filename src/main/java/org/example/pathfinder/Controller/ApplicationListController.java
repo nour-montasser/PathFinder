@@ -49,7 +49,7 @@ public class ApplicationListController {
         applicationService = new ApplicationService();
         applicationService = new ApplicationService();
         jobOfferService = new JobOfferService();
-        String imagePath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png").toString();
+        String imagePath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png").toString();
         searchIcon.setImage(new Image(imagePath));
         coverLetterService = new CoverLetterService();
         applicationListView.setItems(getApplicationsForUser());

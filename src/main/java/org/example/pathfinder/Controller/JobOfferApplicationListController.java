@@ -96,7 +96,7 @@ public class JobOfferApplicationListController {
         System.out.println(jobOffer);
 
         // Set the search icon
-        String imagePath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png").toString();
+        String imagePath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png").toString();
         searchIcon.setImage(new Image(imagePath));
 
         // Fetch the company data from the user profile
@@ -388,7 +388,7 @@ normalPart.setStyle("-fx-text-fill: #777777FF;");
         }
     }private GoogleCredentials getGoogleCredentials() throws IOException, GeneralSecurityException {
         // Load client secrets
-        InputStream in = new FileInputStream("C:\\Users\\nourm\\Documents\\esprit\\3eme\\Project\\PathFinder\\src\\main\\resources\\org\\example\\pathfinder\\view\\Sources\\credentials.json");
+        InputStream in = new FileInputStream("C:\\Users\\User\\Documents\\esprit 3eme\\PI2\\PathFinder-Message\\src\\main\\resources\\org\\example\\pathfinder\\view\\Sources\\credentials.json");
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(), new InputStreamReader(in));
 
         // Build the authorization flow
