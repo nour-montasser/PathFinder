@@ -1,0 +1,257 @@
+/* Define colors directly without variables */
+.root {
+    -fx-background-color: #FDF6E3;
+}
+
+#contentArea {
+    -fx-background-color: #F5E6D3;
+}
+
+/* Left panel */
+.left-panel {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #FFFFFF, #FDF6E3);
+    -fx-border-color: #E6CCB2;
+    -fx-border-width: 0 1 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0, 0, 0);
+}
+
+/* Channel list */
+.channel-list {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.channel-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.channel-list .list-cell:selected {
+    -fx-background-color: #F5E6D3;
+}
+
+/* Chat panel */
+.chat-header {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #FFFFFF, #FDF6E3);
+    -fx-border-color: #E6CCB2;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 5, 0, 0, 1);
+}
+
+/* ListView and cells */
+.list-view, .message-list {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 10;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+}
+
+.list-cell:selected {
+    -fx-background-color: #F5E6D3;
+}
+
+.list-cell:hover {
+    -fx-background-color: #E6CCB2;
+}
+
+/* Message bubbles */
+.message-bubble {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #FFFFFF, #FDF6E3);
+    -fx-background-radius: 15;
+    -fx-padding: 10 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #E6CCB2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 3, 0, 1, 1);
+}
+
+.message-bubble-user {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0084ff, #1a94ff);
+    -fx-text-fill: white;
+}
+
+/* Message input area */
+.message-input-area {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #FFFFFF, #FDF6E3);
+    -fx-border-color: #E6CCB2;
+    -fx-border-width: 1 0 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 5, 0, 0, -1);
+}
+
+.message-input-area .text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-padding: 8 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 2, 0, 0, 1);
+}
+
+/* Buttons */
+.send-button {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0084ff, #1a94ff);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-min-width: 80;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 3, 0, 1, 1);
+}
+
+.delete-button {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #dc3545, #e4505f);
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 3, 0, 1, 1);
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+.action-button {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: #34495e;
+}
+
+.message-list-container {
+    -fx-background-color: white;
+}
+.message-box {
+    -fx-padding: 10;
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 5;
+    -fx-margin: 5;
+}
+
+.sender-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.message-content {
+    -fx-wrap-text: true;
+}
+
+.action-button {
+    -fx-font-size: 12px;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+}
+
+.update-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.delete-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+.action-button:hover {
+    -fx-opacity: 0.8;
+}
+.message-menu {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.message-menu .label {
+    -fx-text-fill: #666666;
+}
+
+.message-menu:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+.custom-context-menu {
+    -fx-padding: 5;
+}
+
+.custom-context-menu .menu-item {
+    -fx-padding: 5 15;
+}
+
+.custom-context-menu .menu-item:focused {
+    -fx-background-color: #0096c9;
+    -fx-text-fill: white;
+}
+.message-menu .context-menu {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+.message-menu .menu-item:hover {
+    -fx-background-color: #f0f0f0;
+}
+.channel-list {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.channel-list .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+}
+.suggestion-list {
+    -fx-background-color: white;
+    -fx-border-color: #E6CCB2;
+    -fx-border-width: 1px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}
+
+.suggestion-list .list-cell {
+    -fx-padding: 8px 12px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+    -fx-background-color: transparent;
+}
+
+.suggestion-list .list-cell:hover {
+    -fx-background-color: #F5E6D3;
+}
+
+.suggestion-list .list-cell:filled:selected {
+    -fx-background-color: #E6CCB2;
+}
+
+#suggestionList {
+    -fx-background-insets: 0;
+    -fx-padding: 2;
+    -fx-background-color: white;
+}
+.user-avatar {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
+}
+
+.message-container {
+    -fx-padding: 5;
+    -fx-spacing: 10;
+}
+.no-hover-list-view {
+    -fx-selection-bar: transparent;
+    -fx-selection-bar-non-focused: transparent;
+}
+
+.no-hover-list-view .list-cell:filled:hover,
+.no-hover-list-view .list-cell:selected {
+    -fx-background-color: transparent;
+}
+
+.no-hover-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
