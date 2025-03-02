@@ -57,7 +57,6 @@ public class ChannelService implements Services<Channel> {
         }
     }
 
-    @Override
     public List<Channel> getall(Long userId) {
         List<Channel> channels = new ArrayList<>();
         String query = "SELECT * FROM channel WHERE id_user1 = ? OR id_user2 = ?";
@@ -78,6 +77,11 @@ public class ChannelService implements Services<Channel> {
         }
         return channels;
     }
+    @Override
+    public List<Channel> getall() {
+        return null;
+    }
+
 
     @Override
     public Channel getone() {

@@ -20,6 +20,7 @@ import javafx.util.Duration;
 import org.example.pathfinder.Model.Channel;
 import org.example.pathfinder.Model.Message;
 import org.example.pathfinder.Model.User;
+import org.example.pathfinder.Service.ApplicationService;
 import org.example.pathfinder.Service.ChannelService;
 import org.example.pathfinder.Service.MessageService;
 import org.example.pathfinder.Service.UserService;
@@ -76,7 +77,7 @@ public class ChannelMessageController {
     private User selectedUser;  // Currently selected user
     private Long currentChannelId;
     private UserService userService;
-    private Long currentUserId =4L; // Change this to test different users (1, 2, etc.)
+    private Long currentUserId =7L; // Change this to test different users (1, 2, etc.)
 
     public ChannelMessageController() {
         messageService = new MessageService();
@@ -163,7 +164,8 @@ public class ChannelMessageController {
                             item.getUser2Id() : item.getUser1Id();
 
                     User user = userService.getUserById(otherUserId);
-                    String url = userService.getProfilePictureById(otherUserId);
+                    ApplicationService applicationService = new ApplicationService();
+                    String url = applicationService.getUserProfilePicture(user.getId());
 
                     // Create profile image
 
@@ -456,13 +458,16 @@ public class ChannelMessageController {
 
     private Image loadDefaultAvatar() {
         try (InputStream stream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png")) {
+            if (stream == null) {
+                System.err.println("Could not find default avatar image");
+                return null;
+            }
             return new Image(stream);
         } catch (Exception e) {
             System.err.println("Error loading default avatar: " + e.getMessage());
             return null;
         }
     }
-
     private void displayMessages(List<Message> messages, Long channelId) {
         messageListView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
         messageListView.setCellFactory(param -> new ListCell<Message>() {
@@ -619,16 +624,22 @@ public class ChannelMessageController {
             return;
         }
 
-        User selectedUser = userService.getall(null).stream()
-                .filter(user -> user.getName().equalsIgnoreCase(searchText))
-                .findFirst()
-                .orElse(null);
+        try {
+            User selectedUser = userService.getall(null).stream()
+                    .filter(user -> user.getName().equalsIgnoreCase(searchText) && user.getId() != currentUserId)
+                    .findFirst()
+                    .orElse(null);
 
-        if (selectedUser != null) {
+            if (selectedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "User Error", "User not found.");
+                return;
+            }
+
             this.selectedUser = selectedUser;
             Channel existingChannel = channelService.getChannelBetweenUsers(currentUserId, selectedUser.getId());
 
             if (existingChannel == null) {
+                // Create new channel
                 Channel newChannel = new Channel();
                 newChannel.setUser1Id(currentUserId);
                 newChannel.setUser2Id(selectedUser.getId());
@@ -642,8 +653,10 @@ public class ChannelMessageController {
                 List<Message> messages = messageService.getMessagesByChannelId(existingChannel.getId());
                 displayMessages(messages, existingChannel.getId());
             }
-        } else {
-            showAlert(Alert.AlertType.ERROR, "User Error", "User not found.");
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "An error occurred: " + e.getMessage());
+            e.printStackTrace();
         }
 
         searchBox.clear();

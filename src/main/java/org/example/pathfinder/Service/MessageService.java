@@ -84,7 +84,6 @@ public class MessageService implements Services<Message> {
 
 
 
-    @Override
     public List<Message> getall(Long userId) {
         List<Message> messages = new ArrayList<>();
         String req = "SELECT m.* FROM Message m " +
@@ -111,6 +110,11 @@ public class MessageService implements Services<Message> {
         }
         return messages;
     }
+    @Override
+    public List<Message> getall() {
+        return null;
+    }
+
     public Message getone() {
         String req = "SELECT * FROM Message LIMIT 1";
         try {

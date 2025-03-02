@@ -110,8 +110,7 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-    </dependency>
+
   </dependencies>
 
   <build>

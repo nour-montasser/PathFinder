@@ -195,5 +195,38 @@ public class UserService {
         }
         return false;
     }
+    public List<User> getall(Long userId) {
+        List<User> users = new ArrayList<>();
+        String query = "SELECT * FROM app_user";
+
+        // If you need to filter users based on userId
+        if (userId != null) {
+            query += " WHERE id_user = ?";
+        }
+
+        try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+            if (userId != null) {
+                stmt.setLong(1, userId);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    long idUser = rs.getLong("id_user");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String password = rs.getString("password");
+                    String role = rs.getString("role");
+
+                    User user = new User(idUser, name, email, role, password);
+                    users.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return users;
+    }
+
 
 }

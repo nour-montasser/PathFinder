@@ -18,7 +18,6 @@ module org.example.pathfinder {
     requires com.google.api.client.extensions.java6.auth;
     requires com.google.api.client.extensions.jetty.auth;
     requires jdk.httpserver;
-    requires javafx.web;
     requires java.net.http;
     requires javafx.graphics;
     requires java.desktop;

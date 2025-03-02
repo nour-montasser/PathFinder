@@ -8,7 +8,6 @@ public interface Services<T> {
 
     void delete(long id); // Delete & update UI
 
-    public List<T> getall2(Long userId);
     public List<T> getall();
 
     public T getone();

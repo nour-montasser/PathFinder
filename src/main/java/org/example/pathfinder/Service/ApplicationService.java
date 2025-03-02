@@ -16,6 +16,7 @@ public class ApplicationService implements Services<ApplicationJob> {
         cnx = DatabaseConnection.getInstance().getCnx();
     }
 
+
     @Override
     public void add(ApplicationJob applicationJob) {
         String req = "INSERT INTO Application_job (job_offer_id, id_user, date_application, status, cv_id) VALUES (?, ?, ?, ?, ?)";
