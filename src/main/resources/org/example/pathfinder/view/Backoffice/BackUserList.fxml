@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="719.0" prefWidth="1320.0" styleClass="root" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.BackUserController">
+<HBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="719.0" prefWidth="1320.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.BackUserController">
 
     <children>
 
@@ -84,23 +84,23 @@
             <ChoiceBox fx:id="sortOrder" layoutX="591.0" layoutY="130.0" prefWidth="150.0" />
             <ChoiceBox fx:id="sortBy" layoutX="427.0" layoutY="130.0" prefWidth="150.0" />
             <Button layoutX="750.0" layoutY="130.0" mnemonicParsing="false" onAction="#sortUsers" text="Sort" />
-            <Button fx:id="HomeButton1" layoutX="-20.0" layoutY="35.0" onAction="#goUsers" prefHeight="50.0" prefWidth="160.0" style="-fx-background-color: #764d35;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Users" textFill="WHITE">
+            <Button fx:id="HomeButton1" layoutX="-20.0" layoutY="35.0" onAction="#goUsers" prefHeight="50.0" prefWidth="160.0" style="-fx-background-color: #764d35;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Users" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-            <Button fx:id="btn_workbench1111" layoutX="793.0" layoutY="31.0" onAction="#openProfile" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Profile" textFill="#b49474">
+            <Button fx:id="btn_workbench1111" layoutX="793.0" layoutY="31.0" onAction="#openProfile" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Profile" textFill="#b49474">
                <font>
                   <Font name="Century Gothic Bold" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="btn_workbench111111" layoutX="922.0" layoutY="30.0" onAction="#logOut" prefHeight="41.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Log Out" textFill="#b49474">
+            <Button fx:id="btn_workbench111111" layoutX="922.0" layoutY="30.0" onAction="#logOut" prefHeight="41.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Log Out" textFill="#b49474">
                <font>
                   <Font name="Century Gothic Bold" size="13.0" />
                </font>
             </Button>
                 <Text fx:id="userName" layoutX="462.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="RIGHT" wrappingWidth="306.93670654296875" />
-            <Button fx:id="HomeButton" layoutX="-240.0" layoutY="36.0" onAction="#goHome" prefHeight="46.0" prefWidth="199.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Home" textFill="#b49474">
+            <Button fx:id="HomeButton" layoutX="-240.0" layoutY="36.0" onAction="#goHome" prefHeight="46.0" prefWidth="199.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Home" textFill="#b49474">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>

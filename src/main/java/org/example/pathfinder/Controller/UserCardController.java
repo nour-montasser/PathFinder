@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 public class UserCardController {
 
@@ -79,7 +78,7 @@ public class UserCardController {
     public void onDetailsClicked(javafx.event.ActionEvent actionEvent) {
         try {
             // Load the profile.fxml (profile page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackUserInformation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackUserInformation.fxml"));
             Parent profileParent = loader.load(); // Load the profile interface
 
             // Create a new stage for the profile window

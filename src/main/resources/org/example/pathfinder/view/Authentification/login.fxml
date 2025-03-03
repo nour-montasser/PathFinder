@@ -18,7 +18,7 @@
     <VBox alignment="CENTER" prefHeight="522.0" prefWidth="350.0" spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10;">
       <ImageView fitHeight="82.0" fitWidth="84.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../Sources/pathfinder_logo_compass.png" />
+            <Image url="@../Sources/pathfinder_logo_compass.png" />
          </image>
       </ImageView>
 

@@ -15,7 +15,7 @@ public class App extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("PathFinder");
         stage.setScene(scene);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/Sources/pathfinder_logo_compass.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png")));
         stage.show();
 
     }

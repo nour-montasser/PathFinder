@@ -109,7 +109,7 @@ public class BackUserController {
     void goHome(ActionEvent event) {
         try {
             // Load the login.fxml (login page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackHome.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackHome.fxml"));
             Parent loginParent = loader.load(); // Load the login interface
 
             // Create a new stage for the login window
@@ -171,7 +171,7 @@ public class BackUserController {
     public void openProfile(ActionEvent actionEvent) {
         try {
             // Load the profile.fxml (profile page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackProfile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackProfile.fxml"));
             Parent profileParent = loader.load(); // Load the profile interface
             User currentUser = userService.getUserByEmail(userName.getText());
             // Create a new stage for the profile window
@@ -210,7 +210,7 @@ public class BackUserController {
 
         for (User userData : users) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/UserCard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/UserCard.fxml"));
                 Pane userCard = loader.load();
                 UserCardController controller = loader.getController();
                 controller.setUserData(userData, user); // Set user data dynamically
@@ -235,7 +235,7 @@ public class BackUserController {
     public void goUsers(ActionEvent actionEvent) {
         try {
             // Load the login.fxml (login page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackUserList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackUserList.fxml"));
             Parent loginParent = loader.load(); // Load the login interface
 
             // Create a new stage for the login window
@@ -281,7 +281,7 @@ public class BackUserController {
 
         for (User userData : filteredUsers) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/UserCard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/UserCard.fxml"));
                 Pane userCard = loader.load();
                 UserCardController controller = loader.getController();
                 controller.setUserData(userData, currentUser); // Set user data dynamically
@@ -338,7 +338,7 @@ public class BackUserController {
 
         for (User userData : users) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/UserCard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/UserCard.fxml"));
                 Pane userCard = loader.load();
                 UserCardController controller = loader.getController();
                 controller.setUserData(userData, currentUser); // Set user data dynamically
@@ -374,7 +374,7 @@ public class BackUserController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/UserStats.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/UserStats.fxml"));
             Parent statsParent = loader.load(); // Load the stats interface
 
             Stage statsStage = new Stage();

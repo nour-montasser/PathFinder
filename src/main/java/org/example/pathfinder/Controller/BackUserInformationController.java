@@ -317,7 +317,7 @@ public class BackUserInformationController {
     void goHome(ActionEvent event) {
         try {
             // Load the login.fxml (login page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackHome.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackHome.fxml"));
             Parent loginParent = loader.load(); // Load the login interface
 
             // Create a new stage for the login window
@@ -347,7 +347,7 @@ public class BackUserInformationController {
     void goUsers(ActionEvent event) {
         try {
             // Load the login.fxml (login page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackUserList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackUserList.fxml"));
             Parent loginParent = loader.load(); // Load the login interface
 
             // Create a new stage for the login window
@@ -479,7 +479,7 @@ public class BackUserInformationController {
     public void openProfile(ActionEvent actionEvent) {
         try {
             // Load the profile.fxml (profile page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Back/BackProfile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Backoffice/BackProfile.fxml"));
             Parent profileParent = loader.load(); // Load the profile interface
             User currentUser = userService.getUserByEmail(currentUserEmail.getText());
             // Create a new stage for the profile window

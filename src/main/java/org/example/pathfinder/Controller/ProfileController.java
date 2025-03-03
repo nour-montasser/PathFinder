@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
@@ -193,7 +192,7 @@ public class ProfileController {
     void goHome(ActionEvent event) {
         try {
             // Load the login.fxml (login page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Front/FrontHomeSeeker.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/FrontHomeSeeker.fxml"));
             Parent loginParent = loader.load(); // Load the login interface
 
             // Create a new stage for the login window

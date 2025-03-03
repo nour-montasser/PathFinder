@@ -8,8 +8,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.embed.swing.SwingFXUtils;
@@ -17,7 +15,6 @@ import javafx.embed.swing.SwingFXUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -31,8 +28,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.stage.Stage;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.example.pathfinder.Model.User;
 import org.example.pathfinder.Service.UserService;
@@ -132,11 +127,11 @@ public class LoginController {
         String dashboardPath = "";
 
         if (user.getRole().equals("COMPANY")) {
-            dashboardPath = "/org/example/pathfinder/view/Dashboard/Front/FrontHomeSeeker.fxml";
+            dashboardPath = "/org/example/pathfinder/view/Frontoffice/FrontHomeSeeker.fxml";
         } else if (user.getRole().equals("SEEKER")) {
-            dashboardPath = "/org/example/pathfinder/view/Dashboard/Front/FrontHomeSeeker.fxml";
+            dashboardPath = "/org/example/pathfinder/view/Frontoffice/FrontHomeSeeker.fxml";
         } else {
-            dashboardPath = "/org/example/pathfinder/view/Dashboard/Back/BackHome.fxml";
+            dashboardPath = "/org/example/pathfinder/view/Backoffice/BackHome.fxml";
         }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(dashboardPath));

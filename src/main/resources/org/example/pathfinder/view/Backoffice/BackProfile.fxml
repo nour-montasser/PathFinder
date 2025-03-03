@@ -15,25 +15,38 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="708.0" prefWidth="1320.0" styleClass="root" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.BackUserInformationController">
-   <children>
-      <VBox prefHeight="781.0" prefWidth="281.0">
-         <children>
-            <AnchorPane fx:id="side_ankerpane" prefHeight="827.0" prefWidth="281.0" style="-fx-background-color: #f3fafa;" styleClass="side_ankerpane" stylesheets="@../../styles.css" />
-         </children>
-      </VBox>
-      <Pane prefHeight="781.0" prefWidth="1040.0" style="-fx-background-color: #f3fafa;">
-         <children>
-            <Label fx:id="idU" layoutX="130.0" layoutY="54.0" prefHeight="83.0" prefWidth="105.0">
-               <font>
-                  <Font name="Century Gothic" size="15.0" />
-               </font>
-            </Label>
-            <Pane fx:id="pane_1111" layoutX="-246.0" layoutY="88.0" prefHeight="303.0" prefWidth="590.0" style="-fx-background-color: #764d35; -fx-border-color: #000000;" styleClass="pane_1111" stylesheets="@../../styles.css">
+<HBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="708.0" prefWidth="1320.0" styleClass="root" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.BackUserInformationController">
+
+    <children>
+
+        <VBox prefHeight="781.0" prefWidth="281.0">
+
+            <children>
+
+                <AnchorPane fx:id="side_ankerpane" prefHeight="827.0" prefWidth="281.0" style="-fx-background-color: #f3fafa;" styleClass="side_ankerpane" stylesheets="@../styles.css" />
+
+            </children>
+
+        </VBox>
+
+        <Pane prefHeight="781.0" prefWidth="1040.0" style="-fx-background-color: #f3fafa;">
+
+            <children>
+                <Label fx:id="idU" layoutX="130.0" layoutY="54.0" prefHeight="83.0" prefWidth="105.0">
+                    <font>
+                        <Font name="Century Gothic" size="15.0" />
+                    </font>
+                </Label>
+            <Pane fx:id="pane_1111" layoutX="-246.0" layoutY="88.0" prefHeight="303.0" prefWidth="590.0" style="-fx-background-color: #764d35; -fx-border-color: #000000;" styleClass="pane_1111" stylesheets="@../styles.css">
                <children>
+                  <Button fx:id="delete" layoutX="402.0" layoutY="22.0" onAction="#deleteButtonOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Delete Profile" textFill="#b49474">
+                     <font>
+                        <Font name="Century Gothic Bold" size="13.0" />
+                     </font>
+                  </Button>
                   <ImageView fx:id="userImage" fitHeight="165.0" fitWidth="221.0" layoutX="28.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../Sources/defaultPicture.png" />
+                        <Image url="@../Sources/defaultPicture.png" />
                      </image>
                   </ImageView>
                   <Text fx:id="usernameEmail" layoutX="86.0" layoutY="219.0" strokeType="OUTSIDE" strokeWidth="0.0" text="email@gmail.com" wrappingWidth="174.5078125">
@@ -61,7 +74,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Text>
-                  <Button fx:id="changepassword1" layoutX="402.0" layoutY="71.0" onAction="#UploadImageOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Upload Image" textFill="WHITE">
+                  <Button fx:id="changepassword1" layoutX="402.0" layoutY="71.0" onAction="#UploadImageOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Upload Image" textFill="WHITE">
                      <font>
                         <Font name="Century Gothic Bold" size="13.0" />
                      </font>
@@ -73,28 +86,23 @@
                   </Label>
                   <ImageView fx:id="userImage1" fitHeight="109.0" fitWidth="119.0" layoutX="420.0" layoutY="175.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../Sources/QR_code.png" />
+                        <Image url="@../Sources/QR_code.png" />
                      </image>
                   </ImageView>
                   <TextField fx:id="userFullName" layoutX="86.0" layoutY="231.0" prefHeight="25.0" prefWidth="146.0" promptText="Name" />
-                  <Button fx:id="changepassword2" layoutX="240.0" layoutY="232.0" onAction="#saveNameButtonOnClick" prefHeight="25.0" prefWidth="50.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Save" textFill="WHITE">
-                     <font>
-                        <Font name="Century Gothic Bold" size="13.0" />
-                     </font>
-                  </Button>
-                  <Button layoutX="402.0" layoutY="14.0" onAction="#resetOnClicked" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Delete User" textFill="#b49474">
+                  <Button fx:id="changepassword2" layoutX="240.0" layoutY="232.0" onAction="#saveNameButtonOnClick" prefHeight="25.0" prefWidth="50.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Save" textFill="WHITE">
                      <font>
                         <Font name="Century Gothic Bold" size="13.0" />
                      </font>
                   </Button>
                </children>
             </Pane>
-            <Button fx:id="HomeButton1" layoutX="-30.0" layoutY="25.0" onAction="#goUsers" prefHeight="50.0" prefWidth="160.0" style="-fx-background-color: #764d35;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Users" textFill="WHITE">
+            <Button fx:id="HomeButton1" layoutX="-30.0" layoutY="25.0" onAction="#goUsers" prefHeight="50.0" prefWidth="160.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Users" textFill="#b49474">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-            <Pane fx:id="NameId" layoutX="566.0" layoutY="82.0" prefHeight="621.0" prefWidth="457.0" style="-fx-border-color: black; -fx-background-color: f3fafa;" styleClass="pane_1111" stylesheets="@../../styles.css">
+            <Pane fx:id="NameId" layoutX="566.0" layoutY="82.0" prefHeight="621.0" prefWidth="457.0" style="-fx-border-color: black; -fx-background-color: f3fafa;" styleClass="pane_1111" stylesheets="@../styles.css">
                <children>
                   <Label layoutX="38.0" layoutY="162.0" prefHeight="39.0" prefWidth="119.0" text="Phone" textAlignment="CENTER" wrapText="true">
                      <font>
@@ -106,7 +114,12 @@
                         <Font name="Century Gothic Bold" size="17.0" />
                      </font>
                   </Label>
-                  <Button fx:id="submit" layoutX="38.0" layoutY="561.0" onAction="#submitButtonOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Save" textFill="WHITE">
+                  <Button fx:id="submit" layoutX="38.0" layoutY="561.0" onAction="#submitButtonOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Save" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="13.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="268.0" layoutY="561.0" onAction="#resetOnClicked" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Reset" textFill="#b49474">
                      <font>
                         <Font name="Century Gothic Bold" size="13.0" />
                      </font>
@@ -136,14 +149,9 @@
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Button fx:id="delete" layoutX="268.0" layoutY="561.0" onAction="#deleteButtonOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Delete Profile" textFill="#b49474">
-                     <font>
-                        <Font name="Century Gothic Bold" size="13.0" />
-                     </font>
-                  </Button>
                </children>
             </Pane>
-            <Pane fx:id="pane_11111111111" layoutX="-246.0" layoutY="399.0" prefHeight="303.0" prefWidth="591.0" style="-fx-border-color: black; -fx-background-color: f3fafa;" styleClass="pane_1111" stylesheets="@../../styles.css">
+            <Pane fx:id="pane_11111111111" layoutX="-246.0" layoutY="399.0" prefHeight="303.0" prefWidth="591.0" style="-fx-border-color: black; -fx-background-color: f3fafa;" styleClass="pane_1111" stylesheets="@../styles.css">
                <children>
                   <Label layoutX="16.0" layoutY="120.0" prefHeight="30.0" prefWidth="119.0" text="New Password" textAlignment="CENTER" wrapText="true">
                      <font>
@@ -160,7 +168,7 @@
                         <Font name="Century Gothic Bold" size="17.0" />
                      </font>
                   </Label>
-                  <Button fx:id="changepassword" layoutX="391.0" layoutY="253.0" onAction="#changePasswordButtonOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Reset Password" textFill="WHITE">
+                  <Button fx:id="changepassword" layoutX="391.0" layoutY="253.0" onAction="#changePasswordButtonOnClick" prefHeight="39.0" prefWidth="160.0" style="-fx-background-color: #b49474;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Reset Password" textFill="WHITE">
                      <font>
                         <Font name="Century Gothic Bold" size="13.0" />
                      </font>
@@ -175,12 +183,12 @@
                   </Label>
                </children>
             </Pane>
-            <Button fx:id="btn_workbench1111" layoutX="783.0" layoutY="21.0" onAction="#openProfile" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Profile" textFill="#b49474">
+            <Button fx:id="btn_workbench1111" layoutX="783.0" layoutY="21.0" onAction="#openProfile" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: #764d35;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Profile" textFill="WHITE">
                <font>
                   <Font name="Century Gothic Bold" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="btn_workbench111111" layoutX="912.0" layoutY="20.0" onAction="#logOut" prefHeight="41.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Log Out" textFill="#b49474">
+            <Button fx:id="btn_workbench111111" layoutX="912.0" layoutY="20.0" onAction="#logOut" prefHeight="41.0" prefWidth="110.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Log Out" textFill="#b49474">
                <font>
                   <Font name="Century Gothic Bold" size="13.0" />
                </font>
@@ -190,13 +198,16 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Text>
-            <Button fx:id="HomeButton" layoutX="-246.0" layoutY="27.0" onAction="#goHome" prefHeight="46.0" prefWidth="199.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../../styles.css" text="Home" textFill="#b49474">
+            <Button fx:id="HomeButton" layoutX="-249.0" layoutY="23.0" onAction="#goHome" prefHeight="46.0" prefWidth="199.0" style="-fx-background-color: white;" styleClass="btn_workbench11" stylesheets="@../styles.css" text="Home" textFill="#b49474">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-         </children>
-      </Pane>
-   </children>
+
+            </children>
+
+        </Pane>
+
+    </children>
 
 </HBox>

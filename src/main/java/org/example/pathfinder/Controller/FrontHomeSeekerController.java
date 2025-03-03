@@ -23,7 +23,7 @@ public class FrontHomeSeekerController {
     public void openProfile(ActionEvent actionEvent) {
         try {
             // Load the profile.fxml (profile page)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Dashboard/Profile/ProfileInformation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ProfileInformation.fxml"));
             Parent profileParent = loader.load(); // Load the profile interface
 
             // Create a new stage for the profile window
