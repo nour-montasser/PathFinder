@@ -676,7 +676,7 @@ public class ChannelMessageController {
         }
 
         try {
-            User selectedUser = userService.getall(null).stream()
+            User selectedUser = userService.getAllUsers().stream()
                     .filter(user -> user.getName().equalsIgnoreCase(searchText) && user.getId() != currentUserId)
                     .findFirst()
                     .orElse(null);
@@ -719,7 +719,7 @@ public class ChannelMessageController {
         suggestions.clear();
 
         // Get all users except current user
-        List<String> filteredUsers = userService.getall(null)
+        List<String> filteredUsers = userService.getAllUsers()
                 .stream()
                 .filter(user -> user.getId() != currentUserId)
                 .map(User::getName)

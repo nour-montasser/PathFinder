@@ -56,7 +56,7 @@ public class BackOfficeController {
     @FXML
     private void loadUsersPage() {
         setActiveButton(usersButton);
-        loadPage("Users.fxml");
+        loadPage("BackUserList.fxml");
     }
 
     @FXML

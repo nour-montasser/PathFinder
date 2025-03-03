@@ -30,6 +30,7 @@ module org.example.pathfinder {
     requires java.desktop;
 
 
+    requires qrgen;
     requires kernel;
     requires layout;
     requires io;
@@ -40,15 +41,20 @@ module org.example.pathfinder {
 
     exports org.example.pathfinder.App;
 
+    requires jbcrypt;
+    requires javafx.web;
+    requires org.apache.httpcomponents.httpcore;
+    requires org.apache.httpcomponents.httpclient;
+
+    requires java.mail;
 
     // Add these exports to allow other modules to access them
     exports org.example.pathfinder.Controller;
     exports org.example.pathfinder.Model;
     exports org.example.pathfinder.Service;
-
     // If using FXML in these packages, open them too
     opens org.example.pathfinder.Controller to javafx.fxml;
     opens org.example.pathfinder.Model to javafx.fxml;
     opens org.example.pathfinder.Service to javafx.fxml;
-
+    opens org.example.pathfinder.App to javafx.fxml; // Open the App subpackage
 }

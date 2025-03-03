@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="523.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.RegisterController">
+    <VBox alignment="CENTER" prefHeight="522.0" prefWidth="350.0" spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10;">
+
+        <!-- Title -->
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Register Form" />
+
+        <!-- Toggle Login/Signup -->
+        <HBox spacing="5" />
+
+        <!-- Name Field -->
+        <TextField fx:id="fullNameText" promptText="Full Name" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+        <!-- Email Field -->
+        <TextField fx:id="EmailAddressText" promptText="Email Address" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+        <!-- Password Field -->
+        <PasswordField fx:id="passwordText" promptText="Password" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+
+        <!-- Confirm Password Field -->
+        <PasswordField fx:id="confirmPasswordText" promptText="Confirm Password" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ccc;" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Role" wrappingWidth="306.13670349121094">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Text>
+        <Pane prefHeight="100.0" prefWidth="310.0">
+            <children>
+                <Pane fx:id="companyPane" layoutX="4.0" layoutY="1.0" onMouseClicked="#roleChosenCompany" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: rgb(128,128,128);">
+                    <children>
+                        <ImageView fitHeight="97.0" fitWidth="125.0" layoutX="1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../Sources/Company.jpg" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </Pane>
+                <Pane fx:id="SeekerPane" layoutX="167.0" layoutY="11.0" onMouseClicked="#roleChosenSeeker" prefHeight="79.0" prefWidth="136.0" style="-fx-background-color: rgb(128,128,128);">
+                    <children>
+                        <ImageView fitHeight="100.0" fitWidth="134.0" layoutX="1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../Sources/Job-Hunting.jpg" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </Pane>
+            </children>
+        </Pane>
+
+        <!-- Signup Button -->
+        <Button onMouseClicked="#signUpClicked" style="-fx-background-color: #b49474; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5;" text="Signup" />
+
+        <!-- Login Link -->
+        <HBox spacing="5">
+            <Label style="-fx-font-size: 12px;" text="Already have an account?" />
+            <Label onMouseClicked="#loginChange" style="-fx-text-fill: #b49474; -fx-font-size: 12px; -fx-cursor: hand;" text="Login here" />
+        </HBox>
+    </VBox>
+</AnchorPane>

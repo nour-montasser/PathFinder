@@ -7,8 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Pathfinder" />
-        <module name="PathFinder" />
+        <module name="gestionuser" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="PathFinder" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

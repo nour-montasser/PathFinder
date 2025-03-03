@@ -123,7 +123,7 @@ public class JobOfferListCardController {
         }
 
         titleLabel.setText(jobOffer.getTitle());
-        descriptionLabel.setText(jobOffer.getDescription());
+        descriptionLabel.setText(jobOffer.getDescription());    
         requiredEducationLabel.setText("Required Education: " + jobOffer.getRequiredEducation());
         requiredExperienceLabel.setText("Required Experience: " + jobOffer.getRequiredExperience());
         skillsLabel.setText("Skills: " + jobOffer.getSkills());

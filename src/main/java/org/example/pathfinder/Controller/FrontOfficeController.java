@@ -119,7 +119,7 @@ public class FrontOfficeController {
     @FXML
     private void loadProfilePage() {
         setActiveButton(profileButton);
-        loadPage("Profile.fxml");
+        loadPage("ProfileInformation.fxml");
     }
 
     @FXML

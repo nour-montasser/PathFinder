@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.UserStatsController">
+    <BarChart fx:id="ageChart" title="User Age Distribution" layoutX="50" layoutY="50" prefHeight="400" prefWidth="600">
+        <xAxis>
+            <CategoryAxis label="Age Groups" />
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Number of Users" />
+        </yAxis>
+    </BarChart>
+</AnchorPane>

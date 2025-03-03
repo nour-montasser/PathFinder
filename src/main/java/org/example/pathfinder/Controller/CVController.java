@@ -1,7 +1,7 @@
 package org.example.pathfinder.Controller;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.layout.properties.TextAlignment;
+//import com.itextpdf.layout.properties.TextAlignment;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
