@@ -2,11 +2,7 @@ package org.example.pathfinder.Service;  // ✅ Package should be at the top
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.io.entity.StringEntity;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -34,7 +30,7 @@ public class DeepSeekClient {
         }
     }
 
-    public static String getPriceEstimation(String serviceType) {
+   /* public static String getPriceEstimation(String serviceType) {
         if (API_KEY == null || API_KEY.isEmpty()) {
             throw new IllegalStateException("❌ API Key is missing. Set DEEPSEEK_API_KEY in environment variables or config.properties.");
         }
@@ -87,4 +83,6 @@ public class DeepSeekClient {
     }
 
 
+}
+*/
 }

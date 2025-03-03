@@ -22,19 +22,19 @@ module org.example.pathfinder {
     requires java.sql;
     requires com.dlsc.formsfx;
     requires com.google.gson;  // ✅ This allows you to use Gson
-    requires org.apache.httpcomponents.client5.httpclient5;
+
     requires javafx.base;
     requires javafx.swing;
 
-    requires org.apache.httpcomponents.core5.httpcore5;
+
     requires java.desktop;
-    requires java.sql; // Required for database connection
+
 
     requires kernel;
     requires layout;
     requires io;
     requires org.json;
-    requires javafx.web;
+
     requires jdk.jsobject;  // Add this for JSON parsing
     opens org.example.pathfinder to javafx.fxml;
 

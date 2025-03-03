@@ -10,6 +10,7 @@ import org.example.pathfinder.Service.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
+import org.example.pathfinder.Service.ApplicationService;
 
 import java.util.Map;
 

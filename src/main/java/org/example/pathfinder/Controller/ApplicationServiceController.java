@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import com.google.gson.Gson;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -37,8 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import javafx.scene.web.WebView;
-import javafx.scene.web.WebEngine;
+
 
 
 

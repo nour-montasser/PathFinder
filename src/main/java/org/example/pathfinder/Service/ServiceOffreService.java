@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ServiceOffreService implements Services<ServiceOffre> {
+public class ServiceOffreService implements Services2<ServiceOffre> {
     private Connection cnx;
 
     public ServiceOffreService() {

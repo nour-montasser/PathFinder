@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApplicationServiceService implements Services<ApplicationService> {
+public class ApplicationServiceService implements Services2<ApplicationService> {
     private final Connection cnx;
 
     public ApplicationServiceService() {
