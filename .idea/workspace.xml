@@ -4,26 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="ya rabi ostorna 6.9">
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$" beforeDir="false" afterPath="$PROJECT_DIR$" afterDir="false" />
+    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="nchalah tekhedem">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ApplicationServiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ApplicationServiceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/BackOfficeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/BackOfficeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontofficeController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ViewSkillTestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ViewSkillTestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ApplicationServiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ApplicationServiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/DeepSeekClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/DeepSeekClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ServiceOffreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ServiceOffreService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/module-info.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/App/DatabaseConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/App/DatabaseConnection.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/BackOfficeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/BackOfficeController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/FrontOfficeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/FrontOfficeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ViewSkillTestController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ViewSkillTestController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,12 +46,12 @@
     &quot;assignee&quot;: &quot;nour-montasser&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/nour-montasser/PathFinder&quot;,
-    &quot;accountId&quot;: &quot;c1dac3be-df8b-4424-9269-d20fe9b5ec08&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/nour-montasser/PathFinder",
+    "accountId": "161400d4-3a4a-4663-9fd8-186119fee247"
   }
-}</component>
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -132,11 +119,11 @@
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\Sources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\selim\IdeaProjects\pathfinder\Pathfinder\src\main\java\org\example\pathfinder\Controller" />
       <recent name="C:\Users\msi\Desktop\java\PROJET\Pathfinder\src\main\resources\org\example\pathfinder\view\Sources" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Frontoffice" />
-      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="org.example.pathfinder" />
@@ -218,7 +205,7 @@
       <workItem from="1740935330209" duration="3499000" />
       <workItem from="1740946260777" duration="2238000" />
       <workItem from="1740948572157" duration="1431000" />
-      <workItem from="1740999227920" duration="1024000" />
+      <workItem from="1740999227920" duration="2769000" />
     </task>
     <task id="LOCAL-00001" summary="crud joboffer+application">
       <option name="closed" value="true" />
@@ -348,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740877173616</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="nchalah tekhedem">
+      <option name="closed" value="true" />
+      <created>1741000978230</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1741000978230</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -376,7 +371,8 @@
     <MESSAGE value="ya rabi ostorna 2" />
     <MESSAGE value="ya rabi ostorna 4.0" />
     <MESSAGE value="ya rabi ostorna 6.9" />
-    <option name="LAST_COMMIT_MESSAGE" value="ya rabi ostorna 6.9" />
+    <MESSAGE value="nchalah tekhedem" />
+    <option name="LAST_COMMIT_MESSAGE" value="nchalah tekhedem" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
