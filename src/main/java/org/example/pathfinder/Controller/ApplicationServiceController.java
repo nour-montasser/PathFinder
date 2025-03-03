@@ -47,7 +47,7 @@ public class ApplicationServiceController {
 
 
 
-    private static final String HCAPTCHA_SITE_KEY = "ES_3ca1f53f02154f12aac8f49642c189ec"; // Replace with your actual hCaptcha site key
+
 
 
     @FXML
@@ -75,8 +75,6 @@ public class ApplicationServiceController {
     @FXML
     private PieChart revenuePieChart;
 
-    @FXML
-    private WebView hcaptchaWebView;
 
     private static final String API_URL = " https://v6.exchangerate-api.com/v6/01b62ddd85a1a7a3b14cb327/latest/USD";
     private Map<Integer, Double> originalPrices = new HashMap<>(); // Store original prices by service ID
@@ -523,57 +521,6 @@ public class ApplicationServiceController {
     }
 
 
-
-    private void loadHcaptcha() {
-        String html = "<html>"
-                + "<head><script src='https://js.hcaptcha.com/1/api.js' async defer></script></head>"
-                + "<body>"
-                + "<form>"
-                + "<div class='h-captcha' data-sitekey='" + HCAPTCHA_SITE_KEY + "'></div>"
-                + "</form>"
-                + "</body></html>";
-        hcaptchaWebView.getEngine().loadContent(html);
-    }
-
-    private static final String HCAPTCHA_SECRET_KEY = "ES_3ca1f53f02154f12aac8f49642c189ec"; // Replace with your actual hCaptcha secret key
-
-    private boolean verifyHcaptcha(String userResponseToken) {
-        try {
-            String url = "https://api.hcaptcha.com/siteverify";
-            String params = "secret=" + HCAPTCHA_SECRET_KEY + "&response=" + userResponseToken;
-
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-            connection.getOutputStream().write(params.getBytes());
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String response = reader.readLine();
-            reader.close();
-
-            JSONObject json = new JSONObject(response);
-            return json.getBoolean("success");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void handleApplyForService(ServiceOffre service) {
-        // Get the hCaptcha response token from the WebView
-        WebEngine engine = hcaptchaWebView.getEngine();
-        engine.executeScript("hcaptcha.getResponse()").toString();
-
-        // Verify the hCaptcha token
-        String userResponseToken = engine.executeScript("hcaptcha.getResponse()").toString();
-        if (verifyHcaptcha(userResponseToken)) {
-            // Proceed with the application
-            openApplicationDetails(service.getId_service());
-        } else {
-            showErrorAlert("Error", "hCaptcha verification failed. Please complete the captcha.");
-        }
-    }
 
 
 

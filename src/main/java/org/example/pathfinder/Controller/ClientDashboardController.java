@@ -3,8 +3,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.layout.HBox;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
+
 import netscape.javascript.JSObject;
 import org.json.JSONObject;
 import javafx.fxml.FXML;
