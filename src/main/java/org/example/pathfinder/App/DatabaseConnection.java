@@ -4,34 +4,44 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+
 public class DatabaseConnection {
 
-    private Connection cnx; // Make private
-    private static DatabaseConnection instance; // Singleton instance
+    Connection cnx;
 
-    public DatabaseConnection() {
-        String url = "jdbc:mysql://localhost:3307/projet_3a"; // Database URL
-        String username = "pma"; // Database username
-        String password = ""; // Database password
+
+
+    public static DatabaseConnection instance;
+    public DatabaseConnection(){
+
+        String Url="jdbc:mysql://localhost/pathfinder";
+        String Username="root";
+        String Password="";
 
         try {
-            cnx = DriverManager.getConnection(url, username, password);
-            System.out.println("Connexion établie"); // Connection success
+            cnx= DriverManager.getConnection(Url,Username,Password);
+            System.out.println("Connection établie");
         } catch (SQLException e) {
-            System.err.println("Erreur de connexion à la base de données : " + e.getMessage());
-            throw new RuntimeException(e); // Throw runtime exception for fatal error
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean isConnectionClosed() {
+        try {
+            return cnx == null || cnx.isClosed();
+        } catch (SQLException e) {
+            System.out.println("❌ Error checking connection status: " + e.getMessage());
+            return true; // Assume closed if there's an error
         }
     }
 
-    // Singleton method to get the instance
+
     public static DatabaseConnection getInstance() {
-        if (instance == null) {
-            instance = new DatabaseConnection();
+        if(instance==null){
+            instance=  new DatabaseConnection();
         }
         return instance;
     }
 
-    // Getter for the connection
     public Connection getCnx() {
         return cnx;
     }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.PriceEstimationController">
+    <Label text="Freelance Price Estimation" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <TextField fx:id="serviceInput" promptText="Enter a service (e.g. Logo Design)"/>
+    <Button fx:id="searchButton" text="Get Price Estimate"/>
+    <Label fx:id="resultLabel" text="Result will be shown here." wrapText="true"/>
+</VBox>
