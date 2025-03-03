@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Priority?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(245,245,245,0);" fx:controller="org.example.pathfinder.Controller.JobOfferApplicationListController">
+    <!-- Close Button -->
+    <HBox alignment="TOP_LEFT" style="-fx-padding: 0;">
+        <Button fx:id="closeButton" text="Close" onAction="#handleClose"
+                style="-fx-background-color: #3b261d; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 12 24; -fx-background-radius: 5;
+                       -fx-font-family: 'Segoe UI', sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);
+                       -fx-background-insets: 0;" />
+    </HBox>
+
+    <!-- Main Content: Two Columns -->
+    <HBox spacing="20" style="-fx-padding: 0;" VBox.vgrow="ALWAYS">
+        <!-- Left Column: Job Offer Details -->
+        <VBox spacing="20" style="-fx-pref-width: 400; -fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(51,51,51,0.08), 5, 0, 0, 3);" VBox.vgrow="ALWAYS">
+            <!-- Job Offer Title -->
+            <Label text="Job Offer Details"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #150e0d; -fx-font-family: 'Segoe UI', sans-serif;" />
+
+            <!-- Company Info Section -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <!-- Company Image -->
+                <ImageView fx:id="companyImage" fitWidth="50" fitHeight="50" preserveRatio="true"
+                           style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);" />
+
+                <!-- Company Name and Address -->
+                <VBox spacing="5">
+                    <Label fx:id="companyName"
+                           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #150e0d; -fx-font-family: 'Segoe UI', sans-serif;" />
+                    <Label fx:id="companyAddress"
+                           style="-fx-text-fill: #777777; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', sans-serif;" />
+                </VBox>
+            </HBox>
+
+            <!-- Job Title and Description -->
+            <Label fx:id="jobOfferTitle"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #150e0d; -fx-font-family: 'Segoe UI', sans-serif;" />
+
+            <Label fx:id="jobOfferDescription"
+                   wrapText="true"
+                   style="-fx-text-fill: #777777; -fx-font-size: 15px; -fx-font-family: sans-serif;" />
+
+            <!-- Required Details -->
+            <VBox spacing="5" style="-fx-padding: 10 0;">
+                <Label fx:id="requiredEducationLabel"
+                       style="-fx-text-fill: #777777; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', sans-serif;" />
+
+                <Label fx:id="requiredExperienceLabel"
+                       style="-fx-text-fill: #777777; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', sans-serif;" />
+
+                <Label fx:id="skillsLabel"
+                       style="-fx-text-fill: #777777; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', sans-serif;" />
+
+                <Label fx:id="numberOfSpotsLabel"
+                       style="-fx-text-fill: #777777; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', sans-serif;" />
+            </VBox>
+        </VBox>
+
+        <!-- Right Column: Applications List -->
+        <VBox spacing="20" style="-fx-pref-width: 100%;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+            <!-- Applications Section -->
+            <Label text="Applications"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #150e0d; -fx-padding: 2 0; -fx-font-family: 'Segoe UI', sans-serif;" />
+
+            <!-- Search & Filter Section -->
+            <HBox spacing="10" alignment="CENTER" style="-fx-padding: 2; -fx-pref-width: 100%;">
+                <!-- Search Bar -->
+                <HBox spacing="5" alignment="CENTER_LEFT"
+                      style="-fx-border-color: #ddd; -fx-border-radius: 20; -fx-padding: 5;
+                                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);">
+                    <ImageView fx:id="searchIcon" fitWidth="25" fitHeight="25" pickOnBounds="true" preserveRatio="true"/>
+                    <TextField fx:id="searchField" promptText="Search..."
+                               style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 14px;"/>
+                </HBox>
+
+                <!-- Status Filter Dropdown -->
+                <ComboBox fx:id="statusFilterComboBox" promptText="Filter by status"
+                          style="-fx-font-size: 14px; -fx-background-color: transparent; -fx-border-width: 0; -fx-border-radius: 20; -fx-padding: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);" />
+            </HBox>
+
+            <!-- Applications List -->
+            <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #F5EDE1FF;" VBox.vgrow="ALWAYS">
+                <ListView fx:id="applicationsListView"
+                          style="-fx-background-color: #F5EDE1FF; -fx-border-radius: 10; -fx-background-insets: 0; -fx-font-family: 'Segoe UI', sans-serif; -fx-padding: 7;" />
+            </ScrollPane>
+        </VBox>
+    </HBox>
+</VBox>

@@ -1,0 +1,55 @@
+Index: ../../../El Zeyed/DS1/DS1/src/Voiture.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../../../El Zeyed/DS1/DS1/src/Voiture.java b/../../../El Zeyed/DS1/DS1/src/Voiture.java
+new file mode 100644
+--- /dev/null	
++++ b/../../../El Zeyed/DS1/DS1/src/Voiture.java	
+@@ -0,0 +1,28 @@
++public class Voiture {
++    private String mat, marq;
++    private float prix;
++
++    public String getMat() {
++        return mat;
++    }
++
++    public void setMat(String mat) {
++        this.mat = mat;
++    }
++
++    public String getMarq() {
++        return marq;
++    }
++
++    public void setMarq(String marq) {
++        this.marq = marq;
++    }
++
++    public float getPrix() {
++        return prix;
++    }
++
++    public void setPrix(float prix) {
++        this.prix = prix;
++    }
++}
+Index: ../../../El Zeyed/Gestion De Magasin/Gestion De magasin/src/Produit.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Produit {\r\n    private int id=0;\r\n    private String libelle,mark;\r\n    private float prix;\r\n    Produit(int id,String libelle,String mark,float prix)\r\n    {\r\n        this.id=id;\r\n        this.libelle=libelle;\r\n        this.mark=mark;\r\n        this.prix=prix;\r\n    }\r\n   Produit()\r\n    {\r\n        this.id=0;\r\n        this.libelle=\"\";\r\n        this.mark=\"\";\r\n        this.prix=0;\r\n    }\r\n    public void Afficher()\r\n    {\r\n        System.out.println(\"ID:\" + id);\r\n        System.out.println(\"Libelle:\" + libelle);\r\n        System.out.println(\"mark:\" + mark);\r\n        System.out.println(\"Prix:\" + prix);\r\n\r\n    }\r\n\r\n    public int getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(int id) {\r\n        this.id = id;\r\n    }\r\n\r\n    public String getLibelle() {\r\n        return libelle;\r\n    }\r\n\r\n    public void setLibelle(String libelle) {\r\n        this.libelle = libelle;\r\n    }\r\n\r\n    public String getMark() {\r\n        return mark;\r\n    }\r\n\r\n    public void setMark(String mark) {\r\n        this.mark = mark;\r\n    }\r\n\r\n    public float getPrix() {\r\n        return prix;\r\n    }\r\n\r\n    public void setPrix(float prix) {\r\n        this.prix = prix;\r\n        \r\n    }\r\n\r\n}\r\n
+===================================================================
+diff --git a/../../../El Zeyed/Gestion De Magasin/Gestion De magasin/src/Produit.java b/../../../El Zeyed/Gestion De Magasin/Gestion De magasin/src/Produit.java
+--- a/../../../El Zeyed/Gestion De Magasin/Gestion De magasin/src/Produit.java	
++++ b/../../../El Zeyed/Gestion De Magasin/Gestion De magasin/src/Produit.java	
+@@ -55,7 +55,7 @@
+ 
+     public void setPrix(float prix) {
+         this.prix = prix;
+-        
++
+     }
+ 
+ }

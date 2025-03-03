@@ -1,0 +1,100 @@
+Index: src/main/java/org/example/pathfinder/App/App.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.pathfinder.App;\r\n\r\nimport javafx.application.Application;\r\nimport javafx.fxml.FXMLLoader;\r\nimport javafx.scene.Scene;\r\nimport javafx.stage.Stage;\r\n\r\nimport java.sql.Connection;\r\n\r\n\r\npublic class    App extends Application {\r\n    @Override\r\n    public void start(Stage stage) {\r\n        try {\r\n            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(\"/org/example/pathfinder/view/Frontoffice/Question.fxml\"));\r\n                Scene scene = new Scene(fxmlLoader.load(), 1000, 600);\r\n            stage.setTitle(\"PathFinder\");\r\n            stage.setScene(scene);\r\n           // stage.setMaximized(true);\r\n            stage.show();        }\r\n        catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    public static void main(String[] args) {\r\n        System.out.println(\"Test terminé !\");\r\n        DatabaseConnection db = DatabaseConnection.getInstance();\r\n        Connection conn         = db.getCnx();\r\n\r\n        if (conn != null) {\r\n            System.out.println(\"\uD83C\uDFAF La connexion est active !\");\r\n        } else {\r\n            System.out.println(\"⚠\uFE0F La connexion a échoué !\");\r\n        }\r\n\r\n\r\n        launch(); // Launch JavaFX application\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/pathfinder/App/App.java b/src/main/java/org/example/pathfinder/App/App.java
+--- a/src/main/java/org/example/pathfinder/App/App.java	(revision 8cdb4b33ee7caa87b4e8ca48e52e0f7e582e84ba)
++++ b/src/main/java/org/example/pathfinder/App/App.java	(date 1740692276379)
+@@ -3,38 +3,47 @@
+ import javafx.application.Application;
+ import javafx.fxml.FXMLLoader;
+ import javafx.scene.Scene;
++import javafx.scene.image.Image;
+ import javafx.stage.Stage;
++import org.example.pathfinder.Model.LoggedUser;
++import org.example.pathfinder.Model.User;
++import org.example.pathfinder.Service.UserService;
+ 
+-import java.sql.Connection;
+-
++import java.io.IOException;
+ 
+-public class    App extends Application {
++public class App extends Application {
++
+     @Override
+-    public void start(Stage stage) {
+-        try {
+-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/pathfinder/view/Frontoffice/Question.fxml"));
+-                Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
+-            stage.setTitle("PathFinder");
+-            stage.setScene(scene);
+-           // stage.setMaximized(true);
+-            stage.show();        }
+-        catch (Exception e) {
+-            e.printStackTrace();
+-        }
++    public void start(Stage stage) throws IOException {
++        // Set up the FXML scene
++        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/Question.fxml"));
++        Scene scene = new Scene(fxmlLoader.load());
++
++        // Set up the window title, icon, and scene
++        stage.setTitle("PathFinder");
++        stage.setScene(scene);
++        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png")));
++        stage.setMaximized(true);
++
++        // Show the stage (window)
++        stage.show();
++
++        // Set the logged user ID here (after the stage is shown)
++
++
+     }
+ 
+     public static void main(String[] args) {
+-        System.out.println("Test terminé !");
+-        DatabaseConnection db = DatabaseConnection.getInstance();
+-        Connection conn         = db.getCnx();
++        long logged = 1L;
++        UserService userService = new UserService();
++        User u= userService.getUserById(logged);
+ 
+-        if (conn != null) {
+-            System.out.println("🎯 La connexion est active !");
+-        } else {
+-            System.out.println("⚠️ La connexion a échoué !");
+-        }
++        LoggedUser.getInstance().setRole(u.getRole());
++        LoggedUser.getInstance().setUserId(logged);
+ 
++        System.out.println("logged"+LoggedUser.getInstance().getUserId());
++        System.out.println("logged"+LoggedUser.getInstance().getRole());
++        launch();
+ 
+-        launch(); // Launch JavaFX application
+     }
+-}
++}
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n  <modelVersion>4.0.0</modelVersion>\r\n\r\n  <groupId>org.example</groupId>\r\n  <artifactId>Pathfinder</artifactId>\r\n  <version>1.0-SNAPSHOT</version>\r\n  <name>Pathfinder</name>\r\n\r\n  <properties>\r\n    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n<junit.version>5.10.0</junit.version>  </properties>\r\n\r\n  <dependencies>\r\n    <dependency>\r\n      <groupId>org.apache.pdfbox</groupId>\r\n      <artifactId>pdfbox</artifactId>\r\n      <version>2.0.27</version>\r\n    </dependency>\r\n    <dependency>\r\n      <groupId>com.squareup.okhttp3</groupId>\r\n      <artifactId>okhttp</artifactId>\r\n      <version>4.9.3</version>\r\n    </dependency>\r\n\r\n    <dependency>\r\n      <groupId>org.json</groupId>\r\n      <artifactId>json</artifactId>\r\n      <version>20210307</version>\r\n    </dependency>\r\n\r\n    <dependency>\r\n      <groupId>mysql</groupId>\r\n      <artifactId>mysql-connector-java</artifactId>\r\n      <version>8.0.27</version> <!-- Utilise la version compatible -->\r\n    </dependency>\r\n\r\n    <dependency>\r\n      <groupId>org.openjfx</groupId>\r\n      <artifactId>javafx-controls</artifactId>\r\n      <version>17.0.6</version>\r\n    </dependency>\r\n    <dependency>\r\n      <groupId>org.openjfx</groupId>\r\n      <artifactId>javafx-fxml</artifactId>\r\n      <version>17.0.6</version>\r\n    </dependency>\r\n<dependency>\r\n      <groupId>com.dlsc.formsfx</groupId>\r\n      <artifactId>formsfx-core</artifactId>\r\n      <version>11.6.0</version>\r\n      <exclusions>\r\n        <exclusion>\r\n          <groupId>org.openjfx</groupId>\r\n          <artifactId>*</artifactId>\r\n        </exclusion>\r\n      </exclusions>\r\n    </dependency>\r\n<dependency>\r\n      <groupId>org.junit.jupiter</groupId>\r\n      <artifactId>junit-jupiter-api</artifactId>\r\n      <version>${junit.version}</version>\r\n      <scope>test</scope>\r\n    </dependency>\r\n    <dependency>\r\n      <groupId>org.junit.jupiter</groupId>\r\n      <artifactId>junit-jupiter-engine</artifactId>\r\n      <version>${junit.version}</version>\r\n      <scope>test</scope>\r\n    </dependency>\r\n\r\n  </dependencies>\r\n\r\n  <build>\r\n    <plugins>\r\n      <plugin>\r\n        <groupId>org.apache.maven.plugins</groupId>\r\n        <artifactId>maven-compiler-plugin</artifactId>\r\n        <version>3.11.0</version>\r\n        <configuration>\r\n          <source>17</source>\r\n          <target>17</target>\r\n        </configuration>\r\n      </plugin>\r\n      <plugin>\r\n        <groupId>org.openjfx</groupId>\r\n        <artifactId>javafx-maven-plugin</artifactId>\r\n        <version>0.0.8</version>\r\n        <executions>\r\n          <execution>\r\n            <!-- Default configuration for running with: mvn clean javafx:run -->\r\n            <id>default-cli</id>\r\n            <configuration>\r\n              <mainClass>org.example.pathfinder/org.example.pathfinder.HelloApplication</mainClass>\r\n              <launcher>app</launcher>\r\n              <jlinkZipName>app</jlinkZipName>\r\n              <jlinkImageName>app</jlinkImageName>\r\n              <noManPages>true</noManPages>\r\n              <stripDebug>true</stripDebug>\r\n              <noHeaderFiles>true</noHeaderFiles>\r\n            </configuration>\r\n          </execution>\r\n        </executions>\r\n      </plugin>\r\n    </plugins>\r\n  </build>\r\n</project>
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision 8cdb4b33ee7caa87b4e8ca48e52e0f7e582e84ba)
++++ b/pom.xml	(date 1740690836512)
+@@ -34,7 +34,7 @@
+     <dependency>
+       <groupId>mysql</groupId>
+       <artifactId>mysql-connector-java</artifactId>
+-      <version>8.0.27</version> <!-- Utilise la version compatible -->
++      <version>8.0.33</version> <!-- Utilise la version compatible -->
+     </dependency>
+ 
+     <dependency>

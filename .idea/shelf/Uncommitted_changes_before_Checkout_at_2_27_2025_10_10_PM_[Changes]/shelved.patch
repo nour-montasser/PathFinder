@@ -1,0 +1,28 @@
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>org.example</groupId>\r\n    <artifactId>PathFinder</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n    <name>PathFinder</name>\r\n\r\n    <properties>\r\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n        <junit.version>5.10.2</junit.version>\r\n    </properties>\r\n\r\n    <dependencies>\r\n\r\n            <!-- MySQL JDBC Driver Dependency -->\r\n        <dependency>\r\n            <groupId>mysql</groupId>\r\n            <artifactId>mysql-connector-java</artifactId>\r\n            <version>8.0.33</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.json</groupId>\r\n            <artifactId>json</artifactId>\r\n            <version>20210307</version> <!-- Use the latest version -->\r\n        </dependency>\r\n\r\n\r\n        <dependency>\r\n            <groupId>org.apache.pdfbox</groupId>\r\n            <artifactId>pdfbox</artifactId>\r\n            <version>2.0.27</version>\r\n        </dependency>\r\n\r\n\r\n        <dependency>\r\n            <groupId>org.openjfx</groupId>\r\n            <artifactId>javafx-controls</artifactId>\r\n            <version>17.0.6</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.openjfx</groupId>\r\n            <artifactId>javafx-fxml</artifactId>\r\n            <version>17.0.6</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.junit.jupiter</groupId>\r\n            <artifactId>junit-jupiter-api</artifactId>\r\n            <version>${junit.version}</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.junit.jupiter</groupId>\r\n            <artifactId>junit-jupiter-engine</artifactId>\r\n            <version>${junit.version}</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n    </dependencies>\r\n\r\n    <build>\r\n        <plugins>\r\n            <plugin>\r\n                <groupId>org.apache.maven.plugins</groupId>\r\n                <artifactId>maven-compiler-plugin</artifactId>\r\n                <version>3.13.0</version>\r\n                <configuration>\r\n                    <source>17</source>\r\n                    <target>17</target>\r\n                </configuration>\r\n            </plugin>\r\n            <plugin>\r\n                <groupId>org.openjfx</groupId>\r\n                <artifactId>javafx-maven-plugin</artifactId>\r\n                <version>0.0.8</version>\r\n                <executions>\r\n                    <execution>\r\n                        <!-- Default configuration for running with: mvn clean javafx:run -->\r\n                        <id>default-cli</id>\r\n                        <configuration>\r\n                            <mainClass>org.example.pathfinder/org.example.pathfinder.App.App</mainClass>\r\n                            <launcher>app</launcher>\r\n                            <jlinkZipName>app</jlinkZipName>\r\n                            <jlinkImageName>app</jlinkImageName>\r\n                            <noManPages>true</noManPages>\r\n                            <stripDebug>true</stripDebug>\r\n                            <noHeaderFiles>true</noHeaderFiles>\r\n                        </configuration>\r\n                    </execution>\r\n                </executions>\r\n            </plugin>\r\n        </plugins>\r\n    </build>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision 491e355d766581d422eebda708d61472def0cabd)
++++ b/pom.xml	(date 1740687568864)
+@@ -26,10 +26,15 @@
+         <dependency>
+             <groupId>org.json</groupId>
+             <artifactId>json</artifactId>
+-            <version>20210307</version> <!-- Use the latest version -->
++            <version>20210307</version>
++        </dependency>
++
++        <dependency>
++        <groupId>com.squareup.okhttp3</groupId>
++        <artifactId>okhttp</artifactId>
++        <version>4.9.3</version>
+         </dependency>
+ 
+-
+         <dependency>
+             <groupId>org.apache.pdfbox</groupId>
+             <artifactId>pdfbox</artifactId>
