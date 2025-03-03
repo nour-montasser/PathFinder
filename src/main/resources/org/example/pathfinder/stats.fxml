@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.pathfinder.Controller.FreelancerDashboardController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <!-- Title Label -->
+    <Label text="Revenue Breakdown by Service"
+           layoutX="200.0" layoutY="20.0"
+           style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- Pie Chart -->
+    <PieChart fx:id="revenuePieChart"
+              layoutX="50.0" layoutY="50.0"
+              prefWidth="500.0" prefHeight="300.0"/>
+
+</AnchorPane>

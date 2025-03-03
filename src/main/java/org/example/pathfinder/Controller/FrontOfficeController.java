@@ -9,9 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import java.io.IOException;
-
 import java.net.URL;
-
 
 public class FrontOfficeController {
 
@@ -22,7 +20,7 @@ public class FrontOfficeController {
     private StackPane contentArea; // The main content area where views will be loaded dynamically
 
     @FXML
-    private Button homeButton, freelanceButton, findJobButton, profileButton, messagesButton, helpButton;
+    private Button homeButton, freelanceButton, findJobButton, profileButton, messagesButton, helpButton, serviceButton;
 
     private Button activeButton; // Stores the currently active button
 
@@ -31,7 +29,7 @@ public class FrontOfficeController {
 
         // Load Logo Image
         try {
-            String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_navbar.png.png").toExternalForm();
+            String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_navbar.png").toExternalForm();
             logoImage.setImage(new Image(logoPath));
         } catch (Exception e) {
             System.err.println("⚠️ Logo Image not found: " + e.getMessage());
@@ -83,7 +81,6 @@ public class FrontOfficeController {
             e.printStackTrace();
         }
     }
-
     // ✅ Function to Set Active Button (Turns White & Adds Underline)
     private void setActiveButton(Button button) {
         if (activeButton != null) {
@@ -104,7 +101,13 @@ public class FrontOfficeController {
     @FXML
     private void loadFreelancePage() {
         setActiveButton(freelanceButton);
-        loadPage("Freelance.fxml");
+        loadPage("ApplicationForum.fxml");
+    }
+
+    @FXML
+    private void loadServicesPage() {
+        setActiveButton(serviceButton);
+        loadPage("ClientDashboard.fxml");
     }
 
     @FXML
@@ -116,7 +119,7 @@ public class FrontOfficeController {
     @FXML
     private void loadProfilePage() {
         setActiveButton(profileButton);
-        loadPage("Profile.fxml");
+        loadPage("ProfileInformation.fxml");
     }
 
     @FXML
@@ -138,6 +141,19 @@ public class FrontOfficeController {
         contentArea.getChildren().add(newView);
     }
 
+    @FXML
+    private void loadCVForum() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/CV-Forum.fxml"));
+            Parent cvForumView = loader.load();
+            loadView(cvForumView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Error loading CV-Forum.fxml");
+        }
+
+    }
+
 
     public void setContent(Parent newContent) {
         if (contentArea.getScene() == null) {
@@ -153,7 +169,6 @@ public class FrontOfficeController {
             updateContent(newContent);
         }
     }
-
     // Helper method to update content safely
     private void updateContent(Parent newContent) {
         contentArea.getChildren().clear();

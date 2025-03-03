@@ -19,6 +19,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import org.example.pathfinder.Model.Channel;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Model.Message;
 import org.example.pathfinder.Model.User;
 import org.example.pathfinder.Service.ApplicationService;
@@ -78,7 +79,7 @@ public class ChannelMessageController {
     private User selectedUser;  // Currently selected user
     private Long currentChannelId;
     private UserService userService;
-    private Long currentUserId =7L; // Change this to test different users (1, 2, etc.)
+    private Long loggedInUserId= LoggedUser.getInstance().getUserId();
 
     public ChannelMessageController() {
         messageService = new MessageService();
@@ -115,7 +116,7 @@ public class ChannelMessageController {
 
 
         // Fetch channels for current user only
-        List<Channel> channelsList = channelService.getall(currentUserId);
+        List<Channel> channelsList = channelService.getall(loggedInUserId);
         ObservableList<Channel> channelsObservableList = FXCollections.observableArrayList(channelsList);
         channelListView.setItems(channelsObservableList);
 
@@ -124,7 +125,7 @@ public class ChannelMessageController {
             Channel selectedChannel = channelListView.getSelectionModel().getSelectedItem();
             if (selectedChannel != null) {
                 // Get the other user's ID (not the current user)
-                Long otherUserId = selectedChannel.getUser1Id().equals(currentUserId) ?
+                Long otherUserId = selectedChannel.getUser1Id().equals(loggedInUserId) ?
                         selectedChannel.getUser2Id() : selectedChannel.getUser1Id();
 
                 User selectedUser = userService.getUserById(otherUserId);
@@ -165,7 +166,7 @@ public class ChannelMessageController {
                     setGraphic(null);
                 } else {
                     // Get the other user's ID (not the current user)
-                    Long otherUserId = item.getUser1Id().equals(currentUserId) ?
+                    Long otherUserId = item.getUser1Id().equals(loggedInUserId) ?
                             item.getUser2Id() : item.getUser1Id();
 
                     User user = userService.getUserById(otherUserId);
@@ -218,7 +219,7 @@ public class ChannelMessageController {
                         String messageContent = truncateMessage(lastMessage.getContent(), 20);
 
                         // Correct logic: if the sender is the current user, show "You:"
-                        if (Objects.equals(lastMessage.getIdUserSender(), currentUserId)) {
+                        if (Objects.equals(lastMessage.getIdUserSender(), loggedInUserId)) {
                             statusLabel.setText("You: " + messageContent);
                         } else {
                             User sender = userService.getUserById(lastMessage.getIdUserSender());
@@ -355,7 +356,7 @@ public class ChannelMessageController {
             messageService.update(messageToUpdate);
 
             // Refresh the messages
-            Long channelId = messageService.getChannelIdBetweenUsers(currentUserId, selectedUser.getId());
+            Long channelId = messageService.getChannelIdBetweenUsers(loggedInUserId, selectedUser.getId());
             List<Message> messages = messageService.getMessagesByChannelId(channelId);
             messageListView.getItems().setAll(messages);
 
@@ -381,14 +382,14 @@ public class ChannelMessageController {
             return;
         }
 
-        Long channelId = messageService.getChannelIdBetweenUsers(currentUserId, selectedUser.getId());
+        Long channelId = messageService.getChannelIdBetweenUsers(loggedInUserId, selectedUser.getId());
         if (channelId == null) {
             showAlert(Alert.AlertType.ERROR, "Channel Error", "No channel found between selected users.");
             return;
         }
 
         // Send user message
-        Message message = new Message(content, currentUserId, selectedUser.getId(), "text", channelId);
+        Message message = new Message(content, loggedInUserId, selectedUser.getId(), "text", channelId);
         try {
             messageService.add(message);
 
@@ -402,7 +403,7 @@ public class ChannelMessageController {
                     // Send AI response as a new message
                     Message aiMessage = new Message(
                             aiResponse,
-                            currentUserId,
+                            loggedInUserId,
                             selectedUser.getId(),
                             "text",
                             channelId
@@ -431,7 +432,7 @@ public class ChannelMessageController {
             }
 
             // Check if the message belongs to the current user
-            if (!selectedMessage.getIdUserSender().equals(currentUserId)) {
+            if (!selectedMessage.getIdUserSender().equals(loggedInUserId)) {
                 showAlert(Alert.AlertType.ERROR, "Permission Error", "You can only update your own messages.");
                 return;
             }
@@ -538,7 +539,7 @@ public class ChannelMessageController {
                 messageBox.getChildren().clear();
                 menuButton.getItems().clear();
 
-                if (message.getIdUserSender().equals(currentUserId)) {
+                if (message.getIdUserSender().equals(loggedInUserId)) {
                     setupSenderMessage(message);
                 } else {
                     setupReceiverMessage(message);
@@ -676,8 +677,8 @@ public class ChannelMessageController {
         }
 
         try {
-            User selectedUser = userService.getall(null).stream()
-                    .filter(user -> user.getName().equalsIgnoreCase(searchText) && user.getId() != currentUserId)
+            User selectedUser = userService.getAllUsers().stream()
+                    .filter(user -> user.getName().equalsIgnoreCase(searchText) && user.getId() != loggedInUserId)
                     .findFirst()
                     .orElse(null);
 
@@ -687,17 +688,17 @@ public class ChannelMessageController {
             }
 
             this.selectedUser = selectedUser;
-            Channel existingChannel = channelService.getChannelBetweenUsers(currentUserId, selectedUser.getId());
+            Channel existingChannel = channelService.getChannelBetweenUsers(loggedInUserId, selectedUser.getId());
 
             if (existingChannel == null) {
                 // Create new channel
                 Channel newChannel = new Channel();
-                newChannel.setUser1Id(currentUserId);
+                newChannel.setUser1Id(loggedInUserId);
                 newChannel.setUser2Id(selectedUser.getId());
                 channelService.add(newChannel);
 
                 // Refresh channel list
-                List<Channel> updatedChannels = channelService.getall(currentUserId);
+                List<Channel> updatedChannels = channelService.getall(loggedInUserId);
                 channelListView.setItems(FXCollections.observableArrayList(updatedChannels));
             } else {
                 channelListView.getSelectionModel().select(existingChannel);
@@ -719,9 +720,9 @@ public class ChannelMessageController {
         suggestions.clear();
 
         // Get all users except current user
-        List<String> filteredUsers = userService.getall(null)
+        List<String> filteredUsers = userService.getAllUsers()
                 .stream()
-                .filter(user -> user.getId() != currentUserId)
+                .filter(user -> user.getId() != loggedInUserId)
                 .map(User::getName)
                 .collect(Collectors.toList());
 

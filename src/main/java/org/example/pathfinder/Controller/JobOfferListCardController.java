@@ -74,6 +74,8 @@ public class JobOfferListCardController {
     private JobOfferListController parentController;
     private String loggedUserRole = LoggedUser.getInstance().getRole();
     private long loggedUserid = LoggedUser.getInstance().getUserId();
+    private String getLoggedUserRole = LoggedUser.getInstance().getRole();
+    private JobOfferProfileController profileController;
 
 
     @FXML
@@ -105,7 +107,7 @@ public class JobOfferListCardController {
         } else if (loggedUserRole.equals("SEEKER")) {
             applyButton.setVisible(true);   // Make apply button visible for seekers
             menuButton.setVisible(false); // Hide actions menu for seekers
-            titleLabel.setOnMouseClicked(event -> showError("You cannot view the details as a job seeker."));
+
         }
     }
 
@@ -121,7 +123,7 @@ public class JobOfferListCardController {
         }
 
         titleLabel.setText(jobOffer.getTitle());
-        descriptionLabel.setText(jobOffer.getDescription());
+        descriptionLabel.setText(jobOffer.getDescription());    
         requiredEducationLabel.setText("Required Education: " + jobOffer.getRequiredEducation());
         requiredExperienceLabel.setText("Required Experience: " + jobOffer.getRequiredExperience());
         skillsLabel.setText("Skills: " + jobOffer.getSkills());
@@ -143,6 +145,7 @@ public class JobOfferListCardController {
         } else {
             applyButton.setVisible(true);
             menuButton.setVisible(false);
+            titleLabel.setOnMouseClicked(event -> openJobOfferDetailScene());
         }
         cardContainer.setOnMouseClicked(event -> toggleDetails());
     }
@@ -151,6 +154,11 @@ public class JobOfferListCardController {
 
     public void setParentController(JobOfferListController parentController) {
         this.parentController = parentController;
+    }
+
+
+    public void setParentController(JobOfferProfileController profileController) {
+        this.profileController = profileController;
     }
 
     private void toggleDetails() {
@@ -233,31 +241,44 @@ public class JobOfferListCardController {
 
     private void openJobOfferDetailScene() {
         try {
-            // Charger la vue principale (navbar + contentArea)
+            // Load the main front office view (navbar + contentArea)
             FXMLLoader frontOfficeLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
             Parent frontOfficeView = frontOfficeLoader.load();
             FrontOfficeController frontOfficeController = frontOfficeLoader.getController();
 
-            // Charger la page des détails de l'offre d'emploi
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml"));
+            // Determine which FXML file to load based on the logged-in user's role
+            FXMLLoader loader;
+            if (loggedUserRole.equals("COMPANY")) {
+                // Load the JobOfferApplicationList.fxml for companies
+                loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferApplicationList.fxml"));
+            } else {
+                // Load the JobOfferProfile.fxml for other users
+                loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/JobOfferProfile.fxml"));
+            }
+
+            // Load the job offer detail view
             Parent jobOfferDetailView = loader.load();
 
-            // Obtenir le contrôleur et lui passer l'offre d'emploi
-            JobOfferApplicationListController controller = loader.getController();
-            controller.setJobOffer(jobOffer);
+            // Get the controller and pass the job offer to it
+            if (loggedUserRole.equals("COMPANY")) {
+                JobOfferApplicationListController controller = loader.getController();
+                controller.setJobOffer(jobOffer);
+            } else {
+                JobOfferProfileController controller = loader.getController();
+                controller.setJobOffer(jobOffer);
+            }
 
-            // Injecter la vue des détails dans le contentArea
-            frontOfficeController.loadView(jobOfferDetailView); // Méthode déjà ajoutée à FrontOfficeController
+            // Inject the detail view into the contentArea
+            frontOfficeController.loadView(jobOfferDetailView); // Method already added to FrontOfficeController
 
-            // Obtenir la fenêtre actuelle (Stage)
+            // Get the current window (Stage)
             Stage currentStage = (Stage) skillsLabel.getScene().getWindow();
 
-            // Recréer la scène avec le layout mis à jour
+            // Recreate the scene with the updated layout
             Scene detailScene = new Scene(frontOfficeView);
             detailScene.getStylesheets().add(getClass().getResource("/org/example/pathfinder/view/Frontoffice/styles.css").toExternalForm());
 
-
-            // Appliquer la nouvelle scène et forcer le redimensionnement
+            // Apply the new scene and force resizing
             currentStage.setScene(detailScene);
             currentStage.setTitle("Job Offer Details");
             currentStage.setMaximized(false);
@@ -270,7 +291,6 @@ public class JobOfferListCardController {
             throw new RuntimeException(e);
         }
     }
-
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
@@ -372,24 +392,24 @@ public class JobOfferListCardController {
 
 
 
-        // Handle mouse enter event for the card (VBox)
-        public void onCardHover(Event event) {
-            VBox cardContainer = (VBox) event.getSource(); // Get the VBox container (card)
+    // Handle mouse enter event for the card (VBox)
+    public void onCardHover(Event event) {
+        VBox cardContainer = (VBox) event.getSource(); // Get the VBox container (card)
 
-            // Get the width and height of the container to calculate the center
-            double centerX = cardContainer.getBoundsInLocal().getWidth() / 2;
-            double centerY = cardContainer.getBoundsInLocal().getHeight() / 2;
+        // Get the width and height of the container to calculate the center
+        double centerX = cardContainer.getBoundsInLocal().getWidth() / 2;
+        double centerY = cardContainer.getBoundsInLocal().getHeight() / 2;
 
-            // Create a scaling transformation and set the pivot point to the center
-            Scale scale = new Scale(1.05, 1.05, centerX, centerY);  // Scale by 5% larger
-            cardContainer.getTransforms().add(scale);  // Apply the scale transformation
-        }
+        // Create a scaling transformation and set the pivot point to the center
+        Scale scale = new Scale(1.05, 1.05, centerX, centerY);  // Scale by 5% larger
+        cardContainer.getTransforms().add(scale);  // Apply the scale transformation
+    }
 
-        // Handle mouse exit event for the card (VBox)
-        public void onCardExit(Event event) {
-            VBox cardContainer = (VBox) event.getSource(); // Get the VBox container (card)
-            cardContainer.getTransforms().clear();  // Remove any applied transformations, returning to normal size
-        }
+    // Handle mouse exit event for the card (VBox)
+    public void onCardExit(Event event) {
+        VBox cardContainer = (VBox) event.getSource(); // Get the VBox container (card)
+        cardContainer.getTransforms().clear();  // Remove any applied transformations, returning to normal size
+    }
 
 
 

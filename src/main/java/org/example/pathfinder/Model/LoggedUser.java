@@ -5,6 +5,10 @@ public class LoggedUser {
     private long userId;
     private String role;
     private String email;
+    private String password;
+    private String name;
+    private String image;
+
 
     // Private constructor to prevent instantiation
     private LoggedUser() {}
@@ -40,4 +44,23 @@ public class LoggedUser {
     public String getEmail() {
         return email;
     }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setImage(String image) {
+        this.image = image;
+    }
+    public String getImage() {
+        return image;
+    }
+
 }

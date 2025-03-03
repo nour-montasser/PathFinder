@@ -285,7 +285,7 @@ public class ApplicationService implements Services<ApplicationJob> {
         return "Unknown User";
     }
     public String getUserProfilePicture(Long userId) {
-        String query = "SELECT photo FROM profile WHERE id_user = ?";
+        String query = "SELECT image FROM app_user WHERE id_user = ?";
         try (
              PreparedStatement stmt = cnx.prepareStatement(query)) {
 

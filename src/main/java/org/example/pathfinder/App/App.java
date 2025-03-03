@@ -17,14 +17,14 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Set up the FXML scene
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Authentification/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
         // Set up the window title, icon, and scene
         stage.setTitle("PathFinder");
         stage.setScene(scene);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png")));
-        stage.setMaximized(true);
+
 
         // Show the stage (window)
         stage.show();
@@ -35,7 +35,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        long logged = 1L;
+      /*  long logged = 7L;
         UserService userService = new UserService();
         User u= userService.getUserById(logged);
 
@@ -44,7 +44,7 @@ public class App extends Application {
         LoggedUser.getInstance().setEmail(u.getEmail());
 
         System.out.println("logged"+LoggedUser.getInstance().getUserId());
-        System.out.println("logged"+LoggedUser.getInstance().getRole());
+        System.out.println("logged"+LoggedUser.getInstance().getRole());*/
         launch();
 
     }

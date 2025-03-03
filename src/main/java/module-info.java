@@ -19,23 +19,42 @@ module org.example.pathfinder {
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
+    requires com.dlsc.formsfx;
+    requires com.google.gson;  // ✅ This allows you to use Gson
+
     requires javafx.base;
     requires javafx.swing;
 
-    requires java.desktop;
-    requires java.sql; // Required for database connection
 
+    requires java.desktop;
+
+
+    requires qrgen;
     requires kernel;
     requires layout;
     requires io;
     requires org.json;
 
-    // ✅ Open necessary packages for JavaFX to access them
-    opens org.example.pathfinder.Controller to javafx.fxml;
-    opens org.example.pathfinder.App to javafx.fxml;
-    opens org.example.pathfinder.Model to javafx.base;
+    requires jdk.jsobject;  // Add this for JSON parsing
+    opens org.example.pathfinder to javafx.fxml;
 
-    // ✅ Export necessary packages
-    exports org.example.pathfinder.Controller;
     exports org.example.pathfinder.App;
+
+    requires jbcrypt;
+    requires javafx.web;
+    requires org.apache.httpcomponents.httpcore;
+    requires org.apache.httpcomponents.httpclient;
+
+    requires java.mail;
+
+    // Add these exports to allow other modules to access them
+    exports org.example.pathfinder.Controller;
+    exports org.example.pathfinder.Model;
+    exports org.example.pathfinder.Service;
+    // If using FXML in these packages, open them too
+    opens org.example.pathfinder.Controller to javafx.fxml;
+    opens org.example.pathfinder.Model to javafx.fxml;
+    opens org.example.pathfinder.Service to javafx.fxml;
+    opens org.example.pathfinder.App to javafx.fxml; // Open the App subpackage
 }
