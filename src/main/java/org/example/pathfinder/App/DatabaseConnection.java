@@ -10,8 +10,9 @@ public class DatabaseConnection {
     private static DatabaseConnection instance; // Singleton instance
 
     public DatabaseConnection() {
-        String url = "jdbc:mysql://localhost:3307/projet_3a"; // Database URL
-        String username = "pma"; // Database username
+        System.out.println("Attempting to connect to the database...");
+        String url = "jdbc:mysql://localhost:3307/pathfinder"; // Database URL
+        String username = "root"; // Database username
         String password = ""; // Database password
 
         try {
