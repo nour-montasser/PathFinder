@@ -3,6 +3,7 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
+import java.sql.Timestamp;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.collections.FXCollections;
@@ -35,6 +36,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -170,39 +173,49 @@ public class ChannelMessageController {
                             item.getUser2Id() : item.getUser1Id();
 
                     User user = userService.getUserById(otherUserId);
-                    ApplicationService applicationService = new ApplicationService();
-                    String url = applicationService.getUserProfilePicture(user.getId());
-
-                    // Create profile image
 
                     // Create profile image
                     ImageView profileImage = new ImageView();
-
-                    if (url == null || url.isEmpty()) {
-                        url = "/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png";
-                    }
+                    String defaultImagePath = "/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png";
 
                     try {
-                        String finalUrl = url.startsWith("/") ? url : "/" + url;
-                        InputStream stream = getClass().getResourceAsStream(finalUrl);
-
-                        if (stream != null) {
-                            Image image = new Image(stream);
-                            profileImage.setImage(image);
+                        String userImagePath = user.getImage();
+                        if (userImagePath != null && !userImagePath.isEmpty()) {
+                            // Try to load user's image from resources
+                            InputStream imageStream = getClass().getResourceAsStream(userImagePath);
+                            if (imageStream != null) {
+                                profileImage.setImage(new Image(imageStream));
+                            } else {
+                                // Fallback to default image
+                                InputStream defaultStream = getClass().getResourceAsStream(defaultImagePath);
+                                if (defaultStream != null) {
+                                    profileImage.setImage(new Image(defaultStream));
+                                }
+                            }
                         } else {
-                            // Fallback to default image
-                            InputStream defaultStream = getClass().getResourceAsStream("/org/example/pathfinder/view/Sources/pathfinder_logo_compass.png.png");
-                            Image defaultImage = new Image(defaultStream);
-                            profileImage.setImage(defaultImage);
+                            // Load default image
+                            InputStream defaultStream = getClass().getResourceAsStream(defaultImagePath);
+                            if (defaultStream != null) {
+                                profileImage.setImage(new Image(defaultStream));
+                            }
                         }
-
-                        profileImage.setFitHeight(79);
-                        profileImage.setFitWidth(56);
-                        profileImage.setPreserveRatio(true);
-
                     } catch (Exception e) {
-                        System.err.println("Error loading image from path: " + url + " - " + e.getMessage());
+                        System.err.println("Error loading image: " + e.getMessage());
+                        // Try one last time with default image
+                        try {
+                            InputStream defaultStream = getClass().getResourceAsStream(defaultImagePath);
+                            if (defaultStream != null) {
+                                profileImage.setImage(new Image(defaultStream));
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("Error loading default image: " + ex.getMessage());
+                        }
                     }
+
+                    // Configure profile image
+                    profileImage.setFitHeight(79);
+                    profileImage.setFitWidth(56);
+                    profileImage.setPreserveRatio(true);
 
                     // Create labels
                     Label usernameLabel = new Label(user.getName());
@@ -210,15 +223,13 @@ public class ChannelMessageController {
                     usernameLabel.setTextFill(Color.web("#5b3a29"));
                     VBox.setMargin(usernameLabel, new Insets(20, 0, 0, 10));
 
-// Inside the channelListView.setCellFactory method
-                    // In your controller's initialize method or constructor
+                    // Status label
                     Label statusLabel = new Label();
                     List<Message> channelMessages = messageService.getMessagesByChannelId(item.getId());
                     if (!channelMessages.isEmpty()) {
                         Message lastMessage = channelMessages.get(channelMessages.size() - 1);
                         String messageContent = truncateMessage(lastMessage.getContent(), 20);
 
-                        // Correct logic: if the sender is the current user, show "You:"
                         if (Objects.equals(lastMessage.getIdUserSender(), loggedInUserId)) {
                             statusLabel.setText("You: " + messageContent);
                         } else {
@@ -233,7 +244,7 @@ public class ChannelMessageController {
                     statusLabel.setTextFill(Color.web("#9e9e9e"));
                     VBox.setMargin(statusLabel, new Insets(0, 0, 0, 10));
 
-// Layout
+                    // Layout
                     VBox userInfoBox = new VBox(usernameLabel, statusLabel);
                     userInfoBox.setPrefWidth(207);
 
@@ -244,8 +255,6 @@ public class ChannelMessageController {
 
                     setGraphic(channelLayout);
                 }
-
-
             }
 
         });
@@ -369,6 +378,7 @@ public class ChannelMessageController {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to update message: " + e.getMessage());
         }
     }
+
     @FXML
     private void sendMessage() {
         String content = messageInput.getText().trim();
@@ -388,26 +398,21 @@ public class ChannelMessageController {
             return;
         }
 
-        // Send user message
+        // Create and set timestamp for the message
         Message message = new Message(content, loggedInUserId, selectedUser.getId(), "text", channelId);
+        message.setTimesent(new Timestamp(System.currentTimeMillis())); // Set the timestamp
+
         try {
+            // Save message with timestamp
             messageService.add(message);
 
-            // Check if message starts with /pathfinderAI
+            // Handle AI response if needed
             if (content.startsWith("/pathfinderAI")) {
                 String question = content.substring("/pathfinderAI".length()).trim();
                 if (!question.isEmpty()) {
-                    // Generate AI response
-                    String aiResponse = generateAIResponse(question+"Answer this question keep it short!");
-
-                    // Send AI response as a new message
-                    Message aiMessage = new Message(
-                            aiResponse,
-                            loggedInUserId,
-                            selectedUser.getId(),
-                            "text",
-                            channelId
-                    );
+                    String aiResponse = generateAIResponse(question + "Answer this question keep it short!");
+                    Message aiMessage = new Message(aiResponse, loggedInUserId, selectedUser.getId(), "text", channelId);
+                    aiMessage.setTimesent(new Timestamp(System.currentTimeMillis())); // Set timestamp for AI message
                     messageService.add(aiMessage);
                 }
             }
@@ -420,9 +425,7 @@ public class ChannelMessageController {
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to send message: " + e.getMessage());
         }
-
-
-    }    @FXML
+    }@FXML
     public void updateMessage(ActionEvent event) {
         if (!isUpdateMode) {
             Message selectedMessage = messageListView.getSelectionModel().getSelectedItem();
@@ -554,6 +557,16 @@ public class ChannelMessageController {
                 messageContainer.setAlignment(Pos.CENTER_RIGHT);
                 contentLabel.setStyle("-fx-background-color: #0084ff; -fx-text-fill: white; -fx-background-radius: 15px;");
 
+                // Create time label
+                Label timeLabel = new Label(formatTimestamp(message.getTimesent()));
+                timeLabel.setStyle("-fx-text-fill: #9e9e9e; -fx-font-size: 12px;");
+
+                // Create VBox for message and time
+                VBox messageAndTime = new VBox(2); // 2 pixels spacing
+                messageAndTime.setAlignment(Pos.CENTER_RIGHT);
+                messageAndTime.getChildren().addAll(contentLabel, timeLabel);
+
+                // Add menu items
                 MenuItem updateItem = new MenuItem("Update");
                 MenuItem deleteItem = new MenuItem("Delete");
 
@@ -568,13 +581,21 @@ public class ChannelMessageController {
                 });
 
                 menuButton.getItems().addAll(updateItem, deleteItem);
-                messageContainer.getChildren().addAll(contentLabel, menuButton);
-            }
-
-            private void setupReceiverMessage(Message message) {
+                messageContainer.getChildren().clear(); // Clear existing children
+                messageContainer.getChildren().addAll(messageAndTime, menuButton);
+            }            private void setupReceiverMessage(Message message) {
                 messageBox.setAlignment(Pos.CENTER_LEFT);
                 messageContainer.setAlignment(Pos.CENTER_LEFT);
                 contentLabel.setStyle("-fx-background-color: #e9ecef; -fx-text-fill: black; -fx-background-radius: 15px;");
+
+                // Create time label
+                Label timeLabel = new Label(formatTimestamp(message.getTimesent()));
+                timeLabel.setStyle("-fx-text-fill: #9e9e9e; -fx-font-size: 12px;");
+
+                // Create VBox for message and time
+                VBox messageAndTime = new VBox(2); // 2 pixels spacing
+                messageAndTime.setAlignment(Pos.CENTER_LEFT);
+                messageAndTime.getChildren().addAll(contentLabel, timeLabel);
 
                 // Load profile picture
                 ApplicationService applicationService = new ApplicationService();
@@ -591,7 +612,6 @@ public class ChannelMessageController {
                     if (stream != null) {
                         profilePicture.setImage(new Image(stream));
                     } else {
-                        // Fallback to default image
                         InputStream defaultStream = getClass().getResourceAsStream("/Sources/pathfinder_logo_compass.png");
                         if (defaultStream != null) {
                             profilePicture.setImage(new Image(defaultStream));
@@ -601,9 +621,41 @@ public class ChannelMessageController {
                     System.err.println("Error loading profile picture: " + e.getMessage());
                 }
 
-                messageContainer.getChildren().addAll(profilePicture, contentLabel);
+                profilePicture.setFitHeight(40);
+                profilePicture.setFitWidth(40);
+                profilePicture.setPreserveRatio(true);
+
+                Circle clip = new Circle(20, 20, 20);
+                profilePicture.setClip(clip);
+
+                messageContainer.getChildren().clear();
+                messageContainer.getChildren().addAll(profilePicture, messageAndTime);
             }
-        });
+            private String formatTimestamp(java.sql.Timestamp timestamp) {
+                if (timestamp == null) return "";
+
+                LocalDateTime messageTime = LocalDateTime.of(
+                        timestamp.getYear() + 1900,
+                        timestamp.getMonth() + 1,
+                        timestamp.getDate(),
+                        timestamp.getHours(),
+                        timestamp.getMinutes()
+                );
+                LocalDateTime now = LocalDateTime.now();
+
+                // If message is from today, show only time
+                if (messageTime.toLocalDate().equals(now.toLocalDate())) {
+                    return messageTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                }
+
+                // If message is from this year, show date without year
+                if (messageTime.getYear() == now.getYear()) {
+                    return messageTime.format(DateTimeFormatter.ofPattern("MMM d, HH:mm"));
+                }
+
+                // For older messages, show full date and time
+                return messageTime.format(DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm"));
+            }        });
 
         messageListView.getItems().setAll(messages.stream()
                 .filter(m -> m != null && m.getIdChannel().equals(channelId))

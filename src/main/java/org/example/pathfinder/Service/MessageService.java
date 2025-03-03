@@ -153,6 +153,8 @@ public class MessageService implements Services<Message> {
                         rs.getString("media"),
                         rs.getLong("id_channel")
                 );
+                message.setTimesent(rs.getTimestamp("timesent"));
+
                 messages.add(message);
             }
         } catch (SQLException e) {

@@ -293,7 +293,7 @@ public class ApplicationService implements Services<ApplicationJob> {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("photo"); // Return the photo path directly
+                return rs.getString("image"); // Return the photo path directly
             }
         } catch (SQLException e) {
             e.printStackTrace();

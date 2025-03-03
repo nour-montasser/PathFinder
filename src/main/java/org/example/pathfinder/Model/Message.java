@@ -17,7 +17,6 @@ public class Message {
         this.idUserSender = idUserSender;
         this.media = media;
         this.idChannel = idChannel;
-        this.timesent = new Timestamp(System.currentTimeMillis());
     }
 
     // Constructor for new messages (without ID)
@@ -26,7 +25,6 @@ public class Message {
         this.idUserSender = idUserSender;
         this.media = media;
         this.idChannel = idChannel;
-        this.timesent = new Timestamp(System.currentTimeMillis());
     }
 
     // Getters and setters
