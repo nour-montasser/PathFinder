@@ -91,7 +91,7 @@ public class RegisterController {
         }
 
         // Create a new User object
-        User newUser = new User(0, fullName, email, role, password, null);
+        User newUser = new User(0, fullName, email, role, password, "src/main/resources/org/example/pathfinder/view/Sources/default_profile.jpeg");
 
         // Register user
         serviceUser.addUser(newUser);

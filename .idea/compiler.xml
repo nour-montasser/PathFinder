@@ -8,10 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Pathfinder" />
         <module name="gestionuser" />
+        <module name="PathFinder" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="PathFinder" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
