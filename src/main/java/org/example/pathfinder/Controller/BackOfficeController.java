@@ -1,6 +1,5 @@
 package org.example.pathfinder.Controller;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,7 +25,7 @@ public class BackOfficeController {
         System.out.println("✅ BackOfficeController initialized!");
         // Set Users as default active page
         setActiveButton(usersButton);
-        String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_white.png.png").toExternalForm();
+        String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_white.png").toExternalForm();
         logoImage.setImage(new Image(logoPath));
 
     }
@@ -93,6 +92,6 @@ public class BackOfficeController {
     @FXML
     private void loadFreelanceGigsPage() {
         setActiveButton(freelanceGigsButton);
-        loadPage("FreelanceGigs.fxml");
+        loadPage("DashboardService.fxml");
     }
 }
