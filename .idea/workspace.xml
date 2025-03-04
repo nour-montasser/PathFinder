@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="ya rabi ostorna 6.9">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="last update added homepage, fixed layout">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/JobOfferFormController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/JobOfferFormController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/HomePage.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,14 +135,7 @@
   </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
-      <module name="PathFinder" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="PathFinder" />
-      <option name="filePath" />
+      <module name="gestionuser" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -154,12 +143,6 @@
     <configuration name="RunnConfigApp" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.pathfinder.App.App" />
       <module name="PathFinder" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="gestionuser" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -233,6 +216,7 @@
       <workItem from="1740946260777" duration="2238000" />
       <workItem from="1740948572157" duration="1431000" />
       <workItem from="1740999227920" duration="1024000" />
+      <workItem from="1741063288326" duration="730000" />
     </task>
     <task id="LOCAL-00001" summary="crud joboffer+application">
       <option name="closed" value="true" />
@@ -370,7 +354,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741057925352</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="last update added homepage, fixed layout">
+      <option name="closed" value="true" />
+      <created>1741062657454</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1741062657454</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -398,7 +390,8 @@
     <MESSAGE value="ya rabi ostorna 2" />
     <MESSAGE value="ya rabi ostorna 4.0" />
     <MESSAGE value="ya rabi ostorna 6.9" />
-    <option name="LAST_COMMIT_MESSAGE" value="ya rabi ostorna 6.9" />
+    <MESSAGE value="last update added homepage, fixed layout" />
+    <option name="LAST_COMMIT_MESSAGE" value="last update added homepage, fixed layout" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
