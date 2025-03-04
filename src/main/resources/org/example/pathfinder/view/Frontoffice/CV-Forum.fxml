@@ -257,7 +257,7 @@
             <!-- Flatten PDF Option -->
             <HBox spacing="5" alignment="CENTER_LEFT">
                 <CheckBox fx:id="addCertficatesCheckbox"/>
-                <Label text="Add certificates" style="-fx-text-fill: #3B261D;"/>
+                <Label text="Add certificates " style="-fx-text-fill: #3B261D;"/>
             </HBox>
 
 
