@@ -10,7 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import org.example.pathfinder.Model.JobOffer;
 import org.example.pathfinder.Service.JobOfferService;
-
+import org.example.pathfinder.Model.ServiceOffre;
+import org.example.pathfinder.Service.ServiceOffreService;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class HomePageController {
     @FXML private ImageView logoImage;
     @FXML private ImageView compassImage;
     @FXML private HBox jobOffersContainer;
+    @FXML private HBox servicesContainer;
 
     private JobOfferService jobOfferService = new JobOfferService();
 
@@ -41,6 +43,8 @@ public class HomePageController {
 
         // Load job offers
         loadJobOffers();
+        // Load Latest Services
+        loadLatestServices();
     }
 
     private void loadJobOffers() {
@@ -71,4 +75,38 @@ public class HomePageController {
         } catch (IOException e) {
             System.err.println("Error loading job offer cards: " + e.getMessage());
         }
-    }}
+    }
+    private void loadLatestServices() {
+        try {
+            List<ServiceOffre> services = new ServiceOffreService().getAll().stream().limit(5).toList(); // Get latest 5 services
+
+            for (ServiceOffre service : services) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/ServiceListCard.fxml"));
+                Node serviceCard = loader.load();
+
+                // Cast to Region to set width
+                if (serviceCard instanceof Region) {
+                    Region region = (Region) serviceCard;
+                    region.setMinWidth(300);
+                    region.setMaxWidth(300);
+                    region.setPrefWidth(300);
+                    region.setPrefHeight(150);
+                }
+
+                // Pass service data to the controller
+                ServiceListCardController controller = loader.getController();
+                controller.setService(service);
+
+                servicesContainer.getChildren().add(serviceCard);
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading service cards: " + e.getMessage());
+        }
+    }
+
+
+
+
+
+
+}

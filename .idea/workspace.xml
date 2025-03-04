@@ -5,25 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="nchalah tekhedem">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ServiceListCardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/ServiceListCard.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ChannelMessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ChannelMessageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ClientDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ClientDashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ServiceOffreController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ServiceOffreController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ShowApplicationDetailsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ShowApplicationDetailsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/ApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/ApplicationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/ApplicationForum.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/ApplicationForum.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/ClientDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/ClientDashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/ServiceForum.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/ServiceForum.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/showApplicationDetails.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/showApplicationDetails.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/ApplicationForum.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/ApplicationForum.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/ClientDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/ClientDashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/showApplicationDetails.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/showApplicationDetails.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/main-frontoffice.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/HomePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/HomePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/HomePage.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,9 +24,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
+        <option value="Interface" />
         <option value="FxmlFile" />
         <option value="Class" />
-        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -356,7 +343,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741000978230</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="nchalah tekhedem">
+      <option name="closed" value="true" />
+      <created>1741058675331</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1741058675332</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
