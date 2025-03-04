@@ -4,43 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="pushpush">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ChannelMessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ChannelMessageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/Message.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/ApplicationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Model/Message.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Model/Message.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Service/ApplicationService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Service/ApplicationService.class" afterDir="false" />
     <list default="true" id="a0b36dc7-48d5-4dbf-a249-2dcc33a27a8b" name="Changes" comment="ya rabi ostorna 6.9">
-      <change afterPath="$PROJECT_DIR$/../El Zeyed/DS1/DS1/src/Voiture.java" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/.gitignore" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/Equipement.pro" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/Resources.qrc" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/connexion.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/connexion.h" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/equipement.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/equipement.h" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/main.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/mainwindow.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/mainwindow.h" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/mainwindow.ui" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Equipement/style.qss" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Twiiter/.gitignore" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Twiiter/Twiiter.pro" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Twiiter/main.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Twiiter/mainwindow.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Twiiter/mainwindow.h" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/Twiiter/mainwindow.ui" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/TwitterTimelineModel/.gitignore" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/TwitterTimelineModel/TwitterTimelineModel.pro" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/TwitterTimelineModel/main.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/TwitterTimelineModel/twittertimelinemodel.cpp" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/TwitterTimelineModel/twittertimelinemodel.h" afterDir="false" />
-      <change afterPath="$USER_HOME$/Documents/TwitterTimelineModel/twittertimelinemodel.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/FrontOfficeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/JobOfferFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/JobOfferFormController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/JobOfferFormController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/JobOfferForm.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,9 +25,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="FxmlFile" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
+        <option value="FxmlFile" />
       </list>
     </option>
   </component>
@@ -105,14 +76,14 @@
     <option name="jreName" value="jbr-17 (2)" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2sfDwZNMoq5OeKIcsJeuadXnotq" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="false" id="Update" />
   </component>
   <component name="ProjectViewState">
@@ -156,9 +127,9 @@
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\Sources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources" />
       <recent name="C:\Users\selim\IdeaProjects\pathfinder\Pathfinder\src\main\java\org\example\pathfinder\Controller" />
       <recent name="C:\Users\msi\Desktop\java\PROJET\Pathfinder\src\main\resources\org\example\pathfinder\view\Sources" />
-      <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Sources" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\" />
       <recent name="C:\Users\nourm\Documents\esprit\3eme\Project\PathFinder\src\main\resources\org\example\pathfinder\view\Frontoffice" />
     </key>
@@ -167,9 +138,28 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="PathFinder" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="PathFinder" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="RunnConfigApp" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.pathfinder.App.App" />
       <module name="PathFinder" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="gestionuser" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -242,7 +232,7 @@
       <workItem from="1740935330209" duration="3499000" />
       <workItem from="1740946260777" duration="2238000" />
       <workItem from="1740948572157" duration="1431000" />
-      <workItem from="1740999227920" duration="2769000" />
+      <workItem from="1740999227920" duration="1024000" />
     </task>
     <task id="LOCAL-00001" summary="crud joboffer+application">
       <option name="closed" value="true" />
@@ -372,24 +362,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740877173616</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
-    <task id="LOCAL-00017" summary="nchalah tekhedem">
+    <task id="LOCAL-00017" summary="ya rabi ostorna 6.9">
       <option name="closed" value="true" />
-      <created>1741000978230</created>
+      <created>1741057925352</created>
       <option name="number" value="00017" />
       <option name="presentableId" value="LOCAL-00017" />
       <option name="project" value="LOCAL" />
-      <updated>1741000978230</updated>
+      <updated>1741057925352</updated>
     </task>
-    <task id="LOCAL-00018" summary="pushpush">
-      <option name="closed" value="true" />
-      <created>1741040492846</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1741040492846</updated>
-    </task>
-    <option name="localTasksCounter" value="19" />
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -417,9 +398,6 @@
     <MESSAGE value="ya rabi ostorna 2" />
     <MESSAGE value="ya rabi ostorna 4.0" />
     <MESSAGE value="ya rabi ostorna 6.9" />
-    <MESSAGE value="nchalah tekhedem" />
-    <MESSAGE value="pushpush" />
-    <option name="LAST_COMMIT_MESSAGE" value="pushpush" />
     <option name="LAST_COMMIT_MESSAGE" value="ya rabi ostorna 6.9" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

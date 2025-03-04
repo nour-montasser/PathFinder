@@ -1,9 +1,6 @@
 package org.example.pathfinder.Service;
 
-import org.example.pathfinder.Model.CV;
-import org.example.pathfinder.Model.Experience;
-import org.example.pathfinder.Model.Certificate;
-import org.example.pathfinder.Model.Language;
+import org.example.pathfinder.Model.*;
 import org.example.pathfinder.App.DatabaseConnection;
 
 import java.sql.*;
@@ -12,7 +9,7 @@ import java.util.List;
 
 public class CVService implements Services2<CV> {
     private final Connection connection;
-
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
     public CVService() {
         this.connection = DatabaseConnection.getInstance().getCnx();
     }
@@ -26,7 +23,7 @@ public class CVService implements Services2<CV> {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, cv.getUserId());
+            statement.setInt(1, Math.toIntExact(loggedInUserId));
             statement.setString(2, uniqueTitle); // 🔹 Ensure unique title
             statement.setString(3, cv.getUserTitle()); // 🔥 Insert user_title field
             statement.setString(4, cv.getIntroduction());
@@ -52,7 +49,7 @@ public class CVService implements Services2<CV> {
         try (PreparedStatement statement = connection.prepareStatement(checkQuery)) {
             do {
                 statement.setString(1, newTitle);
-                statement.setInt(2, userId);
+                statement.setInt(1, Math.toIntExact(loggedInUserId));
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next() && resultSet.getInt(1) > 0) {
                     // If the title exists, generate a new one
@@ -75,7 +72,7 @@ public class CVService implements Services2<CV> {
     public void update(CV cv) {
         String query = "UPDATE CV SET id_user = ?, user_title = ?, introduction = ?, skills = ? WHERE id_cv = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, cv.getUserId());
+            statement.setInt(1, Math.toIntExact(loggedInUserId));
             statement.setString(2, cv.getUserTitle());
             statement.setString(3, cv.getIntroduction());
             statement.setString(4, cv.getSkills());

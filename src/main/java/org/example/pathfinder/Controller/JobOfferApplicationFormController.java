@@ -344,9 +344,9 @@ public class JobOfferApplicationFormController {
        Button source = (Button) event.getSource();
 
        if (source.getId().equals("generateCoverLetterButton")) {
-           source.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+           source.setStyle("-fx-background-color: #957155; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
        } else if (source.getId().equals("applyButton")) {
-           source.setStyle("-fx-background-color: #64B5F6; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+           source.setStyle("-fx-background-color: #5b3f29; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
        } else if (source.getId().equals("cancelButton")) {
            source.setStyle("-fx-background-color: #FF7043; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
        }
@@ -357,9 +357,9 @@ public class JobOfferApplicationFormController {
         Button source = (Button) event.getSource();
 
         if (source.getId().equals("generateCoverLetterButton")) {
-            source.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+            source.setStyle("-fx-background-color: #5b3f29; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
         } else if (source.getId().equals("applyButton")) {
-            source.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
+            source.setStyle("-fx-background-color: #3b261d; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
         } else if (source.getId().equals("cancelButton")) {
             source.setStyle("-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 12 24; -fx-font-weight: bold;");
         }

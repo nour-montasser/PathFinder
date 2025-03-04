@@ -3,30 +3,42 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.pathfinder.Controller.ShowApplicationDetailsController"
+           style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-padding: 20px;">
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pathfinder.Controller.ShowApplicationDetailsController">
-    <VBox spacing="15" style="-fx-padding: 20px; -fx-background-color: #f4f4f4;">
-        <Button fx:id="endServiceButton" text="End Service" onAction="#handleEndService"
-                style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 8px 16px;"
-                visible="false"/>
+    <VBox spacing="15" style="-fx-background-color: #F5EDE1; -fx-padding: 20px; -fx-background-radius: 10px;
+                               -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 4);
+                               -fx-pref-width: 600px; -fx-pref-height: 500px;">
+
+        <!-- Close Button & End Service -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button fx:id="endServiceButton" text="End Service" onAction="#handleEndService"
+                    style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 14px;
+                           -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-cursor: hand;"
+                    visible="false"/>
+        </HBox>
 
         <!-- Top Section: Service Details -->
-        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: lightgray; -fx-border-width: 1;">
-            <Label fx:id="serviceTitleLabel" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
-            <Label fx:id="serviceDescriptionArea" wrapText="true" style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20px; -fx-border-radius: 10;
+                                  -fx-background-radius: 10; -fx-border-color: #DDC6A1; -fx-border-width: 1;">
+            <Label fx:id="serviceTitleLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+            <Label fx:id="serviceDescriptionArea" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #555;"/>
 
             <HBox spacing="15">
-                <Label fx:id="servicePriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                <Label fx:id="servicePriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #008000;"/>
                 <Label fx:id="serviceDurationLabel" style="-fx-font-size: 14px; -fx-text-fill: #777;"/>
                 <Label fx:id="serviceExperienceLabel" style="-fx-font-size: 14px; -fx-text-fill: #777;"/>
             </HBox>
         </VBox>
 
-        <!-- Bottom Section: Freelancer Requests -->
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+        <!-- Applications Section -->
+        <Label text="Freelancer Applications" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent; -fx-padding: 10;">
             <VBox fx:id="applicationsContainer" spacing="10" style="-fx-padding: 10px;"/>
         </ScrollPane>
 
-    </VBox>
-</AnchorPane>
 
+    </VBox>
+</StackPane>

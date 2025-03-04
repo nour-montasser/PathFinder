@@ -150,7 +150,7 @@ public class CoverLetterService implements Services<CoverLetter> {
     public String getUserDataForCoverLetter(Long userId) {
         StringBuilder userData = new StringBuilder();
 
-        // Query to get user profile and CV information
+        // Query to get user profile, CV, languages, certificates, and experience information
         String query = "SELECT " +
                 "    u.id_user, " +
                 "    u.name, " +
@@ -165,23 +165,33 @@ public class CoverLetterService implements Services<CoverLetter> {
                 "    p.bio, " +
                 "    c.id_cv, " +
                 "    c.title AS cv_title, " +
+                "    c.user_title AS cv_user_title, " +
                 "    c.introduction AS cv_introduction, " +
-                "    c.languages AS cv_languages, " +
+                "    c.skills AS cv_skills, " +
                 "    c.date_creation AS cv_creation_date, " +
                 "    e.id_experience, " +
-                "    e.type AS experience_type, " +
-                "    e.position AS experience_position, " +
+                "    e.TYPE AS experience_type, " +
+                "    e.POSITION AS experience_position, " +
                 "    e.location_name AS experience_location, " +
                 "    e.start_date AS experience_start_date, " +
-                "    e.end_date AS experience_end_date " +
+                "    e.end_date AS experience_end_date, " +
+                "    l.language_name AS language_name, " +
+                "    l.level AS language_level, " +
+                "    cert.title AS certificate_title, " +
+                "    cert.description AS certificate_description, " +
+                "    cert.issue_date AS certificate_issue_date " +
                 "FROM " +
                 "    app_user u " +
                 "JOIN " +
                 "    profile p ON u.id_user = p.id_user " +
                 "JOIN " +
-                "    CV c ON u.id_user = c.id_user " +
+                "    cv c ON u.id_user = c.id_user " +
                 "LEFT JOIN " +
                 "    experience e ON c.id_cv = e.id_cv " +
+                "LEFT JOIN " +
+                "    languages l ON c.id_cv = l.id_cv " +
+                "LEFT JOIN " +
+                "    certificates cert ON c.id_cv = cert.id_cv " +
                 "WHERE " +
                 "    u.id_user = ?";
 
@@ -204,7 +214,10 @@ public class CoverLetterService implements Services<CoverLetter> {
                     // Adding CV Details
                     userData.append("CV Information: \n")
                             .append("CV Title: ").append(rs.getString("cv_title")).append("\n")
-                            .append("Languages: ").append(rs.getString("cv_languages")).append("\n\n");
+                            .append("User Title: ").append(rs.getString("cv_user_title")).append("\n")
+                            .append("Introduction: ").append(rs.getString("cv_introduction")).append("\n")
+                            .append("Skills: ").append(rs.getString("cv_skills")).append("\n")
+                            .append("Creation Date: ").append(rs.getTimestamp("cv_creation_date")).append("\n\n");
                 }
 
                 // Adding Experience Details (handling multiple experiences)
@@ -220,7 +233,25 @@ public class CoverLetterService implements Services<CoverLetter> {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                     userData.append("Start Date: ").append(startDate != null ? sdf.format(startDate) : "N/A").append("\n")
-                            .append("End Date: ").append(endDate != null ? sdf.format(endDate) : "N/A").append("\n\n");
+                            .append("End Date: ").append(endDate != null ? sdf.format(endDate) : "N/A").append("\n")
+                            .append("Description: ").append(rs.getString("experience_description")).append("\n\n");
+                }
+
+                // Adding Languages Details (handling multiple languages)
+                String language = rs.getString("language_name");
+                if (language != null) {
+                    userData.append("Languages: \n")
+                            .append("Language: ").append(language).append("\n")
+                            .append("Level: ").append(rs.getString("language_level")).append("\n\n");
+                }
+
+                // Adding Certificates Details (handling multiple certificates)
+                String certificateTitle = rs.getString("certificate_title");
+                if (certificateTitle != null) {
+                    userData.append("Certificates: \n")
+                            .append("Title: ").append(certificateTitle).append("\n")
+                            .append("Description: ").append(rs.getString("certificate_description")).append("\n")
+                            .append("Issue Date: ").append(rs.getDate("certificate_issue_date")).append("\n\n");
                 }
             }
 
@@ -235,6 +266,7 @@ public class CoverLetterService implements Services<CoverLetter> {
 
         return userData.toString();
     }
+
 
     public long getJobOfferIdByCoverLetterId(long coverLetterId) {
         long jobOfferId = -1;  // Default value indicating not found

@@ -12,10 +12,8 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-import org.example.pathfinder.Model.CV;
-import org.example.pathfinder.Model.Experience;
-import org.example.pathfinder.Service.CVService;
-import org.example.pathfinder.Service.ExperienceService;
+import org.example.pathfinder.Model.*;
+import org.example.pathfinder.Service.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -23,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import java.awt.Desktop;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -49,12 +48,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.example.pathfinder.Model.Certificate;
-import org.example.pathfinder.Service.CertificateService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.example.pathfinder.Model.Language;
-import org.example.pathfinder.Service.LanguageService;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -81,6 +76,9 @@ import com.itextpdf.layout.element.Paragraph;
 
 public class CVController {
 
+    private long loggedInUserId = LoggedUser.getInstance().getUserId();
+   // ProfileService profileService;
+    //Profile profile=profileService.getOne(loggedInUserId);
     // Character limits
     boolean disableGrammarCheck;
     private final int TITLE_MAX = 100;
@@ -214,6 +212,58 @@ public class CVController {
     @FXML private VBox skillsPreviewContainer;
     @FXML private VBox languagesPreviewContainer;
     @FXML private VBox certificatesPreviewContainer;
+    @FXML private StackPane downloadModalOverlay;
+    @FXML private VBox downloadModal;
+    @FXML private ComboBox<String> fileTypeDropdown;
+    @FXML private ComboBox<String> pageRangeDropdown;
+    @FXML private CheckBox addCertficatesCheckbox;
+    UserService userService;
+
+    @FXML
+    private void showDownloadModal() {
+        downloadModalOverlay.setVisible(true);
+    }
+    @FXML
+    private void downloadCV() {
+        String selectedFileType = fileTypeDropdown.getValue();
+        boolean flatten = addCertficatesCheckbox.isSelected();
+        System.out.println("Downloading as: " + selectedFileType);
+        System.out.println("Flatten: " + flatten);
+
+        if (selectedFileType.contains("A4")) {
+            exportToPDF();
+        } else if (selectedFileType.contains("Image")) {
+            exportToImage();
+        }
+        else if (selectedFileType.contains("PDF "))
+        {
+            exportToPDF2();
+        }
+
+        hideDownloadModalCancel(); // Close modal after download
+    }
+
+
+    private void exportToImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Image");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Files", "*.png"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                WritableImage snapshot = cvPreviewContainer.snapshot(null, null);
+                BufferedImage fullImage = SwingFXUtils.fromFXImage(snapshot, null);
+                ImageIO.write(fullImage, "png", file);
+
+                System.out.println("✅ Image Exported: " + file.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     @FXML
     private void exportToPDF() {
@@ -295,7 +345,7 @@ public class CVController {
 
                     pageNum++; // Move to the next page
                 }
-
+                appendCertificateImagesToPdf(pdfDoc, document);
                 document.close();
                 System.out.println("✅ PDF exported successfully: " + file.getAbsolutePath());
 
@@ -380,6 +430,7 @@ public class CVController {
             contentStream.newLineAtOffset(50, 720);
             contentStream.showText("Name: " + "DANETTE EASTWOOD");
             contentStream.endText();
+
 
             contentStream.beginText();
             contentStream.newLineAtOffset(50, 700);
@@ -959,9 +1010,19 @@ public class CVController {
       updateHeaderSection();
         titleField.textProperty().addListener((obs, oldText, newText) -> updateHeaderSection());
 
+        fileTypeDropdown.valueProperty().addListener((obs, oldVal, newVal) -> {
+            // If the selected file type contains "Image", hide the certificate checkbox.
+            if (newVal != null && newVal.contains("Image")) {
+                addCertficatesCheckbox.setVisible(false);
+            } else {
+                addCertficatesCheckbox.setVisible(true);
+            }
+        });
+
 
 
     }
+
 
     private void setupCharacterLimit(TextInputControl field, Label counter, int maxLength) {
         field.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -976,8 +1037,29 @@ public class CVController {
                 updateCounterColor(counter, length, maxLength);
             }
         });
+        populateFileTypeDropdown();
+    }
+    private void populateFileTypeDropdown() {
+        ObservableList<String> fileTypes = FXCollections.observableArrayList(
+                "📄 Flattened PDF ",
+                "🖼️ Image (PNG)",
+                "📄 PDF A4 (BETA)"
+        );
+        fileTypeDropdown.setItems(fileTypes);
+        fileTypeDropdown.setValue("📄 Flattened PDF"); // Default
     }
 
+
+    @FXML
+    private void hideDownloadModal(MouseEvent event) {
+        if (!downloadModal.isVisible()) return;
+        downloadModalOverlay.setVisible(false);
+    }
+
+    @FXML
+    private void hideDownloadModalCancel() {
+        downloadModalOverlay.setVisible(false);
+    }
     /**
      * Updates the counter color based on the character limit.
      */
@@ -1377,33 +1459,6 @@ public class CVController {
         return wrappedText.toString().trim();
     }
 
-    // 🔹 Creates a header section (NAME + ROLE + CONTACT INFO)
-    private VBox createHeaderSection() {
-        VBox header = new VBox();
-        header.setAlignment(Pos.CENTER);
-        header.setSpacing(5);
-        header.setMaxWidth(Double.MAX_VALUE);
-
-        // Always display the name
-        Label nameLabel = createStyledLabel("DANETTE EASTWOOD", "header");
-        nameLabel.setAlignment(Pos.CENTER);
-        header.getChildren().add(nameLabel);
-
-        // Only create the role label if the CV Title field has something
-        String cvTitle = titleField.getText().trim();
-        if (!cvTitle.isEmpty()) {
-            Label roleLabel = createStyledLabel(cvTitle, "sub-header");
-            roleLabel.setAlignment(Pos.CENTER);
-            header.getChildren().add(roleLabel);
-        }
-
-        // Always display the contact information
-        Label contactLabel = createStyledLabel("+1-555-555-5555  •  danette.eastwood@gmail.com  •  github.io/danette.east  •  San Francisco, CA", "contact");
-        contactLabel.setAlignment(Pos.CENTER);
-        header.getChildren().add(contactLabel);
-
-        return header;
-    }
 
 
     @FXML
@@ -1421,10 +1476,42 @@ public class CVController {
         updateLanguagesSection();
         updateCertificatesSection();
     }
+    private void appendCertificateImagesToPdf(PdfDocument pdfDoc, Document document) throws IOException {
+        if (addCertficatesCheckbox.isSelected()) {
+            for (Certificate cert : certificates) {
+                String media = cert.getMedia().toLowerCase();
+                if (media.endsWith(".png") || media.endsWith(".jpg") || media.endsWith(".jpeg")) {
+                    File certFile = new File("view/Certificates/" + cert.getMedia());
+                    System.out.println("Adding certificate image: " + cert.getMedia());
+                    if (certFile.exists()) {
+                        // Read the image to obtain its dimensions.
+                        BufferedImage bufferedImage = ImageIO.read(certFile);
+                        float imgWidth = bufferedImage.getWidth();   // in pixels (assuming 1 pixel = 1 point)
+                        float imgHeight = bufferedImage.getHeight(); // in pixels (assuming 1 pixel = 1 point)
+
+                        // Create a custom page size matching the certificate image.
+                        PageSize certPageSize = new PageSize(imgWidth, imgHeight);
+                        pdfDoc.addNewPage(certPageSize);
+
+                        // Create the iText image from the certificate file.
+                        com.itextpdf.layout.element.Image certImg = new com.itextpdf.layout.element.Image(
+                                com.itextpdf.io.image.ImageDataFactory.create(certFile.getAbsolutePath())
+                        );
+
+                        // Scale the image to exactly fill the page.
+                        certImg.scaleToFit(certPageSize.getWidth(), certPageSize.getHeight());
+                        certImg.setFixedPosition(pdfDoc.getNumberOfPages(), 0, 0);
+                        document.add(certImg);
+                    }
+                }
+            }
+        }
+    }
+
+
 
     @FXML
     private void exportToPDF2() {
-        // Choose file location
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save PDF");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
@@ -1432,48 +1519,43 @@ public class CVController {
 
         if (file != null) {
             try {
-                // Increase snapshot resolution for higher quality
-                double scaleFactor = 3.0; // Adjust this for higher quality (3x scale)
+                double scaleFactor = 3.0;
                 SnapshotParameters params = new SnapshotParameters();
                 params.setTransform(javafx.scene.transform.Transform.scale(scaleFactor, scaleFactor));
 
-                // Take high-resolution snapshot of cvPreviewContainer
                 WritableImage snapshot = new WritableImage(
                         (int) (cvPreviewContainer.getWidth() * scaleFactor),
                         (int) (cvPreviewContainer.getHeight() * scaleFactor)
                 );
                 cvPreviewContainer.snapshot(params, snapshot);
 
-                // Convert JavaFX image to BufferedImage
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
 
-                // Save image as PNG (high quality)
                 File imageFile = new File("cv_preview_high_res.png");
                 ImageIO.write(bufferedImage, "png", imageFile);
 
-                // Create PDF
                 PdfWriter writer = new PdfWriter(new FileOutputStream(file));
                 PdfDocument pdfDoc = new PdfDocument(writer);
                 Document document = new Document(pdfDoc);
 
-                // Set Page Size to match A4 or Image Aspect Ratio
+                // Use the image's dimensions to create a custom page size for the main CV page
                 float imageWidth = bufferedImage.getWidth();
                 float imageHeight = bufferedImage.getHeight();
                 PageSize customPageSize = new PageSize(imageWidth, imageHeight);
                 pdfDoc.setDefaultPageSize(customPageSize);
 
-                // Add Image to PDF (scaled to fit full page)
                 com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(
                         com.itextpdf.io.image.ImageDataFactory.create(imageFile.getAbsolutePath()));
-
                 img.scaleToFit(customPageSize.getWidth(), customPageSize.getHeight());
-                img.setFixedPosition(0, 0); // Ensure full-page alignment
-
+                img.setFixedPosition(0, 0);
                 document.add(img);
+
+                // Append certificate images on A4 pages by passing A4 dimensions.
+                appendCertificateImagesToPdf(pdfDoc, document);
+
                 document.close();
 
                 System.out.println("✅ PDF saved at: " + file.getAbsolutePath());
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1491,7 +1573,7 @@ public class CVController {
         header.setMaxWidth(Double.MAX_VALUE);
 
         // Name is always displayed
-        Label nameLabel = createStyledLabel("DANETTE EASTWOOD", "header");
+        Label nameLabel = createStyledLabel(LoggedUser.getInstance().getName(), "header");
         nameLabel.setAlignment(Pos.CENTER);
         header.getChildren().add(nameLabel);
 
@@ -1504,9 +1586,9 @@ public class CVController {
         }
 
         // Contact information is always displayed
-        Label contactLabel = createStyledLabel("+1-555-555-5555  •  danette.eastwood@gmail.com  •  github.io/danette.east  •  San Francisco, CA", "contact");
+       /* Label contactLabel = createStyledLabel( LoggedUser.getInstance().getEmail() +"•" +  profile.getPhone() +  "•" + profile.getAddress() + "•" + profile.getCurrent_occupation(), "contact");
         contactLabel.setAlignment(Pos.CENTER);
-        header.getChildren().add(contactLabel);
+        header.getChildren().add(contactLabel);*/
 
         // Add the header to the dedicated header container in the preview
         headerContainer.getChildren().add(header);

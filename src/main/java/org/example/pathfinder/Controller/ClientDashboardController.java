@@ -204,39 +204,58 @@ public class ClientDashboardController {
             System.out.println("❌ Service is NULL in createServiceCard!");
             return new StackPane();
         }
+
         System.out.println("✅ Creating service card for: " + service.getTitle());
+
         StackPane card = new StackPane();
-        card.setStyle("-fx-background-color: white; -fx-border-radius: 10px; -fx-padding: 15px;");
+        card.setStyle("-fx-background-color: white; " +
+                "-fx-border-radius: 10px; " +
+                "-fx-padding: 15px; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 6, 0, 0, 3); " +
+                "-fx-background-insets: 0;");
 
         VBox content = new VBox(10);
-
         HBox priceAndExperience = createPriceAndExperience(service);
 
-        // ✅ Format Duration (Ensure it's not null)
-        String durationText = (service.getDuration() != null && !service.getDuration().isEmpty()) ? service.getDuration() : "No duration";
+        String durationText = (service.getDuration() != null && !service.getDuration().isEmpty())
+                ? service.getDuration()
+                : "No duration";
 
         Label durationLabel = new Label(" " + durationText);
         durationLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #444;");
 
-        // ✅ Make "Posted On" smaller and less visible
         Label postedOnLabel = new Label("Posted on: " + service.getFormattedDate());
         postedOnLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #A9A9A9; -fx-padding: 5px 0;");
 
-        // ✅ Arrange Posted On & Duration in the same row
-        HBox dateInfo = new HBox(10); // Horizontal box with spacing
+        HBox dateInfo = new HBox(10);
         dateInfo.getChildren().addAll(postedOnLabel, durationLabel);
 
         content.getChildren().addAll(
                 createLabel(service.getTitle(), 20, "black", true),
                 priceAndExperience,
-                dateInfo, // ✅ Display both "Posted On" & Duration
+                dateInfo,
                 createLabel(shortenDescription(service.getDescription()), 14, "#666", false),
                 createApplyButton(service)
         );
 
         card.getChildren().add(content);
+
+        // ✅ ADD HOVER EFFECT (MOUSE ENTER/EXIT)
+        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #FAFAFA; " +
+                "-fx-border-radius: 10px; " +
+                "-fx-padding: 15px; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 4); " +
+                "-fx-background-insets: 0;"));
+
+        card.setOnMouseExited(e -> card.setStyle("-fx-background-color: white; " +
+                "-fx-border-radius: 10px; " +
+                "-fx-padding: 15px; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 6, 0, 0, 3); " +
+                "-fx-background-insets: 0;"));
+
         return card;
     }
+
 
     private HBox createPriceAndExperience(ServiceOffre service) {
         HBox hbox = new HBox(20);
@@ -277,7 +296,7 @@ public class ClientDashboardController {
 
     private Button createApplyButton(ServiceOffre service) {
         Button applyButton = new Button("Apply");
-        applyButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px;");
+        applyButton.setStyle("-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px;");
 
         applyButton.setOnAction(event -> openApplicationModal(service));
         return applyButton;
@@ -297,7 +316,7 @@ public class ClientDashboardController {
         priceField.setPromptText("Enter price...");
 
         Button submitButton = new Button("Submit");
-        submitButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;");
+        submitButton.setStyle("-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 14px;");
         submitButton.setOnAction(event -> handleSubmitApplication(service, priceField.getText()));
 
         dialogVBox.getChildren().addAll(infoLabel, priceField, submitButton);

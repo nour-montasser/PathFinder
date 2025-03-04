@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.pathfinder.Controller.ServiceListCardController"
+      style="-fx-padding: 10; -fx-background-color: white; -fx-border-radius: 10px;
+             -fx-border-color: #DDD; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 8, 0, 0, 5);"
+      spacing="10">
+
+    <Label fx:id="titleLabel" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+    <Label fx:id="priceLabel" style="-fx-text-fill: #2e7d32;"/>
+    <Label fx:id="experienceLabel" style="-fx-text-fill: #777;"/>
+
+    <Button fx:id="applyButton" text="Apply"
+            style="-fx-background-color: #5D4037; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;"/>
+</VBox>
