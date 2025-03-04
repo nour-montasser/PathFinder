@@ -7,6 +7,7 @@ public class ApplicationService {
     private String status;
     private int idService;
     private int rating;
+    private String name; // User's name
 
     public ApplicationService(int idApplication, double priceOffre, int idUser, String status, int idService,int Rating) {
         this.idApplication = idApplication;
@@ -15,6 +16,7 @@ public class ApplicationService {
         this.status = status;
         this.idService = idService;
         this.rating = rating;
+
     }
 
     public int getIdApplication() { return idApplication; }

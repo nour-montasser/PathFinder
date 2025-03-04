@@ -7,18 +7,18 @@
 <VBox xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.pathfinder.Controller.ApplicationServiceController"
-      style="-fx-background-color: #F5F5F5; -fx-padding: 20; -fx-alignment: center;">
+      style="-fx-background-color: #F5EDE1; -fx-padding: 20px;">
 
-    <!-- 🌟 Modern Navigation Bar -->
+    <!-- 🌟 Updated Navigation Bar (Matches ClientDashboard) -->
     <HBox spacing="20" alignment="CENTER_LEFT"
-          style="-fx-background-color: white;
+          style="-fx-background-color: #F5EDE1;
                  -fx-padding: 12px 18px;
                  -fx-border-radius: 12px;
-                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 5);
+                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 6, 0, 0, 2);
                  -fx-alignment: center-left;">
 
         <!-- Pathfinder Logo -->
-        <ImageView fx:id="logoImage" fitHeight="55" preserveRatio="true"/>
+        <ImageView fx:id="logoImage" fitHeight="50" preserveRatio="true"/>
 
         <!-- Currency Selector -->
         <ComboBox fx:id="currencySelector"
@@ -26,7 +26,7 @@
                   style="-fx-background-color: transparent;
                          -fx-font-size: 15px;
                          -fx-border-width: 0;
-                         -fx-text-fill: #333;
+                         -fx-text-fill: #3B261D;
                          -fx-padding: 5px 10px;"/>
 
         <!-- Sorting Dropdown -->
@@ -35,21 +35,19 @@
                   style="-fx-background-color: transparent;
                          -fx-font-size: 15px;
                          -fx-border-width: 0;
-                         -fx-text-fill: #333;
+                         -fx-text-fill: #3B261D;
                          -fx-padding: 5px 10px;"/>
 
         <!-- Spacer to push elements right -->
         <Pane HBox.hgrow="ALWAYS"/>
 
-        <!-- 🔍 Beautiful Search Bar (Premium Look) -->
-        <HBox spacing="10" style="-fx-background-color: white;
-                                  -fx-border-radius: 30px;
-                                  -fx-border-color: #ddd;
-                                  -fx-padding: 10px 18px;
-                                  -fx-min-width: 400px; /* Increased width */
-                                  -fx-max-width: 450px;
-                                  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 4, 0, 0, 3);
-                                  -fx-alignment: center-left;">
+        <!-- 🔍 Updated Search Bar -->
+        <HBox spacing="5" alignment="CENTER_LEFT"
+              style="-fx-background-color: #F5EDE1;
+                     -fx-border-color: #E0D6C9;
+                     -fx-border-radius: 20;
+                     -fx-padding: 8 14;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 2);">
 
             <!-- Search Icon Inside -->
             <ImageView fx:id="searchIcon" fitHeight="18" fitWidth="18" style="-fx-opacity: 0.7;"/>
@@ -59,15 +57,14 @@
                        style="-fx-background-color: transparent;
                               -fx-border-width: 0;
                               -fx-font-size: 16px;
-                              -fx-text-fill: #555;
+                              -fx-text-fill: #3B261D;
                               -fx-padding: 2px 5px;"/>
-
         </HBox>
 
         <!-- ➕ Add New Service Button -->
         <Button fx:id="addServiceButton" text="+"
                 onAction="#openServiceForumModal"
-                style="-fx-background-color: #4CAF50;
+                style="-fx-background-color: #3B261D;
                        -fx-text-fill: white;
                        -fx-font-size: 28px;
                        -fx-min-width: 50px;
@@ -77,12 +74,18 @@
                        -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 5, 0, 0, 3);"/>
     </HBox>
 
-    <!-- 🌟 Services Display Section -->
-    <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true"
-                style="-fx-padding: 12px; -fx-background: transparent;">
-        <GridPane fx:id="servicesGrid"
-                  style="-fx-padding: 20; -fx-alignment: center; -fx-background-color: transparent;"
-                  hgap="30" vgap="30"/>
-    </ScrollPane>
+    <!-- 🌟 Services Display Section with Correct Background -->
+    <StackPane style="-fx-background-color: #F5EDE1;">
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true"
+                    style="-fx-background-color: transparent; -fx-padding: 10;">
+            <VBox style="-fx-background-color: #F5EDE1; -fx-padding: 20;">
+                <GridPane fx:id="servicesGrid"
+                          style="-fx-padding: 20;
+                                 -fx-alignment: center;
+                                 -fx-background-color: transparent;"
+                          hgap="30" vgap="30"/>
+            </VBox>
+        </ScrollPane>
+    </StackPane>
 
 </VBox>

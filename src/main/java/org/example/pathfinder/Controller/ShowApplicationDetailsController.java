@@ -1,10 +1,14 @@
 package org.example.pathfinder.Controller;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
+import javafx.util.Duration;
 import org.example.pathfinder.Model.ApplicationService;
 import org.example.pathfinder.Service.ApplicationServiceService;
 import org.example.pathfinder.Model.ServiceOffre;
@@ -89,6 +93,7 @@ public class ShowApplicationDetailsController {
 
 
 
+
     private VBox createApplicationCard(ApplicationService app, boolean isServiceCompleted) {
         VBox card = new VBox(10);
         card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-border-radius: 10; "
@@ -111,10 +116,50 @@ public class ShowApplicationDetailsController {
         rejectButton.setDisable(isServiceCompleted); // Disable if service is completed
         rejectButton.setOnAction(e -> confirmAndUpdateApplicationStatus(app, "Rejected"));
 
+
+
+
         HBox buttons = new HBox(10, acceptButton, rejectButton);
+
+        // ✅ Add "Send Message" Button Only for Accepted Users
+        if ("Accepted".equals(app.getStatus())) {
+            Button messageButton = new Button("📩 Send Message");
+            messageButton.setStyle("-fx-background-color: #0078D7; -fx-text-fill: white;");
+            messageButton.setOnAction(e -> navigateToMessages(app.getIdUser()));
+
+
+            buttons.getChildren().add(messageButton); // Add to existing buttons
+        }
+
+
         card.getChildren().addAll(priceLabel, statusLabel, buttons);
         return card;
     }
+
+    private void navigateToMessages(int freelancerId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pathfinder/view/Frontoffice/Message.fxml"));
+            Parent root = loader.load();
+
+            // ✅ Correct the controller name and use `id_user`
+            ChannelMessageController channelMessageController = loader.getController();
+            channelMessageController.setFreelancerId(freelancerId); // Set using `id_user`
+
+            // ✅ Apply smooth transition animation
+            Scene scene = applicationsContainer.getScene();
+            root.setOpacity(0);
+
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), root);
+            fadeTransition.setFromValue(0);
+            fadeTransition.setToValue(1);
+
+            scene.setRoot(root);
+            fadeTransition.play();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void confirmAndUpdateApplicationStatus(ApplicationService app, String newStatus) {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);

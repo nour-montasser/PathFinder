@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Model.ServiceOffre;
 import org.example.pathfinder.Service.ServiceOffreService;
 import org.json.JSONArray;
@@ -50,7 +51,7 @@ public class ServiceOffreController {
     private Label aiStatusLabel; // Add this to your FXML
 
     private LocalDateTime date_posted;
-    private final int loggedInUserId = 10; // Simulated logged-in user ID
+    private final int loggedInUserId =(int) LoggedUser.getInstance().getUserId();
     private final ServiceOffreService serviceOffreService = new ServiceOffreService();
     private ServiceOffre selectedService = null; // Track the selected service for editing
 

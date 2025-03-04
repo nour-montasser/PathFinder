@@ -865,4 +865,18 @@ public class ChannelMessageController {
 
         menuButton.getItems().clear();
         menuButton.getItems().addAll(updateItem, deleteItem);
-    }}
+    }
+    public void setFreelancerId(int userId) {
+        this.selectedUser = userService.getUserById((long) userId); // Convert int to Long
+
+        if (this.selectedUser != null) {
+            userLabel.setText(selectedUser.getName());
+            System.out.println("✅ User ID set: " + userId);
+        } else {
+            System.out.println("❌ User not found with ID: " + userId);
+        }
+    }
+
+
+
+}

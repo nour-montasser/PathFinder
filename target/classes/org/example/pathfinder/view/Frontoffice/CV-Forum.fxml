@@ -101,8 +101,8 @@
             <!-- Title and Export Button Container -->
             <HBox spacing="10" alignment="CENTER_RIGHT" maxWidth="Infinity">
                 <Label text="CV Preview" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
-                <Button fx:id="exportPdfButton" text="Export to PDF" onAction="#exportToPDF"
-                        style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;"/>
+                <Button fx:id="exportPdfButton" text="Download" onAction="#showDownloadModal"
+                        style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;-fx-font-size: 14px;"/>
             </HBox>
             <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
                 <!-- Main preview container with dedicated sub-containers -->
@@ -231,5 +231,46 @@
             </HBox>
         </VBox>
     </StackPane>
+    <!-- Download Modal Overlay (Gray Background) -->
+    <StackPane fx:id="downloadModalOverlay"
+               visible="false"
+               style="-fx-background-color: rgba(0, 0, 0, 0.5);"
+               onMouseClicked="#hideDownloadModal">
+        <!-- Centered Modal Box -->
+        <VBox fx:id="downloadModal"
+              spacing="10"
+              alignment="CENTER"
+              style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #3B261D; -fx-border-radius: 5;"
+              maxWidth="400" maxHeight="300"
+              onMouseClicked="#consumeClick">
+
+            <Label text="Download CV" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+
+            <!-- File Type Selection -->
+            <VBox spacing="5" alignment="CENTER_LEFT">
+                <Label text="File Type" style="-fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
+                <ComboBox fx:id="fileTypeDropdown" maxWidth="300"
+                          style="-fx-background-color: white; -fx-border-color: #3B261D;">
+                </ComboBox>
+            </VBox>
+
+            <!-- Flatten PDF Option -->
+            <HBox spacing="5" alignment="CENTER_LEFT">
+                <CheckBox fx:id="addCertficatesCheckbox"/>
+                <Label text="Add certificates" style="-fx-text-fill: #3B261D;"/>
+            </HBox>
+
+
+            <!-- Buttons -->
+            <HBox spacing="10">
+                <Button text="Download" onAction="#downloadCV"
+                        style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5;"/>
+                <Button text="Cancel" onAction="#hideDownloadModalCancel"
+                        style="-fx-background-color: #FF5555; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5;"/>
+            </HBox>
+
+        </VBox>
+    </StackPane>
+
 
 </StackPane>
