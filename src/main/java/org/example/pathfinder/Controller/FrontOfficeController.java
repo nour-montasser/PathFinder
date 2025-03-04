@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -26,7 +28,6 @@ public class FrontOfficeController {
 
     public void initialize() {
         System.out.println("✅ FrontOfficeController initialized!");
-
         // Load Logo Image
         try {
             String logoPath = getClass().getResource("/org/example/pathfinder/view/Sources/pathfinder_logo_navbar.png").toExternalForm();
@@ -95,7 +96,7 @@ public class FrontOfficeController {
     @FXML
     private void loadHomePage() {
         setActiveButton(homeButton);
-        loadPage("Home.fxml");
+        loadPage("HomePage.fxml");
     }
 
     @FXML

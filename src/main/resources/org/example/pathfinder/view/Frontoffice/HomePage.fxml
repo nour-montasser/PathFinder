@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ScrollPane?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.pathfinder.Controller.HomePageController"
+           style="-fx-background-color: #f5ede1;">
+
+    <AnchorPane>
+        <!-- Main Scrollable Content -->
+        <ScrollPane fitToWidth="true" style="-fx-background: #F5EDE1FF; -fx-background-color: #F5EDE1FF;"
+                    AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="70.0">
+            <VBox alignment="CENTER" spacing="20">
+                <!-- Center Content -->
+                <VBox alignment="CENTER" spacing="25" maxWidth="900">
+                    <!-- Pathfinder Logo -->
+                    <ImageView fx:id="logoImage" fitWidth="200" fitHeight="80"
+                               pickOnBounds="true" preserveRatio="true"/>
+
+                    <!-- Welcome Message -->
+                    <Label fx:id="welcomeLabel" text="Welcome to Pathfinder!"
+                           style="-fx-font-size: 28px; -fx-text-fill: #3B261D; -fx-font-weight: bold;"/>
+
+                    <!-- Introduction Text -->
+                    <Label fx:id="introLabel"
+                           style="-fx-font-size: 16px; -fx-text-fill: #3B261D;"
+                           wrapText="true" maxWidth="600"
+                           textAlignment="CENTER"/>
+
+                    <!-- Decorative Compass Logo -->
+                    <ImageView fx:id="compassImage" fitWidth="100" fitHeight="100"
+                               pickOnBounds="true" preserveRatio="true"/>
+                </VBox>
+
+                <!-- Job Offers Section -->
+                <VBox spacing="10" alignment="CENTER_LEFT" maxWidth="1000">
+                    <Label text="Latest Job Opportunities"
+                           style="-fx-font-size: 20px; -fx-text-fill: #3B261D; -fx-font-weight: bold;"/>
+
+                    <ScrollPane hbarPolicy="ALWAYS" vbarPolicy="NEVER"
+                                prefWidth="1000" maxWidth="1000"
+                                style="-fx-background-color: transparent; -fx-background: transparent;">
+                        <HBox fx:id="jobOffersContainer" spacing="20" alignment="CENTER">
+                            <padding>
+                                <Insets top="10" right="20" bottom="10" left="20"/>
+                            </padding>
+                        </HBox>
+                    </ScrollPane>
+                </VBox>
+
+                <!-- Add bottom padding to ensure content doesn't get cut off by footer -->
+                <padding>
+                    <Insets top="20" bottom="20"/>
+                </padding>
+            </VBox>
+        </ScrollPane>
+
+        <!-- Footer (Fixed at bottom) -->
+        <HBox alignment="CENTER" spacing="30"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0"
+              style="-fx-background-color: #3B261D; -fx-padding: 15;">
+
+            <!-- Contact Info -->
+            <Label text="📩 Email: support@pathfinder.com"
+                   style="-fx-font-size: 14px; -fx-text-fill: #F5E4C3;"/>
+
+            <!-- Social Media Info -->
+            <Label text="🔵 Facebook: @pathfinder"
+                   style="-fx-font-size: 14px; -fx-text-fill: #F5E4C3;"/>
+            <Label text="📷 Instagram: @pathfinder"
+                   style="-fx-font-size: 14px; -fx-text-fill: #F5E4C3;"/>
+            <Label text="🔗 LinkedIn: @pathfinder"
+                   style="-fx-font-size: 14px; -fx-text-fill: #F5E4C3;"/>
+        </HBox>
+    </AnchorPane>
+</StackPane>

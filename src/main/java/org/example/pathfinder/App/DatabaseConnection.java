@@ -14,7 +14,7 @@ public class DatabaseConnection {
     public static DatabaseConnection instance;
     public DatabaseConnection(){
 
-        String Url="jdbc:mysql://localhost:3306/pathfinder";
+        String Url="jdbc:mysql://localhost:3307/pathfinder";
         String Username="root";
         String Password="";
 
