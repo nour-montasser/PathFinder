@@ -20,7 +20,7 @@ public class CertificateService implements Services2<Certificate> {
 
     @Override
     public void add(Certificate certificate) {
-        String query = "INSERT INTO certificate (id_cv, title, description, media, issued_by, issue_date) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO certificates (id_cv, title, description, media, issued_by, issue_date) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, certificate.getIdCv());
             statement.setString(2, certificate.getTitle());
@@ -37,7 +37,7 @@ public class CertificateService implements Services2<Certificate> {
 
     @Override
     public void update(Certificate certificate) {
-        String query = "UPDATE certificate SET id_cv = ?, title = ?, description = ?, media = ?, issued_by = ?, issue_date = ? WHERE id_certificate = ?";
+        String query = "UPDATE certificates SET id_cv = ?, title = ?, description = ?, media = ?, issued_by = ?, issue_date = ? WHERE id_certificate = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, certificate.getIdCv());
             statement.setString(2, certificate.getTitle());
@@ -55,7 +55,7 @@ public class CertificateService implements Services2<Certificate> {
 
     @Override
     public void delete(int id) {
-        String query = "DELETE FROM certificate WHERE id_certificate = ?";
+        String query = "DELETE FROM certificates WHERE id_certificate = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -67,7 +67,7 @@ public class CertificateService implements Services2<Certificate> {
 
     @Override
     public Certificate getById(int id) {
-        String query = "SELECT * FROM certificate WHERE id_certificate = ?";
+        String query = "SELECT * FROM certificates WHERE id_certificate = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -91,7 +91,7 @@ public class CertificateService implements Services2<Certificate> {
     @Override
     public List<Certificate> getAll() {
         List<Certificate> certificates = new ArrayList<>();
-        String query = "SELECT * FROM certificate";
+        String query = "SELECT * FROM certificates";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -113,7 +113,7 @@ public class CertificateService implements Services2<Certificate> {
 
     public List<Certificate> getCertificatesByCV(int cvId) {
         List<Certificate> certificates = new ArrayList<>();
-        String query = "SELECT * FROM certificate WHERE id_cv = ?";
+        String query = "SELECT * FROM certificates WHERE id_cv = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, cvId);
             ResultSet resultSet = statement.executeQuery();
@@ -135,7 +135,7 @@ public class CertificateService implements Services2<Certificate> {
     }
     public List<Certificate> getByCvId(int cvId) {
         List<Certificate> certificates = new ArrayList<>();
-        String query = "SELECT * FROM certificate WHERE id_cv = ?";
+        String query = "SELECT * FROM certificates WHERE id_cv = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, cvId);

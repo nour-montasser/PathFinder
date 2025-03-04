@@ -103,7 +103,7 @@ public class CVService implements Services2<CV> {
     public CV getById(int id) {
         String queryCV = "SELECT * FROM CV WHERE id_cv = ?";
         String queryExperiences = "SELECT * FROM experience WHERE id_cv = ?";
-        String queryCertificates = "SELECT * FROM certificate WHERE id_cv = ?";
+        String queryCertificates = "SELECT * FROM certificates WHERE id_cv = ?";
         String queryLanguages = "SELECT * FROM languages WHERE id_cv = ?";
 
         try (PreparedStatement statementCV = connection.prepareStatement(queryCV);
@@ -381,7 +381,7 @@ public class CVService implements Services2<CV> {
 
                -- Format Certificates
                (SELECT GROUP_CONCAT(CONCAT(c.title, ' - ', c.issued_by, ' (', c.issue_date, ')') SEPARATOR ' | ')
-                FROM certificate c WHERE c.id_cv = cv.id_cv) AS certificates
+                FROM certificates c WHERE c.id_cv = cv.id_cv) AS certificates
 
         FROM CV cv
         JOIN app_user u ON cv.id_user = u.id_user
