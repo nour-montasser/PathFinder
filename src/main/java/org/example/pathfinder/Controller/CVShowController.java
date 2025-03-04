@@ -14,6 +14,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.example.pathfinder.Model.CV;
 
+import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Service.CVService;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -42,7 +43,8 @@ public class CVShowController implements Initializable {
     private GridPane cvGridPane; // ✅ Matches fx:id from FXML
 
     private final CVService cvService = new CVService();
-    private final int userId = 1; // 🔥 Change this to dynamically fetch the logged-in user
+
+    private final int userId = Math.toIntExact(LoggedUser.getInstance().getUserId()); // 🔥 Change this to dynamically fetch the logged-in user
     @FXML
     private TextField searchField;
     private List<CV> allCVs = new ArrayList<>();
