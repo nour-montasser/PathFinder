@@ -255,3 +255,14 @@
     -fx-background-color: transparent;
     -fx-padding: 0;
 }
+.typing-indicator {
+    -fx-text-fill: #666666;
+    -fx-font-style: italic;
+    -fx-padding: 0 0 0 10;
+    -fx-font-size: 14px;
+}
+
+.chat-header {
+    -fx-alignment: center-left;
+    -fx-spacing: 10;
+}

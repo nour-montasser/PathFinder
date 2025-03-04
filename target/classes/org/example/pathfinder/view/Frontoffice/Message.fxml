@@ -59,8 +59,11 @@
 
         <!-- Messages Area -->
         <ListView fx:id="messageListView" VBox.vgrow="ALWAYS" styleClass="message-list"/>
+        <Label fx:id="typingLabel" text="Typing..." visible="false" styleClass="typing-indicator"/>
+
 
         <!-- Message Input Area -->
+
         <HBox styleClass="message-input-area" spacing="10" alignment="CENTER">
             <padding>
                 <Insets top="15" right="15" bottom="15" left="15"/>

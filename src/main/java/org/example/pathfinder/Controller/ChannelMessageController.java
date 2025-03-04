@@ -19,6 +19,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import org.example.pathfinder.App.Client;
+import org.example.pathfinder.App.ClientListener;
 import org.example.pathfinder.Model.Channel;
 import org.example.pathfinder.Model.LoggedUser;
 import org.example.pathfinder.Model.Message;

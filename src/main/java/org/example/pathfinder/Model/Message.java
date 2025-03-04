@@ -7,8 +7,9 @@ public class Message {
     private String content;
     private Long idUserSender;
     private String media;
-    private Timestamp timesent;
     private Long idChannel;
+    private Timestamp timesent;
+
 
     // Constructor with ID (for loading from database)
     public Message(Long idMessage, String content, Long idUserSender, String media, Long idChannel) {

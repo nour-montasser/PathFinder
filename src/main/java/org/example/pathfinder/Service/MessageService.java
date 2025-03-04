@@ -184,6 +184,23 @@ public class MessageService implements Services<Message> {
             throw new RuntimeException("Error retrieving channel ID: " + e.getMessage(), e);
         }
     }
+    public List<Long> getChannelsForUser(Long userId) {
+        List<Long> channels = new ArrayList<>();
+        String req = "SELECT id_channel FROM Channel WHERE id_user1 = ? OR id_user2 = ?";
+
+        try (PreparedStatement stm = cnx.prepareStatement(req)) {
+            stm.setLong(1, userId);
+            stm.setLong(2, userId);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                channels.add(rs.getLong("id_channel"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting channels for user: " + e.getMessage(), e);
+        }
+        return channels;
+    }
 
 
 
