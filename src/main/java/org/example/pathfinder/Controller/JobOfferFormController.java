@@ -196,6 +196,8 @@ public class JobOfferFormController {
                     controller.setJobOfferId(id); // Pass the jobOffer ID to the controller
 
                     Stage stage = (Stage) cityErrorLabel.getScene().getWindow();
+                    stage.centerOnScreen();
+                    stage.setResizable(false);
                     stage.setScene(new Scene(root));
                     stage.show();
                 } else {
