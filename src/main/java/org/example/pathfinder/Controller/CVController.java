@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.input.*;
@@ -74,7 +75,7 @@ import com.itextpdf.layout.element.Paragraph;
 public class CVController {
 
     private long loggedInUserId = LoggedUser.getInstance().getUserId();
-   // ProfileService profileService;
+    // ProfileService profileService;
     //Profile profile=profileService.getOne(loggedInUserId);
     // Character limits
     boolean disableGrammarCheck;
@@ -120,8 +121,6 @@ public class CVController {
     private TextArea descriptionField; // ADDED DESCRIPTION FIELD
     @FXML
     private ComboBox<String> typeDropdown;
-    @FXML
-    private ComboBox<String> skillsDropdown;
     @FXML
     private TextField positionField;
     @FXML
@@ -197,6 +196,13 @@ public class CVController {
     private String selectedLanguageLevel = ""; // Stores the selected level as text
     @FXML private TextFlow titleTextFlow;
     @FXML private TextFlow introductionTextFlow;
+    @FXML private ComboBox<String> skillComboBox; // Editable search field for skills
+    @FXML private FlowPane selectedSkillsFlow;      // Container for the added skill tags
+
+    private final ObservableList<String> availableSkills = FXCollections.observableArrayList();
+    private final ObservableList<String> selectedSkills = FXCollections.observableArrayList();
+
+    private Timeline skillSearchDelayTimeline;
 
     private final String GRAMMAR_API_URL = "https://api.languagetool.org/v2/check";
     private final Map<String, List<String>> cachedCorrections = new HashMap<>();
@@ -397,7 +403,7 @@ public class CVController {
 
         textField.setOnContextMenuRequested(event -> showCorrectionMenu(event, textField));
     }
-  public void exportHybridCVPreview() {
+    public void exportHybridCVPreview() {
         try {
             // Step 1: Take snapshot of VBox
             WritableImage snapshot = cvPreviewContainer.snapshot(null, null);
@@ -573,36 +579,28 @@ public class CVController {
 
 
 
-    @FXML
-    private void fetchSkills() {
-        // Hugging Face API endpoint
+    private void fetchSkills(String inputText) {
+        // API endpoint and token
         String apiUrl = "https://api-inference.huggingface.co/models/algiraldohe/lm-ner-linkedin-skills-recognition";
-        // Your Hugging Face API token
         String apiToken = "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"; // Replace with your actual token
 
-        // Input text (e.g., a LinkedIn profile or job description)
-        String inputText = "Experienced software engineer with expertise in Python, C++, and project management. Strong leadership and team collaboration skills.";
-
         try {
-            // Create the HTTP connection
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Authorization", "Bearer " + apiToken);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
-
-            // Create the JSON payload
+            System.out.println(inputText);
+            // Use the inputText variable instead of a constant string
             String jsonInputString = "{\"inputs\": \"" + inputText + "\"}";
 
-            // Send the request
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
                 os.write(input, 0, input.length);
             }
 
-            // Read the response
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder response = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
@@ -610,41 +608,60 @@ public class CVController {
             }
             in.close();
 
-            // Parse the JSON response
             JSONArray jsonResponse = new JSONArray(response.toString());
             System.out.print(jsonResponse);
 
-            // Clear previous items and add new skills
-            skillsDropdown.getItems().clear();
-            for (int i = 0; i < jsonResponse.length(); i++) {
-                JSONObject entity = jsonResponse.getJSONObject(i);
-                String entityType = entity.getString("entity_group");
-                String skillName = entity.getString("word");
-
-                // Filter for skills (assuming the model labels skills as "SKILL")
-                if ("SOFT".equals(entityType) || "TECHNOLOGY".equals(entityType) ) {
-                    // Only include short, single-word skills (or up to 2 words)
-                    if (skillName.split(" ").length <= 2) {
-                        skillsDropdown.getItems().add(skillName);
+            // Update available skills on the JavaFX thread
+            Platform.runLater(() -> {
+                availableSkills.clear();
+                for (int i = 0; i < jsonResponse.length(); i++) {
+                    JSONObject entity = jsonResponse.getJSONObject(i);
+                    String entityType = entity.getString("entity_group");
+                    String skillName = entity.getString("word");
+                    if ( skillName.split(" ").length <= 2) {
+                        availableSkills.add(skillName);
                     }
                 }
-            }
-
-            // Notify if no skills were found
-            if (skillsDropdown.getItems().isEmpty()) {
-                System.out.println("No concise skills found.");
-            }
+                // Update the ComboBox items with new suggestions
+                skillComboBox.setItems(availableSkills);
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void addSkillTag(String skill) {
+        Label skillLabel = new Label(skill);
+        skillLabel.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px;");
+
+        Button removeButton = new Button("x");
+        removeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: red; -fx-font-size: 12px;");
+        removeButton.setOnAction(e -> {
+            selectedSkillsFlow.getChildren().remove(removeButton.getParent());
+            selectedSkills.remove(skill);
+        });
+
+        HBox tag = new HBox(skillLabel, removeButton);
+        tag.setAlignment(Pos.CENTER);
+        tag.setSpacing(5);
+        tag.setStyle("-fx-background-color: #E0E0E0; -fx-padding: 5; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+        selectedSkillsFlow.getChildren().add(tag);
+    }
+    private String getSelectedSkillsString() {
+        StringBuilder sb = new StringBuilder();
+        for (String skill : selectedSkills) {
+            sb.append(skill).append("-");
+        }
+        return sb.toString();
+    }
+
+
+
 
     @FXML
     private void populateLanguagesFromAPI() {
         try {
-            // Force TLS 1.2 for HTTPS connections
-            System.setProperty("https.protocols", "TLSv1.2");
 
             URL url = new URL("https://restcountries.com/v3.1/all");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -858,31 +875,49 @@ public class CVController {
     @FXML
 
     private void addLanguageBox(Language language) {
+        // Create the main container for this language entry
         HBox languageBox = new HBox(10);
-        languageBox.setStyle("-fx-background-color: #F5EDE1; -fx-border-color: #3B261D; -fx-border-width: 2px; " +
-                "-fx-padding: 10px; -fx-border-radius: 8px; -fx-alignment: center-left;");
+        languageBox.setAlignment(Pos.CENTER_LEFT);
+        languageBox.setStyle(
+                "-fx-background-color: #F5EDE1; " +
+                        "-fx-border-color: #3B261D; " +
+                        "-fx-border-width: 2px; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-padding: 10;"
+        );
 
-
+        // Create the label for the language name and level
         Label languageLabel = new Label(language.getName() + " - " + language.getLevel());
         languageLabel.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-
+        // Create a container for the proficiency dots with fixed minimum width for each dot
         HBox dotContainer = new HBox(5);
+        dotContainer.setAlignment(Pos.CENTER_LEFT);
         for (int i = 1; i <= 5; i++) {
             Label dot = new Label(i <= convertLevelToDots(language.getLevel()) ? "⚫" : "⚪");
-            dot.setStyle("-fx-font-size: 14px; -fx-text-fill: #3B261D;");
+            dot.setStyle("-fx-font-size: 16px; -fx-text-fill: gray; -fx-min-width: 20px;");
             dotContainer.getChildren().add(dot);
         }
 
-        Button editButton = createStyledButton("Edit", "#4CAF50", "#FFFFFF");
+        // Create a spacer region to push the action buttons to the far right
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Create the Edit and Delete buttons, all using the brown theme (#3B261D)
+        Button editButton = createStyledButton("Edit", "#3B261D", "white");
         editButton.setOnAction(e -> editLanguage(language, languageBox));
 
-        Button deleteButton = createStyledButton("Delete", "#FF5555", "#FFFFFF");
+        Button deleteButton = createStyledButton("Delete", "#3B261D", "white");
         deleteButton.setOnAction(e -> deleteLanguage(language, languageBox));
 
-        languageBox.getChildren().addAll(languageLabel, dotContainer, editButton, deleteButton);
+        // Add all components to the main languageBox
+        languageBox.getChildren().addAll(languageLabel, dotContainer, spacer, editButton, deleteButton);
+
+        // Add this languageBox to the container that holds all language entries
         languageContainer.getChildren().add(languageBox);
     }
+
     @FXML
     private void editLanguage(Language language, HBox languageBox) {
         // Restore the language to dropdown temporarily for selection
@@ -918,6 +953,34 @@ public class CVController {
 
 
 
+    private void initializeSkillSearch() {
+        // Set the ComboBox to be editable
+        skillComboBox.setEditable(true);
+
+        // Listen to changes in the editor's text property and debounce for 500ms
+        skillComboBox.getEditor().textProperty().addListener((obs, oldText, newText) -> {
+            if (skillSearchDelayTimeline != null) {
+                skillSearchDelayTimeline.stop();
+            }
+            // Wait 500ms after typing stops
+            skillSearchDelayTimeline = new Timeline(new KeyFrame(Duration.millis(1500), event -> {
+                // Call fetchSkills with the current input
+                fetchSkills(newText);
+            }));
+            skillSearchDelayTimeline.play();
+        });
+
+        // Optionally, you can add an action listener for when a skill is selected from suggestions:
+        skillComboBox.setOnAction(event -> {
+            String skill = skillComboBox.getValue();
+            if (skill != null && !skill.isBlank() && !selectedSkills.contains(skill)) {
+                addSkillTag(skill);
+                selectedSkills.add(skill);
+                // Clear the editor for a new search
+                skillComboBox.getEditor().clear();
+            }
+        });
+    }
 
 
 
@@ -946,13 +1009,14 @@ public class CVController {
         setupGrammarCheck(descriptionField);
         setupGrammarCheck(certificateDescriptionField);
         introductionField.textProperty().addListener((obs, oldText, newText) -> updateSummarySection());
-        skillsDropdown.valueProperty().addListener((obs, oldVal, newVal) -> updateSkillsSection());
+        selectedSkills.addListener((ListChangeListener<String>) change -> updateSkillsSection());
+
 
         // ✅ Ensure languages are fetched from API
         populateLanguagesFromAPI(); // RESTORED API CALL
 
         // ✅ Ensure skills dropdown is populated
-        fetchSkills(); // Ensure we load skills
+        initializeSkillSearch();
 
         // ✅ Populate Experience Types
         typeDropdown.setItems(FXCollections.observableArrayList("Academic", "Internship"));
@@ -1004,7 +1068,7 @@ public class CVController {
             }
         });
         // 🔹 HEADER (Always Present)
-      updateHeaderSection();
+        updateHeaderSection();
         titleField.textProperty().addListener((obs, oldText, newText) -> updateHeaderSection());
 
         fileTypeDropdown.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -1100,34 +1164,54 @@ public class CVController {
     private void consumeClick(MouseEvent event) {
         event.consume(); // Stops event from closing modal
     }
-    @FXML
     private void addExperienceBox(Experience experience) {
+        // Main container for an experience entry
         HBox experienceBox = new HBox(10);
-
-        experienceBox.setStyle("-fx-background-color: #F5EDE1; -fx-border-color: #3B261D; -fx-border-width: 2px; " +
-                "-fx-padding: 10px; -fx-border-radius: 8px; -fx-alignment: center-left;");
-
-        Label details = new Label(
-                experience.getType() + ": " + experience.getPosition() + " at " + experience.getLocationName() +
-                        " (" + experience.getStartDate() + " to " + experience.getEndDate() + ")\n" +
-                        "Description: " + experience.getDescription() // ADDED DESCRIPTION
+        experienceBox.setAlignment(Pos.CENTER_LEFT);
+        experienceBox.setStyle(
+                "-fx-background-color: #F5EDE1; " +
+                        "-fx-border-color: #3B261D; " +
+                        "-fx-border-width: 2; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-padding: 10;"
         );
-        details.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        Button editButton = createStyledButton("Edit", "#4CAF50", "#FFFFFF");
+        // Left side: Experience details (type, position, location, dates, and description)
+        VBox detailsBox = new VBox(5);
+        detailsBox.setAlignment(Pos.CENTER_LEFT);
+
+        // Experience header with type, position and location
+        Label headerLabel = new Label(experience.getType() + ": " + experience.getPosition() + " at " + experience.getLocationName());
+        headerLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3B261D;");
+
+        // Dates and description in smaller font
+        Label datesLabel = new Label("(" + experience.getStartDate() + " to " + experience.getEndDate() + ")");
+        datesLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #3B261D;");
+        Label descLabel = new Label("Description: " + experience.getDescription());
+        descLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #3B261D;");
+        descLabel.setWrapText(true);
+
+        detailsBox.getChildren().addAll(headerLabel, datesLabel, descLabel);
+
+        // Spacer to push buttons to the right
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Create Edit and Delete buttons with the brown theme
+        Button editButton = createStyledButton("Edit", "#3B261D", "white");
         editButton.setOnAction(e -> {
             editingExperience = experience;
             typeDropdown.setValue(experience.getType());
             positionField.setText(experience.getPosition());
             locationField.setText(experience.getLocationName());
-            descriptionField.setText(experience.getDescription()); // Set Description
+            descriptionField.setText(experience.getDescription());
             startDatePicker.setValue(LocalDate.parse(experience.getStartDate().split(" ")[0]));
             endDatePicker.setValue(LocalDate.parse(experience.getEndDate().split(" ")[0]));
-
             showExperienceModal();
         });
 
-        Button deleteButton = createStyledButton("Delete", "#FF5555", "#FFFFFF");
+        Button deleteButton = createStyledButton("Delete", "#3B261D", "white");
         deleteButton.setOnAction(e -> {
             experiences.remove(experience);
             experienceContainer.getChildren().remove(experienceBox);
@@ -1135,9 +1219,11 @@ public class CVController {
             updateEducationSection();
         });
 
-        experienceBox.getChildren().addAll(details, editButton, deleteButton);
+        // Assemble the experience box
+        experienceBox.getChildren().addAll(detailsBox, spacer, editButton, deleteButton);
         experienceContainer.getChildren().add(experienceBox);
     }
+
     @FXML
     private void addExperience() {
         String type = typeDropdown.getValue();
@@ -1278,8 +1364,9 @@ public class CVController {
                 introductionErrorLabel.setVisible(true);
                 isValid = false;
             }
-            if (skillsDropdown.getValue() == null) {
-                skillsErrorLabel.setText("Please select a skill.");
+            // New validation: ensure at least one skill tag is selected
+            if (selectedSkills.isEmpty()) {
+                skillsErrorLabel.setText("Please add at least one skill.");
                 skillsErrorLabel.setVisible(true);
                 isValid = false;
             }
@@ -1294,17 +1381,18 @@ public class CVController {
             // Collect CV details
             String title = titleField.getText().trim();
             String introduction = introductionField.getText().trim();
-            String skills = skillsDropdown.getValue().trim();
+            // Concatenate selected skills into a single string, e.g., "Java-Python-C++-"
+            String skills = getSelectedSkillsString();
 
             // ✅ Check if updating an existing CV
             if (editingCV != null) {
-                // ✅ UPDATE EXISTING CV
+                // UPDATE EXISTING CV
                 editingCV.setUserTitle(title);
                 editingCV.setIntroduction(introduction);
                 editingCV.setSkills(skills);
                 cvService.update(editingCV);
 
-                // ✅ Handle Experiences
+                // Handle Experiences
                 List<Experience> originalExperiences = experienceService.getByCvId(editingCV.getIdCV());
                 for (Experience originalExp : originalExperiences) {
                     boolean stillExists = false;
@@ -1315,7 +1403,7 @@ public class CVController {
                         }
                     }
                     if (!stillExists) {
-                        experienceService.delete(originalExp.getIdExperience()); // 🔥 DELETE from DB
+                        experienceService.delete(originalExp.getIdExperience());
                     }
                 }
                 for (Experience experience : experiences) {
@@ -1327,7 +1415,7 @@ public class CVController {
                     }
                 }
 
-                // ✅ Handle Certificates
+                // Handle Certificates
                 List<Certificate> originalCertificates = certificateService.getByCvId(editingCV.getIdCV());
                 for (Certificate originalCert : originalCertificates) {
                     boolean stillExists = false;
@@ -1338,7 +1426,7 @@ public class CVController {
                         }
                     }
                     if (!stillExists) {
-                        certificateService.delete(originalCert.getIdCertificate()); // 🔥 DELETE from DB
+                        certificateService.delete(originalCert.getIdCertificate());
                     }
                 }
                 for (Certificate certificate : certificates) {
@@ -1350,9 +1438,8 @@ public class CVController {
                     }
                 }
 
-                // ✅ Handle Languages
+                // Handle Languages
                 List<Language> originalLanguages = languageService.getByCvId(editingCV.getIdCV());
-
                 for (Language originalLang : originalLanguages) {
                     boolean stillExists = false;
                     for (Language currentLang : languages) {
@@ -1362,7 +1449,7 @@ public class CVController {
                         }
                     }
                     if (!stillExists) {
-                        languageService.delete(originalLang.getIdLanguage()); // 🔥 DELETE from DB
+                        languageService.delete(originalLang.getIdLanguage());
                     }
                 }
                 for (Language language : languages) {
@@ -1373,16 +1460,15 @@ public class CVController {
                         languageService.update(language);
                     }
                 }
-
             } else {
-                // ✅ CREATE NEW CV
+                // CREATE NEW CV
                 CV cv = new CV(1, title, introduction, skills);
                 cvService.add(cv);
 
                 // Retrieve latest CV ID
                 int latestCvId = cvService.getLatestCVId();
                 if (latestCvId == -1) {
-                    return; // Stop execution if CV ID retrieval fails
+                    return;
                 }
 
                 // Store experiences linked to the CV
@@ -1404,7 +1490,7 @@ public class CVController {
                 }
             }
 
-            // ✅ Clear form after submission
+            // Clear form after submission
             clearCVForm();
             editingCV = null; // Reset editing state
 
@@ -1414,11 +1500,13 @@ public class CVController {
     }
 
 
+
+
     @FXML
     private void clearCVForm() {
         titleField.clear();
         introductionField.clear();
-        skillsDropdown.getSelectionModel().clearSelection();
+
 
         // Clear experiences
         experiences.clear();
@@ -1686,11 +1774,20 @@ public class CVController {
         // Clear the dedicated skills container first
         skillsPreviewContainer.getChildren().clear();
 
-        if (skillsDropdown.getValue() != null && !skillsDropdown.getValue().trim().isEmpty()) {
+        if (!selectedSkills.isEmpty()) {
             skillsPreviewContainer.getChildren().add(createSectionLabel("Skills"));
-            skillsPreviewContainer.getChildren().add(createParagraphLabel(skillsDropdown.getValue().trim()));
+            StringBuilder sb = new StringBuilder();
+            for (String skill : selectedSkills) {
+                sb.append(skill).append(", ");
+            }
+            // Remove the trailing comma and space
+            if (sb.length() >= 2) {
+                sb.setLength(sb.length() - 2);
+            }
+            skillsPreviewContainer.getChildren().add(createParagraphLabel(sb.toString()));
         }
     }
+
 
     private void updateLanguagesSection() {
         // Clear the dedicated languages container first
@@ -1949,23 +2046,46 @@ public class CVController {
 
 
 
-    @FXML
     private void addCertificateBox(Certificate certificate) {
+        // Main container for a certificate entry
         HBox certificateBox = new HBox(10);
-        certificateBox.setStyle("-fx-background-color: #F5EDE1; -fx-border-color: #3B261D; -fx-border-width: 2px; " +
-                "-fx-padding: 10px; -fx-border-radius: 8px; -fx-alignment: center-left;");
-
-        Label details = new Label(
-                certificate.getTitle() + " (" + certificate.getAssociation() + ") - " + certificate.getDate() +
-                        "\nDescription: " + certificate.getDescription() // Display description
+        certificateBox.setAlignment(Pos.CENTER_LEFT);
+        certificateBox.setStyle(
+                "-fx-background-color: #F5EDE1; " +
+                        "-fx-border-color: #3B261D; " +
+                        "-fx-border-width: 2; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-padding: 10;"
         );
-        details.setStyle("-fx-text-fill: #3B261D; -fx-font-size: 14px; -fx-font-weight: bold;");
 
+        // Left side: Certificate details
+        VBox detailsBox = new VBox(5);
+        detailsBox.setAlignment(Pos.CENTER_LEFT);
 
-        Button openFileButton = createStyledButton("Open", "#3B261D", "#FFFFFF");
-        openFileButton.setOnAction(e -> openCertificateFile(certificate.getMedia()));
+        // Certificate name in bold
+        Label nameLabel = new Label(certificate.getTitle());
+        nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3B261D;");
 
-        Button editButton = createStyledButton("Edit", "#4CAF50", "#FFFFFF");
+        // Issuing organization and date
+        Label orgLabel = new Label("Issued by: " + certificate.getAssociation());
+        orgLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #3B261D;");
+        Label dateLabel = new Label("Date: " + certificate.getDate().toString());
+        dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #3B261D;");
+
+        // Description
+        Label descLabel = new Label("Description: " + certificate.getDescription());
+        descLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #3B261D;");
+        descLabel.setWrapText(true);
+
+        detailsBox.getChildren().addAll(nameLabel, orgLabel, dateLabel, descLabel);
+
+        // Spacer to push buttons to the far right
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Edit and Delete buttons using the brown theme
+        Button editButton = createStyledButton("Edit", "#3B261D", "white");
         editButton.setOnAction(e -> {
             editingCertificate = certificate;
             certificateNameField.setText(certificate.getTitle());
@@ -1976,14 +2096,15 @@ public class CVController {
             showCertificateModal();
         });
 
-        Button deleteButton = createStyledButton("Delete", "#FF5555", "#FFFFFF");
+        Button deleteButton = createStyledButton("Delete", "#3B261D", "white");
         deleteButton.setOnAction(e -> {
             certificates.remove(certificate);
             certificateContainer.getChildren().remove(certificateBox);
             updateCertificatesSection();
         });
 
-        certificateBox.getChildren().addAll(details, openFileButton, editButton, deleteButton);
+        // Assemble certificate box
+        certificateBox.getChildren().addAll(detailsBox, spacer, editButton, deleteButton);
         certificateContainer.getChildren().add(certificateBox);
     }
 
@@ -2093,8 +2214,24 @@ public class CVController {
             // Fill in basic details
             titleField.setText(editingCV.getUserTitle());
             introductionField.setText(editingCV.getIntroduction());
-            skillsDropdown.setValue(editingCV.getSkills()); // Adjust if Skills is a list
 
+            // Instead of setting the skillsDropdown value, parse the stored skills string
+            String skillsString = editingCV.getSkills(); // Expected format: "skill1-skill2-skill3-"
+            if (skillsString != null && !skillsString.trim().isEmpty()) {
+                // Clear previous skills
+                selectedSkills.clear();
+                selectedSkillsFlow.getChildren().clear();
+                // Split by hyphen and add non-empty tokens to selectedSkills
+                String[] skillsArr = skillsString.split("-");
+                for (String skill : skillsArr) {
+                    if (!skill.trim().isEmpty()) {
+                        selectedSkills.add(skill.trim());
+                        addSkillTag(skill.trim());
+                    }
+                }
+            }
+
+            // Run grammar check after a delay
             new Timeline(new KeyFrame(Duration.millis(1000), event -> {
                 disableGrammarCheck = false;
                 checkGrammarForField(titleField);
@@ -2135,6 +2272,7 @@ public class CVController {
             System.err.println("❌ CV not found for ID: " + cvId);
         }
     }
+
 
     // 🔥 Styled Button Factory
     private Button createStyledButton(String text, String bgColor, String textColor) {

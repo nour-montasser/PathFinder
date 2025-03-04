@@ -6,7 +6,7 @@ import java.net.URL;
 
 public class TextToSpeechAPI {
 
-    private static final String API_KEY = "sk_d2d91b8b549fc6c6008c3a28c8493b6d4f1754053424f415";  // 🔹 Replace with your API Key
+    private static final String API_KEY = "sk_35c7dfff98c29d6e7faabcd2fad41a3db2859b0361589006";  // 🔹 Replace with your API Key
     private static final String VOICE_ID = "EXAVITQu4vr4xnSDxMaL";  // 🔹 Default ElevenLabs Voice
 
     public static void speak(String text) {

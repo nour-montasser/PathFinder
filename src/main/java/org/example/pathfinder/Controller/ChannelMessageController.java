@@ -732,7 +732,7 @@ public class ChannelMessageController {
 
         try {
             User selectedUser = userService.getAllUsers().stream()
-                    .filter(user -> user.getName().equalsIgnoreCase(searchText) && user.getId() != loggedInUserId)
+                    .filter(user -> user.getName().equalsIgnoreCase(searchText) && user.getId() != loggedInUserId && "COMPANY".equals(user.getRole()))
                     .findFirst()
                     .orElse(null);
 

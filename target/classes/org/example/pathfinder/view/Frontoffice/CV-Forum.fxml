@@ -8,14 +8,14 @@
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="org.example.pathfinder.Controller.CVController"
            stylesheets="@frontoffice-style.css"
-           prefWidth="1000" prefHeight="700">
+           prefWidth="1000" prefHeight="700" style="-fx-background-color: #F5EDE1;">
 
     <!-- Main Split Screen -->
-    <SplitPane dividerPositions="0.5">
+    <SplitPane dividerPositions="0.5" style="-fx-background-color: #F5EDE1">
 
         <!-- Left Side (Scrollable Input Fields) -->
-        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
-            <VBox spacing="15" alignment="TOP_CENTER" style="-fx-padding: 20;">
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #F5EDE1">
+            <VBox spacing="15" alignment="TOP_CENTER" style="-fx-padding: 20;-fx-background-color: #F5EDE1">
                 <!-- 🔹 Title -->
                 <Label text="Create CV" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <!-- CV Form -->
@@ -39,8 +39,12 @@
                     <!-- Skills Dropdown -->
                     <VBox spacing="5" alignment="CENTER_LEFT">
                         <Label text="Select a Skill:" style="-fx-text-fill: #3B261D; -fx-font-size: 16px;"/>
-                        <ComboBox fx:id="skillsDropdown" maxWidth="300" promptText="Select a skill"
-                                  style="-fx-background-color: white; -fx-border-color: #3B261D;"/>
+                        <!-- Editable ComboBox for skill search/suggestions -->
+                        <ComboBox fx:id="skillComboBox" editable="true" promptText="Search skills..." prefWidth="300"
+                                  style="-fx-background-color: white; -fx-border-color: #3B261D; -fx-border-radius: 5;"/>
+
+                        <!-- FlowPane to display selected skills as tags -->
+                        <FlowPane fx:id="selectedSkillsFlow" hgap="5" vgap="5" prefWrapLength="400"/>
                         <Label fx:id="skillsErrorLabel" text="Please select a skill!" style="-fx-text-fill: red;" visible="false"/>
                     </VBox>
                 </VBox>
@@ -97,14 +101,14 @@
         </ScrollPane>
 
         <!-- Right Side (CV Preview and Export) -->
-        <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+        <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #F5EDE1">
             <!-- Title and Export Button Container -->
             <HBox spacing="10" alignment="CENTER_RIGHT" maxWidth="Infinity">
                 <Label text="CV Preview" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3B261D;"/>
                 <Button fx:id="exportPdfButton" text="Download" onAction="#showDownloadModal"
                         style="-fx-background-color: #3B261D; -fx-text-fill: white; -fx-border-radius: 5;-fx-font-size: 14px;"/>
             </HBox>
-            <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #F5EDE1; -fx-control-inner-background: #F5EDE1;">
                 <!-- Main preview container with dedicated sub-containers -->
                 <VBox fx:id="cvPreviewContainer" spacing="10" style="-fx-padding: 20; -fx-background-color: white;
             -fx-border-color: #3B261D; -fx-border-width: 2px; -fx-border-radius: 5px;">
@@ -257,7 +261,7 @@
             <!-- Flatten PDF Option -->
             <HBox spacing="5" alignment="CENTER_LEFT">
                 <CheckBox fx:id="addCertficatesCheckbox"/>
-                <Label text="Add certificates" style="-fx-text-fill: #3B261D;"/>
+                <Label text="Add certificates " style="-fx-text-fill: #3B261D;"/>
             </HBox>
 
 

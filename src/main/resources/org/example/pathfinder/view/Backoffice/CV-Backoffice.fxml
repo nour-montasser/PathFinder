@@ -11,7 +11,7 @@
             style="-fx-background-color: #F5F5F5;"> <!-- 🔹 Light Gray Background -->
 
     <!-- 🔹 TableView to Display CV Data -->
-    <TableView fx:id="cvTable" layoutX="20" layoutY="20" prefWidth="860" prefHeight="500"
+    <TableView fx:id="cvTable" layoutX="20" layoutY="20" minWidth="Infinity" maxHeight="Infinity"
                AnchorPane.topAnchor="10.0"
                AnchorPane.bottomAnchor="10.0"
                AnchorPane.leftAnchor="10.0"

@@ -9,6 +9,7 @@
     import javafx.scene.image.ImageView;
     import javafx.scene.layout.StackPane;
     import javafx.scene.text.Font;
+    import org.example.pathfinder.Model.LoggedUser;
 
     import java.io.IOException;
     import java.net.URL;
@@ -37,6 +38,7 @@
                 System.err.println("⚠️ Logo Image not found: " + e.getMessage());
             }
 
+
             // Set Home as default active page and load it
             setActiveButton(homeButton);
 
@@ -64,6 +66,20 @@ homeController.initialize();
                     System.err.println("❌ Scene is NULL when trying to set user data!");
                 }
             });
+
+
+            if( "COMPANY".equals(LoggedUser.getInstance().getRole()))
+            {
+                helpButton.setVisible(false);
+                freelanceButton.setVisible(false);
+                serviceButton.setVisible(false);
+
+            }
+            else {
+                helpButton.setVisible(true);
+                freelanceButton.setVisible(true);
+                serviceButton.setVisible(true);
+            }
         }
         // 📌 Function to Load New Pages in contentArea
         private void loadPage(String fxmlFile) {

@@ -62,7 +62,7 @@ public class BackOfficeController {
     @FXML
     private void loadCVsPage() {
         setActiveButton(cvsButton);
-        loadPage("CVs.fxml");
+        loadPage("CV-Backoffice.fxml");
     }
 
     @FXML

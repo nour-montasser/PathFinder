@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="700" prefWidth="1000" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.CVShowController">
+<StackPane prefHeight="700" prefWidth="1000" style="-fx-background-color:#F5EDE1;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pathfinder.Controller.CVShowController">
 
     <!-- Main Container -->
     <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 20;" VBox.vgrow="ALWAYS">
@@ -56,7 +56,7 @@
         </HBox>
 
         <!-- Grid to Display CVs -->
-        <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+        <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-border-color: transparent;-fx-background-color: #F5EDE1; -fx-control-inner-background: #F5EDE1;" VBox.vgrow="ALWAYS">
             <GridPane fx:id="cvGridPane" alignment="CENTER" hgap="20" style="-fx-padding: 20;" vgap="20">
 
                 <columnConstraints>
