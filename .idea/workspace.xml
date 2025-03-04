@@ -4,37 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bf9f4b74-7305-4103-9fd6-0584ec662d0b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/Client.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/ClientHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/ClientListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="bf9f4b74-7305-4103-9fd6-0584ec662d0b" name="Changes" comment="Socket+&quot;Typing&quot; dms">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/App/DatabaseConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ChannelMessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Controller/ChannelMessageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Model/Message.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/pathfinder/Service/MessageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/Message.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/pathfinder/view/Frontoffice/Message.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/CVController$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/CVController$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/CVController$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/CVController$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/CVController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/ChannelMessageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/JobOfferApplicationFormController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Controller/JobOfferFormController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Model/Message.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Service/CVService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Service/CoverLetterService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/Service/MessageService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/Message.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/pathfinder/view/Frontoffice/Message.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/styles/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/styles/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +29,13 @@
   }
 }]]></component>
   <component name="RunManager" selected="Compound.Server+Client">
+    <configuration name="Client" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.example.pathfinder.App.App" />
+      <module name="PathFinder" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="RunnConfigApp" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.pathfinder.App.App" />
       <module name="PathFinder" />
@@ -91,12 +69,26 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.Client" />
       <item itemvalue="Application.Server" />
       <item itemvalue="Application.RunnConfigApp" />
       <item itemvalue="Compound.Server+Client" />
     </list>
   </component>
   <component name="TaskManager">
+    <task id="LOCAL-00001" summary="Socket+&quot;Typing&quot; dms">
+      <option name="closed" value="true" />
+      <created>1741068268760</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1741068268760</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Socket+&quot;Typing&quot; dms" />
+    <option name="LAST_COMMIT_MESSAGE" value="Socket+&quot;Typing&quot; dms" />
   </component>
 </project>
