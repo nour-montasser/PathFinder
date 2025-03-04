@@ -39,7 +39,7 @@
 
                 <!-- Job Offers Section -->
                 <VBox spacing="10" alignment="CENTER_LEFT" maxWidth="1000">
-                    <Label text="Latest Job &amp; Service Opportunities"
+                    <Label text="Latest Job Opportunities"
                            style="-fx-font-size: 20px; -fx-text-fill: #3B261D; -fx-font-weight: bold;"/>
 
                     <ScrollPane hbarPolicy="ALWAYS" vbarPolicy="NEVER"
@@ -49,11 +49,27 @@
                             <padding>
                                 <Insets top="10" right="20" bottom="10" left="20"/>
                             </padding>
+                        </HBox>
 
-                            <HBox fx:id="servicesContainer" spacing="15"
+                    </ScrollPane>
+                </VBox>
+                <!-- Service Section -->
+                <VBox spacing="10" alignment="CENTER_LEFT" maxWidth="1000">
+                    <Label text="Latest  Service Opportunities"
+                           style="-fx-font-size: 20px; -fx-text-fill: #3B261D; -fx-font-weight: bold;"/>
+
+                    <ScrollPane hbarPolicy="ALWAYS" vbarPolicy="NEVER"
+                                prefWidth="1000" maxWidth="1000"
+                                style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <HBox fx:id="servicesContainer" spacing="15"
                                   style="-fx-padding: 10; -fx-background-color: transparent; -fx-alignment: center-left;"/>
 
-                        </HBox>
+            <padding>
+                                <Insets top="10" right="20" bottom="10" left="20"/>
+                            </padding>
+
+
+
 
 
                     </ScrollPane>

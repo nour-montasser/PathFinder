@@ -46,7 +46,7 @@
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 Parent homeView = loader.load();
                 HomePageController homeController = loader.getController();
-
+homeController.initialize();
                 // Add the view to contentArea
                 contentArea.getChildren().clear();
                 contentArea.getChildren().add(homeView);
